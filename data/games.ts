@@ -53,7 +53,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/2.jpg"
+    "coverImage": "./images/2.jpg"
   },
   {
     "id": "3",
