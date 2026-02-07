@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Header } from './components/Header';
 import { GameCard } from './components/GameCard';
-import { GAMES } from './data/games';
+import { GAMES } from './games';
 import { Search } from 'lucide-react';
 
 const App: React.FC = () => {
