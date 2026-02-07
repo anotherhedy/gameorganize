@@ -1,12 +1,10 @@
 import { GameData } from './types';
 
 export const GAMES: GameData[] = [
-  
-  
   {
     "id": "1",
     "title": "张记早餐店",
-    "url": "https://resoundzhouerhe.top",
+    "url": "resoundzhouerhe.top",
     "releaseDate": "2026-01-27 00:00:00",
     "status": "是",
     "description": "早安·张记的老板张三失踪了,你感觉有点不对劲。",
@@ -53,7 +51,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "../images/2.jpg"
+    "coverImage": "/images/2.jpg"
   },
   {
     "id": "3",
@@ -79,7 +77,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/3.jpg"
+    "coverImage": "/images/3.jpg"
   },
   {
     "id": "4",
@@ -105,7 +103,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/4.jpg"
+    "coverImage": "/images/4.jpg"
   },
   {
     "id": "5",
@@ -131,7 +129,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/5.jpg"
+    "coverImage": "/images/5.jpg"
   },
   {
     "id": "6",
@@ -157,7 +155,7 @@ export const GAMES: GameData[] = [
       "text": "34 【《笔记侦探》补充说明（涉及剧透） - 曼陀罗 | 小红书 - 你的生活兴趣社区】 😆 aEkMBoCIzClVqYA 😆 https://www.xiaohongshu.com/discovery/item/6969b94e000000002103f9ee?source=webshare&xhsshare=pc_web&xsec_token=ABvpaXc1vdzXmTq0tnmqtzfmFhr8z0DvPl9RjexZyVLDE=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6969b94e000000002103f9ee?source=webshare&xhsshare=pc_web&xsec_token=ABvpaXc1vdzXmTq0tnmqtzfmFhr8z0DvPl9RjexZyVLDE=&xsec_source=pc_share"
     },
-    "coverImage": "images/6.jpg"
+    "coverImage": "/images/6.jpg"
   },
   {
     "id": "7",
@@ -183,7 +181,7 @@ export const GAMES: GameData[] = [
       "text": "14 【《404工位消失事件》游戏攻略及剧情解答 - AAA自装地下党 | 小红书 - 你的生活兴趣社区】 😆 dxVsot3zhjB3wNg 😆 https://www.xiaohongshu.com/discovery/item/696638f6000000002102a547?source=webshare&xhsshare=pc_web&xsec_token=ABswMirIEoSEtEa6VAwKD1mB6wQzax7rSBKru93wQfUsk=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/696638f6000000002102a547?source=webshare&xhsshare=pc_web&xsec_token=ABswMirIEoSEtEa6VAwKD1mB6wQzax7rSBKru93wQfUsk=&xsec_source=pc_share"
     },
-    "coverImage": "images/7.jpg"
+    "coverImage": "/images/7.jpg"
   },
   {
     "id": "8",
@@ -209,7 +207,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/8.jpg"
+    "coverImage": "/images/8.jpg"
   },
   {
     "id": "9",
@@ -235,7 +233,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/9.jpg"
+    "coverImage": "/images/9.jpg"
   },
   {
     "id": "10",
@@ -261,7 +259,7 @@ export const GAMES: GameData[] = [
       "text": "79 【《崖边迷案》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 OHfFsm010iCJZ1o 😆 https://www.xiaohongshu.com/discovery/item/69646e22000000001a032c1c?source=webshare&xhsshare=pc_web&xsec_token=ABq21u8OYPVSs2ECHvr-5OhFrmd_RMKFvuQTkGhZW9-l8=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/69646e22000000001a032c1c?source=webshare&xhsshare=pc_web&xsec_token=ABq21u8OYPVSs2ECHvr-5OhFrmd_RMKFvuQTkGhZW9-l8=&xsec_source=pc_share"
     },
-    "coverImage": "images/10.jpg"
+    "coverImage": "/images/10.jpg"
   },
   {
     "id": "11",
@@ -287,7 +285,7 @@ export const GAMES: GameData[] = [
       "text": "73 【滨江新城烂尾楼攻略‖网页游戏解谜 - AA专业莲藕打孔🐱 | 小红书 - 你的生活兴趣社区】 😆 SotVc416eniE8eA 😆 https://www.xiaohongshu.com/discovery/item/69606cde000000000a02d3b6?source=webshare&xhsshare=pc_web&xsec_token=ABm_ypCsKdqcM4TC8yv5E1n15ghztLqcVUe0UYxPy5WDA=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/69606cde000000000a02d3b6?source=webshare&xhsshare=pc_web&xsec_token=ABm_ypCsKdqcM4TC8yv5E1n15ghztLqcVUe0UYxPy5WDA=&xsec_source=pc_share"
     },
-    "coverImage": "images/11.jpg"
+    "coverImage": "/images/11.jpg"
   },
   {
     "id": "12",
@@ -313,7 +311,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/12.jpg"
+    "coverImage": "/images/12.jpg"
   },
   {
     "id": "13",
@@ -339,7 +337,7 @@ export const GAMES: GameData[] = [
       "text": "25 【【网页解谜】递归回声攻略+repo - NixRav | 小红书 - 你的生活兴趣社区】 😆 KkUImr1C0eEEcfF 😆 https://www.xiaohongshu.com/discovery/item/695b36e6000000001f005cd8?source=webshare&xhsshare=pc_web&xsec_token=ABe-FmUOtSat8yphN8MGz1b6oz1onGKLMO40F2eZp-_nc=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/695b36e6000000001f005cd8?source=webshare&xhsshare=pc_web&xsec_token=ABe-FmUOtSat8yphN8MGz1b6oz1onGKLMO40F2eZp-_nc=&xsec_source=pc_share"
     },
-    "coverImage": "images/13.jpg"
+    "coverImage": "/images/13.jpg"
   },
   {
     "id": "14",
@@ -365,7 +363,7 @@ export const GAMES: GameData[] = [
       "text": "48 【【网页解谜】青苗中学攻略＋repo - NixRav | 小红书 - 你的生活兴趣社区】 😆 8VLP14sBkg2T4Jo 😆 https://www.xiaohongshu.com/discovery/item/695a6c2e000000001e02dc95?source=webshare&xhsshare=pc_web&xsec_token=ABlzmsSMW9_r4ASb8DWgLm7g7dK7QGt4W8FNKyx4XyMtY=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/695a6c2e000000001e02dc95?source=webshare&xhsshare=pc_web&xsec_token=ABlzmsSMW9_r4ASb8DWgLm7g7dK7QGt4W8FNKyx4XyMtY=&xsec_source=pc_share"
     },
-    "coverImage": "images/14.jpg"
+    "coverImage": "/images/14.jpg"
   },
   {
     "id": "15",
@@ -391,7 +389,7 @@ export const GAMES: GameData[] = [
       "text": "85 【BOSS消失事件（思维导图） - 哄哄 | 小红书 - 你的生活兴趣社区】 😆 KBjdyGLt2NxbBX3 😆 https://www.xiaohongshu.com/discovery/item/695b7378000000000d00b4a5?source=webshare&xhsshare=pc_web&xsec_token=ABe-FmUOtSat8yphN8MGz1b5_xEWjnsnR8__Lwx9KCSrQ=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/695b7378000000000d00b4a5?source=webshare&xhsshare=pc_web&xsec_token=ABe-FmUOtSat8yphN8MGz1b5_xEWjnsnR8__Lwx9KCSrQ=&xsec_source=pc_share"
     },
-    "coverImage": "images/15.jpg"
+    "coverImage": "/images/15.jpg"
   },
   {
     "id": "16",
@@ -417,7 +415,7 @@ export const GAMES: GameData[] = [
       "text": "https://shimo.im/docs/loqeMPd2KzHeNqnz/ 《🥃 <昨日酒客>全流程解谜攻略》，可复制链接后用石墨文档 App 打开",
       "url": ""
     },
-    "coverImage": "images/16.jpg"
+    "coverImage": "/images/16.jpg"
   },
   {
     "id": "17",
@@ -443,7 +441,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/17.jpg"
+    "coverImage": "/images/17.jpg"
   },
   {
     "id": "18",
@@ -469,7 +467,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/18.jpg"
+    "coverImage": "/images/18.jpg"
   },
   {
     "id": "19",
@@ -495,7 +493,7 @@ export const GAMES: GameData[] = [
       "text": "74 【明德中学坠楼案攻略 ‖网页游戏 - AA专业莲藕打孔🐱 | 小红书 - 你的生活兴趣社区】 😆 ycNvDTagJQzNGLJ 😆 https://www.xiaohongshu.com/discovery/item/6964acbf000000000a02dd90?source=webshare&xhsshare=pc_web&xsec_token=ABFcArglXfX-WjlgGhzvzwhRZxxZA7mZ-uWzSIJ2Pj-yY=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6964acbf000000000a02dd90?source=webshare&xhsshare=pc_web&xsec_token=ABFcArglXfX-WjlgGhzvzwhRZxxZA7mZ-uWzSIJ2Pj-yY=&xsec_source=pc_share"
     },
-    "coverImage": "images/19.jpg"
+    "coverImage": "/images/19.jpg"
   },
   {
     "id": "20",
@@ -521,7 +519,7 @@ export const GAMES: GameData[] = [
       "text": "https://www.taptap.cn/moment/755809220099575148?utm_medium=&utm_source=wechat_session&share_id=",
       "url": "https://www.taptap.cn/moment/755809220099575148?utm_medium=&utm_source=wechat_session&share_id="
     },
-    "coverImage": "images/20.jpg"
+    "coverImage": "/images/20.jpg"
   },
   {
     "id": "21",
@@ -547,7 +545,7 @@ export const GAMES: GameData[] = [
       "text": "30 【网页解密新作制作中！（附一代攻略 - 薛定谔摸鱼的猫猫 | 小红书 - 你的生活兴趣社区】 😆 YQPIU10f5lw9vz1 😆 https://www.xiaohongshu.com/discovery/item/6959d3d5000000002103e062?source=webshare&xhsshare=pc_web&xsec_token=ABgOQkwZRd9dQueZeN6dlsbggh8Zp_kjZn-fNUgUgax2k=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6959d3d5000000002103e062?source=webshare&xhsshare=pc_web&xsec_token=ABgOQkwZRd9dQueZeN6dlsbggh8Zp_kjZn-fNUgUgax2k=&xsec_source=pc_share"
     },
-    "coverImage": "images/21.jpg"
+    "coverImage": "/images/21.jpg"
   },
   {
     "id": "22",
@@ -573,7 +571,7 @@ export const GAMES: GameData[] = [
       "text": "12 【《停电谜夜》攻略  - anna（一颗心随便伤版） | 小红书 - 你的生活兴趣社区】 😆 Uiz8bbfyGqfKbgi 😆 https://www.xiaohongshu.com/discovery/item/694ff367000000001e00ee9e?source=webshare&xhsshare=pc_web&xsec_token=ABguLJai9HJWCBUfiRwbZwpfxjOBPkb-AVtT1kpW1_4Ag=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/694ff367000000001e00ee9e?source=webshare&xhsshare=pc_web&xsec_token=ABguLJai9HJWCBUfiRwbZwpfxjOBPkb-AVtT1kpW1_4Ag=&xsec_source=pc_share"
     },
-    "coverImage": "images/22.jpg"
+    "coverImage": "/images/22.jpg"
   },
   {
     "id": "23",
@@ -599,7 +597,7 @@ export const GAMES: GameData[] = [
       "text": "41 【《欢迎来到特调局4》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 TCdC4P7vgEVCR00 😆 https://www.xiaohongshu.com/discovery/item/694c24b0000000001e026cd0?source=webshare&xhsshare=pc_web&xsec_token=ABGjpjnp2n38PH5AXDXqewKrCZPqn98lre6DwXgzUK2E4=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/694c24b0000000001e026cd0?source=webshare&xhsshare=pc_web&xsec_token=ABGjpjnp2n38PH5AXDXqewKrCZPqn98lre6DwXgzUK2E4=&xsec_source=pc_share"
     },
-    "coverImage": "images/23.jpg"
+    "coverImage": "/images/23.jpg"
   },
   {
     "id": "24",
@@ -625,7 +623,7 @@ export const GAMES: GameData[] = [
       "text": "91 【部分玩过网页解谜游戏攻略存档（内有剧透） - 玘芜 | 小红书 - 你的生活兴趣社区】 😆 yZ3T5q3mp1AdyXL 😆 https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share"
     },
-    "coverImage": "images/24.jpg"
+    "coverImage": "/images/24.jpg"
   },
   {
     "id": "25",
@@ -651,7 +649,7 @@ export const GAMES: GameData[] = [
       "text": "73 【墟境调和局（思维导图） - 哄哄 | 小红书 - 你的生活兴趣社区】 😆 r6Yie1BawXCbwaw 😆 https://www.xiaohongshu.com/discovery/item/694a5a4d000000001e032178?source=webshare&xhsshare=pc_web&xsec_token=ABf78V6S3Lqv0XZQeXtPvkKDTkCtGMUWkYOQKOSWFuC8M=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/694a5a4d000000001e032178?source=webshare&xhsshare=pc_web&xsec_token=ABf78V6S3Lqv0XZQeXtPvkKDTkCtGMUWkYOQKOSWFuC8M=&xsec_source=pc_share"
     },
-    "coverImage": "images/25.jpg"
+    "coverImage": "/images/25.jpg"
   },
   {
     "id": "26",
@@ -677,7 +675,7 @@ export const GAMES: GameData[] = [
       "text": "43 【《诡异自缢事件》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 pco3elfuA8a87hj 😆 https://www.xiaohongshu.com/discovery/item/6957dd72000000001f004cd3?source=webshare&xhsshare=pc_web&xsec_token=ABp-ZOO9aOZntn8EVRo2DisQhxZa4z8tMkSRtPVCBUAO8=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6957dd72000000001f004cd3?source=webshare&xhsshare=pc_web&xsec_token=ABp-ZOO9aOZntn8EVRo2DisQhxZa4z8tMkSRtPVCBUAO8=&xsec_source=pc_share"
     },
-    "coverImage": "images/26.jpg"
+    "coverImage": "/images/26.jpg"
   },
   {
     "id": "27",
@@ -703,7 +701,7 @@ export const GAMES: GameData[] = [
       "text": "2 【《寻她》攻略📝👀 - anna（一颗心随便伤版） | 小红书 - 你的生活兴趣社区】 😆 MwgPj3JjUMZ1PKR 😆 https://www.xiaohongshu.com/discovery/item/69467988000000001e001031?source=webshare&xhsshare=pc_web&xsec_token=AB4y6vF0jonlJYmI0iLcBxU-EcgnueszV2cNSn3JQDwqw=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/69467988000000001e001031?source=webshare&xhsshare=pc_web&xsec_token=AB4y6vF0jonlJYmI0iLcBxU-EcgnueszV2cNSn3JQDwqw=&xsec_source=pc_share"
     },
-    "coverImage": "images/27.jpg"
+    "coverImage": "/images/27.jpg"
   },
   {
     "id": "28",
@@ -729,7 +727,7 @@ export const GAMES: GameData[] = [
       "text": "87 【锦灰堆密码及部分元素解析 - 乐巫鹅 | 小红书 - 你的生活兴趣社区】 😆 2pj7UTB3zxH78li 😆 https://www.xiaohongshu.com/discovery/item/69493616000000001b033d50?source=webshare&xhsshare=pc_web&xsec_token=ABtK6kpVodR9jgPsExuTeJLDijMuYQ494CGBZpgPJO6ZQ=&xsec_source=pc_share",
       "url": ""
     },
-    "coverImage": "images/28.jpg"
+    "coverImage": "/images/28.jpg"
   },
   {
     "id": "29",
@@ -755,7 +753,7 @@ export const GAMES: GameData[] = [
       "text": "60 【至北村庄攻略在这里📝👀 - anna（一颗心随便伤版） | 小红书 - 你的生活兴趣社区】 😆 uHKDhn4vHcwabjb 😆 https://www.xiaohongshu.com/discovery/item/69442eb6000000001e0017be?source=webshare&xhsshare=pc_web&xsec_token=AB3haljxf28LDM6Zt3E93aAZ7yZntc1wPAm2poP2A4fDU=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/69442eb6000000001e0017be?source=webshare&xhsshare=pc_web&xsec_token=AB3haljxf28LDM6Zt3E93aAZ7yZntc1wPAm2poP2A4fDU=&xsec_source=pc_share"
     },
-    "coverImage": "images/29.jpg"
+    "coverImage": "/images/29.jpg"
   },
   {
     "id": "30",
@@ -781,7 +779,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/30.jpg"
+    "coverImage": "/images/30.jpg"
   },
   {
     "id": "31",
@@ -807,7 +805,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/31.jpg"
+    "coverImage": "/images/31.jpg"
   },
   {
     "id": "32",
@@ -833,7 +831,7 @@ export const GAMES: GameData[] = [
       "text": "42 【攻略来咯！隐之乡的 - 麦克斯韦盒 | 小红书 - 你的生活兴趣社区】 😆 Cev7aOzXM1cO1Oy 😆 https://www.xiaohongshu.com/discovery/item/6949f9c0000000001e022396?source=webshare&xhsshare=pc_web&xsec_token=AB1nZGX_fVric52_Fx2RnVpCSX-gvht9EqbBiptpRwzsA=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6949f9c0000000001e022396?source=webshare&xhsshare=pc_web&xsec_token=AB1nZGX_fVric52_Fx2RnVpCSX-gvht9EqbBiptpRwzsA=&xsec_source=pc_share"
     },
-    "coverImage": "images/32.jpg"
+    "coverImage": "/images/32.jpg"
   },
   {
     "id": "33",
@@ -859,7 +857,7 @@ export const GAMES: GameData[] = [
       "text": "96 【《干扰频段》（含剧透、攻略？） - 张家第22号人工智能 | 小红书 - 你的生活兴趣社区】 😆 vBs3kZLtpX3Eo0X 😆 https://www.xiaohongshu.com/discovery/item/694235a4000000001e016f8b?source=webshare&xhsshare=pc_web&xsec_token=ABTMMOrrm34aJkcEPm4tmfKfUG0r3sR1s_LFO1Y8SDBdY=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/694235a4000000001e016f8b?source=webshare&xhsshare=pc_web&xsec_token=ABTMMOrrm34aJkcEPm4tmfKfUG0r3sR1s_LFO1Y8SDBdY=&xsec_source=pc_share"
     },
-    "coverImage": "images/33.jpg"
+    "coverImage": "/images/33.jpg"
   },
   {
     "id": "34",
@@ -885,7 +883,7 @@ export const GAMES: GameData[] = [
       "text": "32 【神秘占卜屋攻略来咯  - 常棣 | 小红书 - 你的生活兴趣社区】 😆 QZG5nK8zaAMTWGz 😆 https://www.xiaohongshu.com/discovery/item/693e85e3000000001e0269bd?source=webshare&xhsshare=pc_web&xsec_token=ABuTrhOw09cZMTutJgXrbvbxAHE0Ld0uYMp9lSLmMhybc=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/693e85e3000000001e0269bd?source=webshare&xhsshare=pc_web&xsec_token=ABuTrhOw09cZMTutJgXrbvbxAHE0Ld0uYMp9lSLmMhybc=&xsec_source=pc_share"
     },
-    "coverImage": "images/34.jpg"
+    "coverImage": "/images/34.jpg"
   },
   {
     "id": "35",
@@ -911,7 +909,7 @@ export const GAMES: GameData[] = [
       "text": "91 【部分玩过网页解谜游戏攻略存档（内有剧透） - 玘芜 | 小红书 - 你的生活兴趣社区】 😆 yZ3T5q3mp1AdyXL 😆 https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share"
     },
-    "coverImage": "images/35.jpg"
+    "coverImage": "/images/35.jpg"
   },
   {
     "id": "36",
@@ -937,7 +935,7 @@ export const GAMES: GameData[] = [
       "text": "70 【《404工位消失事件》游戏攻略及剧情解答（更新 - AAA自装地下党 | 小红书 - 你的生活兴趣社区】 😆 O9ZO4CIY5PI1bJH 😆 https://www.xiaohongshu.com/discovery/item/693b82e5000000001b02210e?source=webshare&xhsshare=pc_web&xsec_token=ABK3VqAkVpZeEDEPUZyHUdT5uR5LzAQbcjNGK-IjLQCNU=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/693b82e5000000001b02210e?source=webshare&xhsshare=pc_web&xsec_token=ABK3VqAkVpZeEDEPUZyHUdT5uR5LzAQbcjNGK-IjLQCNU=&xsec_source=pc_share"
     },
-    "coverImage": "images/36.jpg"
+    "coverImage": "/images/36.jpg"
   },
   {
     "id": "37",
@@ -963,7 +961,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/37.jpg"
+    "coverImage": "/images/37.jpg"
   },
   {
     "id": "38",
@@ -989,7 +987,7 @@ export const GAMES: GameData[] = [
       "text": "10 【《ROOM酒店》大致攻略 - 季夏元 | 小红书 - 你的生活兴趣社区】 😆 SOXGR7lFoqTNkh5 😆 https://www.xiaohongshu.com/discovery/item/693c417b000000001b022cdc?source=webshare&xhsshare=pc_web&xsec_token=ABh8vRdR-uC2QhzhG4LFMBN784PkWEBV_jWNhgPnIfw08=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/693c417b000000001b022cdc?source=webshare&xhsshare=pc_web&xsec_token=ABh8vRdR-uC2QhzhG4LFMBN784PkWEBV_jWNhgPnIfw08=&xsec_source=pc_share"
     },
-    "coverImage": "images/38.jpg"
+    "coverImage": "/images/38.jpg"
   },
   {
     "id": "39",
@@ -1015,7 +1013,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/39.jpg"
+    "coverImage": "/images/39.jpg"
   },
   {
     "id": "40",
@@ -1041,7 +1039,7 @@ export const GAMES: GameData[] = [
       "text": "51 【《月光凝视》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 wwkLudpsb2ys5SV 😆 https://www.xiaohongshu.com/discovery/item/694282d4000000001e03150a?source=webshare&xhsshare=pc_web&xsec_token=ABHRAGD_NzEqxGTP4PgCFnMcidza_ViCX00pZTdpJQRFU=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/694282d4000000001e03150a?source=webshare&xhsshare=pc_web&xsec_token=ABHRAGD_NzEqxGTP4PgCFnMcidza_ViCX00pZTdpJQRFU=&xsec_source=pc_share"
     },
-    "coverImage": "images/40.jpg"
+    "coverImage": "/images/40.jpg"
   },
   {
     "id": "41",
@@ -1067,7 +1065,7 @@ export const GAMES: GameData[] = [
       "text": "40 【《万物共生》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 aG8PnbVArry0jPR 😆 https://www.xiaohongshu.com/discovery/item/69395cae000000001e02875b?source=webshare&xhsshare=pc_web&xsec_token=ABnh-5fPKXfuQFeS16zt6FQ0uwoV0UaY44DDKlKvJVbVk=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/69395cae000000001e02875b?source=webshare&xhsshare=pc_web&xsec_token=ABnh-5fPKXfuQFeS16zt6FQ0uwoV0UaY44DDKlKvJVbVk=&xsec_source=pc_share"
     },
-    "coverImage": "images/41.jpg"
+    "coverImage": "/images/41.jpg"
   },
   {
     "id": "42",
@@ -1093,7 +1091,7 @@ export const GAMES: GameData[] = [
       "text": "9 【《万物有灵》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 y6EMVIx6sQxO0gx 😆 https://www.xiaohongshu.com/discovery/item/69536a7f000000001e0251fd?source=webshare&xhsshare=pc_web&xsec_token=ABxzvL8Gan35cUxDCmTqJLpb2FUZN0R-U-PGZBqDiQW_0=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/69536a7f000000001e0251fd?source=webshare&xhsshare=pc_web&xsec_token=ABxzvL8Gan35cUxDCmTqJLpb2FUZN0R-U-PGZBqDiQW_0=&xsec_source=pc_share"
     },
-    "coverImage": "images/42.jpg"
+    "coverImage": "/images/42.jpg"
   },
   {
     "id": "43",
@@ -1119,7 +1117,7 @@ export const GAMES: GameData[] = [
       "text": "91 【部分玩过网页解谜游戏攻略存档（内有剧透） - 玘芜 | 小红书 - 你的生活兴趣社区】 😆 yZ3T5q3mp1AdyXL 😆 https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share"
     },
-    "coverImage": "images/43.jpg"
+    "coverImage": "/images/43.jpg"
   },
   {
     "id": "44",
@@ -1145,7 +1143,7 @@ export const GAMES: GameData[] = [
       "text": "24 【《裘庄电子档案馆》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 6qWj81igv0NCdnG 😆 https://www.xiaohongshu.com/discovery/item/692d15fa000000001e024d6f?source=webshare&xhsshare=pc_web&xsec_token=AB0f9KW4TN8WiFjz38_aYACbzQvztRKUQtF-3Mmum5NsU=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/692d15fa000000001e024d6f?source=webshare&xhsshare=pc_web&xsec_token=AB0f9KW4TN8WiFjz38_aYACbzQvztRKUQtF-3Mmum5NsU=&xsec_source=pc_share"
     },
-    "coverImage": "images/44.jpg"
+    "coverImage": "/images/44.jpg"
   },
   {
     "id": "45",
@@ -1171,7 +1169,7 @@ export const GAMES: GameData[] = [
       "text": "89 【《案件推演》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 r3bU8EeCKFNUNGG 😆 https://www.xiaohongshu.com/discovery/item/693ccb00000000001f00e511?source=webshare&xhsshare=pc_web&xsec_token=ABh8vRdR-uC2QhzhG4LFMBN-enBrxWKooW5KxDL1T9jiY=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/693ccb00000000001f00e511?source=webshare&xhsshare=pc_web&xsec_token=ABh8vRdR-uC2QhzhG4LFMBN-enBrxWKooW5KxDL1T9jiY=&xsec_source=pc_share"
     },
-    "coverImage": "images/45.jpg"
+    "coverImage": "/images/45.jpg"
   },
   {
     "id": "46",
@@ -1197,7 +1195,7 @@ export const GAMES: GameData[] = [
       "text": "33 【城郊医院谜案攻略 - 硫原子 | 小红书 - 你的生活兴趣社区】 😆 Nxc7VF1kaMENlGR 😆 https://www.xiaohongshu.com/discovery/item/693d03e0000000000d03866f?source=webshare&xhsshare=pc_web&xsec_token=ABsy2WXlY1NhhACUomfn-ENUl9GynkvUQGk5PccT0hD18=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/693d03e0000000000d03866f?source=webshare&xhsshare=pc_web&xsec_token=ABsy2WXlY1NhhACUomfn-ENUl9GynkvUQGk5PccT0hD18=&xsec_source=pc_share"
     },
-    "coverImage": "images/46.jpg"
+    "coverImage": "/images/46.jpg"
   },
   {
     "id": "47",
@@ -1223,7 +1221,7 @@ export const GAMES: GameData[] = [
       "text": "33 【《锈蚀之心》攻略 剧透！慎点！ - 今天你磕cp了吗 | 小红书 - 你的生活兴趣社区】 😆 4yJrJwSrhavgw5i 😆 https://www.xiaohongshu.com/discovery/item/692d6642000000001d038b7e?source=webshare&xhsshare=pc_web&xsec_token=AB0f9KW4TN8WiFjz38_aYACWMHnrXbk85jRdPDqlWLk_E=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/692d6642000000001d038b7e?source=webshare&xhsshare=pc_web&xsec_token=AB0f9KW4TN8WiFjz38_aYACWMHnrXbk85jRdPDqlWLk_E=&xsec_source=pc_share"
     },
-    "coverImage": "images/47.jpg"
+    "coverImage": "/images/47.jpg"
   },
   {
     "id": "48",
@@ -1249,7 +1247,7 @@ export const GAMES: GameData[] = [
       "text": "65 【欢迎来到特调局1234全攻略（P2-P5） - 溪午呱呱 | 小红书 - 你的生活兴趣社区】 😆 HXmiM1XwBTRI5tm 😆 https://www.xiaohongshu.com/discovery/item/6944f6dc000000001b026430?source=webshare&xhsshare=pc_web&xsec_token=ABaeiSOLsX9JAwCtTFuSbq1HNtIQ6a9oKfgdghWuPeuTU=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6944f6dc000000001b026430?source=webshare&xhsshare=pc_web&xsec_token=ABaeiSOLsX9JAwCtTFuSbq1HNtIQ6a9oKfgdghWuPeuTU=&xsec_source=pc_share"
     },
-    "coverImage": "images/48.jpg"
+    "coverImage": "/images/48.jpg"
   },
   {
     "id": "49",
@@ -1275,7 +1273,7 @@ export const GAMES: GameData[] = [
       "text": "67 【《诡异广告调查事件》游戏攻略 - 銀河電燈_ | 小红书 - 你的生活兴趣社区】 😆 gVq4haMlhmEOM3q 😆 https://www.xiaohongshu.com/discovery/item/6928fe0a000000001b022d83?source=webshare&xhsshare=pc_web&xsec_token=AB-ZeQVhy9pWA6H6i3MXrsVxdplRnWBdcVsMmWlLsyk6k=&xsec_source=pc_share",
       "url": ""
     },
-    "coverImage": "images/49.jpg"
+    "coverImage": "/images/49.jpg"
   },
   {
     "id": "50",
@@ -1301,7 +1299,7 @@ export const GAMES: GameData[] = [
       "text": "44 【【网页解谜】电波余响攻略自存 - NixRav | 小红书 - 你的生活兴趣社区】 😆 T4kSgNlxS5nlSTP 😆 https://www.xiaohongshu.com/discovery/item/6926bc11000000001f008a27?source=webshare&xhsshare=pc_web&xsec_token=AB2vI_Zv9pPuyEluj4nl-_F7mZ1lgjjQX4HHHlsAxgXJ4=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6926bc11000000001f008a27?source=webshare&xhsshare=pc_web&xsec_token=AB2vI_Zv9pPuyEluj4nl-_F7mZ1lgjjQX4HHHlsAxgXJ4=&xsec_source=pc_share"
     },
-    "coverImage": "images/50.jpg"
+    "coverImage": "/images/50.jpg"
   },
   {
     "id": "51",
@@ -1327,7 +1325,7 @@ export const GAMES: GameData[] = [
       "text": "32 【《找到我》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 jxQ88egfV7duaD6 😆 https://www.xiaohongshu.com/discovery/item/692cf0e9000000001e02e18e?source=webshare&xhsshare=pc_web&xsec_token=ABIwfgGUkrxVWXHbaarMGGg6-jZG1FIdoZvH1kJtyam7U=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/692cf0e9000000001e02e18e?source=webshare&xhsshare=pc_web&xsec_token=ABIwfgGUkrxVWXHbaarMGGg6-jZG1FIdoZvH1kJtyam7U=&xsec_source=pc_share"
     },
-    "coverImage": "images/51.jpg"
+    "coverImage": "/images/51.jpg"
   },
   {
     "id": "52",
@@ -1353,7 +1351,7 @@ export const GAMES: GameData[] = [
       "text": "44 【【网页解谜】清河大学攻略自存 - NixRav | 小红书 - 你的生活兴趣社区】 😆 M7UDLKzExFfqI0y 😆 https://www.xiaohongshu.com/discovery/item/6925311c000000001f00d17f?source=webshare&xhsshare=pc_web&xsec_token=ABWdZ64cB-IlmTM4Su63LNnth165z9JAl-h2X77g0b1uU=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6925311c000000001f00d17f?source=webshare&xhsshare=pc_web&xsec_token=ABWdZ64cB-IlmTM4Su63LNnth165z9JAl-h2X77g0b1uU=&xsec_source=pc_share"
     },
-    "coverImage": "images/52.jpg"
+    "coverImage": "/images/52.jpg"
   },
   {
     "id": "53",
@@ -1379,7 +1377,7 @@ export const GAMES: GameData[] = [
       "text": "80 【《学校的秘密》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 W9APjMgiRKH7nAn 😆 https://www.xiaohongshu.com/discovery/item/6927d928000000001e03527c?source=webshare&xhsshare=pc_web&xsec_token=ABHm__WwCRtpbzU1K8cpDF4kB-aQpoglZFbtQYGceBB2Q=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6927d928000000001e03527c?source=webshare&xhsshare=pc_web&xsec_token=ABHm__WwCRtpbzU1K8cpDF4kB-aQpoglZFbtQYGceBB2Q=&xsec_source=pc_share"
     },
-    "coverImage": "images/53.jpg"
+    "coverImage": "/images/53.jpg"
   },
   {
     "id": "54",
@@ -1405,7 +1403,7 @@ export const GAMES: GameData[] = [
       "text": "91 【部分玩过网页解谜游戏攻略存档（内有剧透） - 玘芜 | 小红书 - 你的生活兴趣社区】 😆 yZ3T5q3mp1AdyXL 😆 https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share"
     },
-    "coverImage": "images/54.jpg"
+    "coverImage": "/images/54.jpg"
   },
   {
     "id": "55",
@@ -1431,7 +1429,7 @@ export const GAMES: GameData[] = [
       "text": "70 【《榕树信箱》委托一～委托六（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 TPMnvedNsp6lAnD 😆 https://www.xiaohongshu.com/discovery/item/6926c289000000001e02d2d8?source=webshare&xhsshare=pc_web&xsec_token=AB2vI_Zv9pPuyEluj4nl-_FxVhGYIjvhHnimh8Rl79cOQ=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6926c289000000001e02d2d8?source=webshare&xhsshare=pc_web&xsec_token=AB2vI_Zv9pPuyEluj4nl-_FxVhGYIjvhHnimh8Rl79cOQ=&xsec_source=pc_share"
     },
-    "coverImage": "images/55.jpg"
+    "coverImage": "/images/55.jpg"
   },
   {
     "id": "56",
@@ -1457,7 +1455,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/56.jpg"
+    "coverImage": "/images/56.jpg"
   },
   {
     "id": "57",
@@ -1483,7 +1481,7 @@ export const GAMES: GameData[] = [
       "text": "95 【《神隐公园》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 y0vBAmOg76PhXEL 😆 https://www.xiaohongshu.com/discovery/item/691dea73000000001e029a3f?source=webshare&xhsshare=pc_web&xsec_token=ABS9BIno_UXC4aBL5PaEopaJ8ye_7ETJdnJqO0U014TAE=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/691dea73000000001e029a3f?source=webshare&xhsshare=pc_web&xsec_token=ABS9BIno_UXC4aBL5PaEopaJ8ye_7ETJdnJqO0U014TAE=&xsec_source=pc_share"
     },
-    "coverImage": "images/57.jpg"
+    "coverImage": "/images/57.jpg"
   },
   {
     "id": "58",
@@ -1509,7 +1507,7 @@ export const GAMES: GameData[] = [
       "text": "49 【实时更新《神秘的失物招领事件》不剧透攻略 - 棖柒本柒 | 小红书 - 你的生活兴趣社区】 😆 4kzhLTQIvtVwzn6 😆 https://www.xiaohongshu.com/discovery/item/6919c6420000000005012cc8?source=webshare&xhsshare=pc_web&xsec_token=ABtNTfA6Yu3yN89P4koRKRcqbzAWjNe_z9ouPBmf-g44w=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6919c6420000000005012cc8?source=webshare&xhsshare=pc_web&xsec_token=ABtNTfA6Yu3yN89P4koRKRcqbzAWjNe_z9ouPBmf-g44w=&xsec_source=pc_share"
     },
-    "coverImage": "images/58.jpg"
+    "coverImage": "/images/58.jpg"
   },
   {
     "id": "59",
@@ -1535,7 +1533,7 @@ export const GAMES: GameData[] = [
       "text": "60 【《圣希尔达的回响》完整版（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 852jtrYeECF06zR 😆 https://www.xiaohongshu.com/discovery/item/6940e4e3000000001e025b02?source=webshare&xhsshare=pc_web&xsec_token=ABS7FPQ-O2FVY9eQW93s7DvquIClHaZV4gOckDUolV2-o=&xsec_source=pc_share",
       "url": ""
     },
-    "coverImage": "images/59.jpg"
+    "coverImage": "/images/59.jpg"
   },
   {
     "id": "60",
@@ -1561,7 +1559,7 @@ export const GAMES: GameData[] = [
       "text": "5 【《寻找王小文》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 rhOw3pYovvfkqwG 😆 https://www.xiaohongshu.com/discovery/item/691a7f1000000000040043b1?source=webshare&xhsshare=pc_web&xsec_token=AB0EnR0_MPzAsoXlUr9vrTCOmJl6RIPHaC6QQQzKbB3Rw=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/691a7f1000000000040043b1?source=webshare&xhsshare=pc_web&xsec_token=AB0EnR0_MPzAsoXlUr9vrTCOmJl6RIPHaC6QQQzKbB3Rw=&xsec_source=pc_share"
     },
-    "coverImage": "images/60.jpg"
+    "coverImage": "/images/60.jpg"
   },
   {
     "id": "61",
@@ -1587,7 +1585,7 @@ export const GAMES: GameData[] = [
       "text": "89 【《小彤的愿望》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 TN4C27IYuhpqNwL 😆 https://www.xiaohongshu.com/discovery/item/6916fd690000000004015e55?source=webshare&xhsshare=pc_web&xsec_token=ABKok3B6O5PuGvPP_YpjA4cGMuKy-dGXzSSkLjr426c_A=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6916fd690000000004015e55?source=webshare&xhsshare=pc_web&xsec_token=ABKok3B6O5PuGvPP_YpjA4cGMuKy-dGXzSSkLjr426c_A=&xsec_source=pc_share"
     },
-    "coverImage": "images/61.jpg"
+    "coverImage": "/images/61.jpg"
   },
   {
     "id": "62",
@@ -1613,7 +1611,7 @@ export const GAMES: GameData[] = [
       "text": "57 【《福寿养康》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 D3BmpJmY9YzQUe4 😆 https://www.xiaohongshu.com/discovery/item/6912b5ed0000000004014fc9?source=webshare&xhsshare=pc_web&xsec_token=ABbl-JTyNttDyvNR3r4WKgulZtNjUx-qG_U5vG9KYnH4M=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6912b5ed0000000004014fc9?source=webshare&xhsshare=pc_web&xsec_token=ABbl-JTyNttDyvNR3r4WKgulZtNjUx-qG_U5vG9KYnH4M=&xsec_source=pc_share"
     },
-    "coverImage": "images/62.jpg"
+    "coverImage": "/images/62.jpg"
   },
   {
     "id": "63",
@@ -1665,7 +1663,7 @@ export const GAMES: GameData[] = [
       "text": "67 【《灰雾明灯》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 PwGes2K0LIQg0KB 😆 https://www.xiaohongshu.com/discovery/item/6912920f00000000040003fe?source=webshare&xhsshare=pc_web&xsec_token=ABbl-JTyNttDyvNR3r4WKguh6vpNSJu-Lj91HikTVcNiQ=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6912920f00000000040003fe?source=webshare&xhsshare=pc_web&xsec_token=ABbl-JTyNttDyvNR3r4WKguh6vpNSJu-Lj91HikTVcNiQ=&xsec_source=pc_share"
     },
-    "coverImage": "images/64.jpg"
+    "coverImage": "/images/64.jpg"
   },
   {
     "id": "65",
@@ -1691,7 +1689,7 @@ export const GAMES: GameData[] = [
       "text": "19 【【网页解谜】玛奇莲超市攻略＋repo - NixRav | 小红书 - 你的生活兴趣社区】 😆 BfriysFSnA9DlPO 😆 https://www.xiaohongshu.com/discovery/item/691422820000000004015583?source=webshare&xhsshare=pc_web&xsec_token=ABEGR7ljBHXdXXHLsnna1lCstwAEQYYbozSWch7RAn9lE=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/691422820000000004015583?source=webshare&xhsshare=pc_web&xsec_token=ABEGR7ljBHXdXXHLsnna1lCstwAEQYYbozSWch7RAn9lE=&xsec_source=pc_share"
     },
-    "coverImage": "images/65.jpg"
+    "coverImage": "/images/65.jpg"
   },
   {
     "id": "66",
@@ -1717,7 +1715,7 @@ export const GAMES: GameData[] = [
       "text": "71 【剧透❗️我的秘密花园游戏打卡 - 嗑CP不带上我我会伤心哒 | 小红书 - 你的生活兴趣社区】 😆 AZymekLnWiqGXwX 😆 https://www.xiaohongshu.com/discovery/item/6915a5130000000005011b04?source=webshare&xhsshare=pc_web&xsec_token=ABWZqQJ2ibqgVUev9SLrLMjlx7EQkHwtppP8zlJVYG4jA=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6915a5130000000005011b04?source=webshare&xhsshare=pc_web&xsec_token=ABWZqQJ2ibqgVUev9SLrLMjlx7EQkHwtppP8zlJVYG4jA=&xsec_source=pc_share"
     },
-    "coverImage": "images/66.jpg"
+    "coverImage": "/images/66.jpg"
   },
   {
     "id": "67",
@@ -1743,7 +1741,7 @@ export const GAMES: GameData[] = [
       "text": "91 【部分玩过网页解谜游戏攻略存档（内有剧透） - 玘芜 | 小红书 - 你的生活兴趣社区】 😆 yZ3T5q3mp1AdyXL 😆 https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share"
     },
-    "coverImage": "images/67.jpg"
+    "coverImage": "/images/67.jpg"
   },
   {
     "id": "68",
@@ -1769,7 +1767,7 @@ export const GAMES: GameData[] = [
       "text": "91 【部分玩过网页解谜游戏攻略存档（内有剧透） - 玘芜 | 小红书 - 你的生活兴趣社区】 😆 yZ3T5q3mp1AdyXL 😆 https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share"
     },
-    "coverImage": "images/68.jpg"
+    "coverImage": "/images/68.jpg"
   },
   {
     "id": "69",
@@ -1795,7 +1793,7 @@ export const GAMES: GameData[] = [
       "text": "64 【《清宫密码：血诏疑云》 （含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 nIrsfpqbUPpqBHi 😆 https://www.xiaohongshu.com/discovery/item/6912cf6c000000000503a956?source=webshare&xhsshare=pc_web&xsec_token=ABbl-JTyNttDyvNR3r4WKgunIaBdZgmvuK9Wub-ouQnNY=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6912cf6c000000000503a956?source=webshare&xhsshare=pc_web&xsec_token=ABbl-JTyNttDyvNR3r4WKgunIaBdZgmvuK9Wub-ouQnNY=&xsec_source=pc_share"
     },
-    "coverImage": "images/69.jpg"
+    "coverImage": "/images/69.jpg"
   },
   {
     "id": "70",
@@ -1821,7 +1819,7 @@ export const GAMES: GameData[] = [
       "text": "87 【肌肉的诱惑攻略  - 摸鱼之神温迪 | 小红书 - 你的生活兴趣社区】 😆 QMuMdz98pAZNBIQ 😆 https://www.xiaohongshu.com/discovery/item/69099c650000000007039bad?source=webshare&xhsshare=pc_web&xsec_token=ABvqWMgA74INg6IR56S9ZrzqnS8jWkFvqta2edVywy8Fc=&xsec_source=pc_share",
       "url": ""
     },
-    "coverImage": "images/70.jpg"
+    "coverImage": "/images/70.jpg"
   },
   {
     "id": "71",
@@ -1847,7 +1845,7 @@ export const GAMES: GameData[] = [
       "text": "91 【部分玩过网页解谜游戏攻略存档（内有剧透） - 玘芜 | 小红书 - 你的生活兴趣社区】 😆 yZ3T5q3mp1AdyXL 😆 https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/695e8f800000000021031efc?source=webshare&xhsshare=pc_web&xsec_token=AB9d6IMTn3uvHhn2St2YDkJHXioaezTuksqSJspeUd8TI=&xsec_source=pc_share"
     },
-    "coverImage": "images/71.jpg"
+    "coverImage": "/images/71.jpg"
   },
   {
     "id": "72",
@@ -1873,7 +1871,7 @@ export const GAMES: GameData[] = [
       "text": "65 【欢迎来到特调局1234全攻略（P2-P5） - 溪午呱呱 | 小红书 - 你的生活兴趣社区】 😆 HXmiM1XwBTRI5tm 😆 https://www.xiaohongshu.com/discovery/item/6944f6dc000000001b026430?source=webshare&xhsshare=pc_web&xsec_token=ABaeiSOLsX9JAwCtTFuSbq1HNtIQ6a9oKfgdghWuPeuTU=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6944f6dc000000001b026430?source=webshare&xhsshare=pc_web&xsec_token=ABaeiSOLsX9JAwCtTFuSbq1HNtIQ6a9oKfgdghWuPeuTU=&xsec_source=pc_share"
     },
-    "coverImage": "images/72.jpg"
+    "coverImage": "/images/72.jpg"
   },
   {
     "id": "73",
@@ -1899,7 +1897,7 @@ export const GAMES: GameData[] = [
       "text": "55 【《缓存溢出：电波余响》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 OVvm3foyB2uOEkW 😆 https://www.xiaohongshu.com/discovery/item/694231b3000000001e024ab6?source=webshare&xhsshare=pc_web&xsec_token=ABTMMOrrm34aJkcEPm4tmfKTWn0tvEDS7gF9Nr3TxU9Oc=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/694231b3000000001e024ab6?source=webshare&xhsshare=pc_web&xsec_token=ABTMMOrrm34aJkcEPm4tmfKTWn0tvEDS7gF9Nr3TxU9Oc=&xsec_source=pc_share"
     },
-    "coverImage": "images/73.jpg"
+    "coverImage": "/images/73.jpg"
   },
   {
     "id": "74",
@@ -1925,7 +1923,7 @@ export const GAMES: GameData[] = [
       "text": "90 【四号宝藏的攻略 - 棖柒本柒 | 小红书 - 你的生活兴趣社区】 😆 WYfiyGeUaak4Mnk 😆 https://www.xiaohongshu.com/discovery/item/69057eeb00000000040282ed?source=webshare&xhsshare=pc_web&xsec_token=ABQrQ9SVlgLl9wHAAQlDl4WFQupqyhBFaa8rduBi7qFOA=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/69057eeb00000000040282ed?source=webshare&xhsshare=pc_web&xsec_token=ABQrQ9SVlgLl9wHAAQlDl4WFQupqyhBFaa8rduBi7qFOA=&xsec_source=pc_share"
     },
-    "coverImage": "images/74.jpg"
+    "coverImage": "/images/74.jpg"
   },
   {
     "id": "75",
@@ -1951,7 +1949,7 @@ export const GAMES: GameData[] = [
       "text": "25 【《水墨迷局》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 kLFaYib8H8MpqPh 😆 https://www.xiaohongshu.com/discovery/item/690337500000000004002b31?source=webshare&xhsshare=pc_web&xsec_token=ABSy_3RDXx_mt3Vwn8DVXpiPnfZK9wgyxNE3UGbiifRN4=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/690337500000000004002b31?source=webshare&xhsshare=pc_web&xsec_token=ABSy_3RDXx_mt3Vwn8DVXpiPnfZK9wgyxNE3UGbiifRN4=&xsec_source=pc_share"
     },
-    "coverImage": "images/75.jpg"
+    "coverImage": "/images/75.jpg"
   },
   {
     "id": "76",
@@ -1977,7 +1975,7 @@ export const GAMES: GameData[] = [
       "text": "65 【欢迎来到特调局1234全攻略（P2-P5） - 溪午呱呱 | 小红书 - 你的生活兴趣社区】 😆 HXmiM1XwBTRI5tm 😆 https://www.xiaohongshu.com/discovery/item/6944f6dc000000001b026430?source=webshare&xhsshare=pc_web&xsec_token=ABaeiSOLsX9JAwCtTFuSbq1HNtIQ6a9oKfgdghWuPeuTU=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/6944f6dc000000001b026430?source=webshare&xhsshare=pc_web&xsec_token=ABaeiSOLsX9JAwCtTFuSbq1HNtIQ6a9oKfgdghWuPeuTU=&xsec_source=pc_share"
     },
-    "coverImage": "images/76.jpg"
+    "coverImage": "/images/76.jpg"
   },
   {
     "id": "77",
@@ -2003,7 +2001,7 @@ export const GAMES: GameData[] = [
       "text": "60 【《圣希尔达的回响》完整版（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 852jtrYeECF06zR 😆 https://www.xiaohongshu.com/discovery/item/6940e4e3000000001e025b02?source=webshare&xhsshare=pc_web&xsec_token=ABS7FPQ-O2FVY9eQW93s7DvquIClHaZV4gOckDUolV2-o=&xsec_source=pc_share",
       "url": ""
     },
-    "coverImage": "images/77.jpg"
+    "coverImage": "/images/77.jpg"
   },
   {
     "id": "78",
@@ -2029,7 +2027,7 @@ export const GAMES: GameData[] = [
       "text": "16 【《宝亚保健有限公司》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 OQeITIP3PxgQk6F 😆 https://www.xiaohongshu.com/discovery/item/68fc6366000000000501324c?source=webshare&xhsshare=pc_web&xsec_token=AB6RAjtpU5ieT2pngPl1zwD-sbv8mZ4R2NQcLLsfE5yBw=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/68fc6366000000000501324c?source=webshare&xhsshare=pc_web&xsec_token=AB6RAjtpU5ieT2pngPl1zwD-sbv8mZ4R2NQcLLsfE5yBw=&xsec_source=pc_share"
     },
-    "coverImage": "images/78.jpg"
+    "coverImage": "/images/78.jpg"
   },
   {
     "id": "79",
@@ -2055,7 +2053,7 @@ export const GAMES: GameData[] = [
       "text": "61 【《宝亚保健》1.5新作（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 zeQA5WZtDkmOGOB 😆 https://www.xiaohongshu.com/discovery/item/690057ee0000000005013899?source=webshare&xhsshare=pc_web&xsec_token=AB-rIDyrBW1Pn9u3fozpKfn6liDYRc9CIZCSNU5KogvZg=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/690057ee0000000005013899?source=webshare&xhsshare=pc_web&xsec_token=AB-rIDyrBW1Pn9u3fozpKfn6liDYRc9CIZCSNU5KogvZg=&xsec_source=pc_share"
     },
-    "coverImage": "images/79.jpg"
+    "coverImage": "/images/79.jpg"
   },
   {
     "id": "80",
@@ -2081,7 +2079,7 @@ export const GAMES: GameData[] = [
       "text": "68 【《神户神隐2.0》攻略来了 - 黑字不是白字（海镜神社主理人 | 小红书 - 你的生活兴趣社区】 😆 TBNBstHDlim8qwa 😆 https://www.xiaohongshu.com/discovery/item/68f107910000000007022caf?source=webshare&xhsshare=pc_web&xsec_token=ABo32zUv4a3eDEBW9DyBmOX6CKa7BXmLSCfl7HZ9zWFFk=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/68f107910000000007022caf?source=webshare&xhsshare=pc_web&xsec_token=ABo32zUv4a3eDEBW9DyBmOX6CKa7BXmLSCfl7HZ9zWFFk=&xsec_source=pc_share"
     },
-    "coverImage": "images/80.jpg"
+    "coverImage": "/images/80.jpg"
   },
   {
     "id": "81",
@@ -2107,7 +2105,7 @@ export const GAMES: GameData[] = [
       "text": "83 【宏业电子厂攻略，卡住的大家可以来看～ - 摸鱼之神温迪 | 小红书 - 你的生活兴趣社区】 😆 byQRBaHCF9fdB7g 😆 https://www.xiaohongshu.com/discovery/item/68f97e700000000007021e76?source=webshare&xhsshare=pc_web&xsec_token=ABBudBtadPm3bid9GTYWxh_nVKOOb0Tk5aq6tvnnorGoM=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/68f97e700000000007021e76?source=webshare&xhsshare=pc_web&xsec_token=ABBudBtadPm3bid9GTYWxh_nVKOOb0Tk5aq6tvnnorGoM=&xsec_source=pc_share"
     },
-    "coverImage": "images/81.jpg"
+    "coverImage": "/images/81.jpg"
   },
   {
     "id": "82",
@@ -2133,7 +2131,7 @@ export const GAMES: GameData[] = [
       "text": "86 【剧透慎点！永安温泉度假酒店纯攻略版 - 零配件 | 小红书 - 你的生活兴趣社区】 😆 ACaCaboCVo1kvfz 😆 https://www.xiaohongshu.com/discovery/item/68eb5d5e0000000005031e92?source=webshare&xhsshare=pc_web&xsec_token=ABvBZtJq7hCVT6zELf11IR60DVHXFA7SHaXxCSytkbvdg=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/68eb5d5e0000000005031e92?source=webshare&xhsshare=pc_web&xsec_token=ABvBZtJq7hCVT6zELf11IR60DVHXFA7SHaXxCSytkbvdg=&xsec_source=pc_share"
     },
-    "coverImage": "images/82.jpg"
+    "coverImage": "/images/82.jpg"
   },
   {
     "id": "83",
@@ -2159,7 +2157,7 @@ export const GAMES: GameData[] = [
       "text": "86 【《尘封的旅馆》（含攻略repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 Tngqs0q9MEd8B5W 😆 https://www.xiaohongshu.com/discovery/item/68ee4a850000000004000a26?source=webshare&xhsshare=pc_web&xsec_token=ABpzHv9uaYhycAXxHtNNcLfzZ3BOb2skyrH2vbkmwykRM=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/68ee4a850000000004000a26?source=webshare&xhsshare=pc_web&xsec_token=ABpzHv9uaYhycAXxHtNNcLfzZ3BOb2skyrH2vbkmwykRM=&xsec_source=pc_share"
     },
-    "coverImage": "images/83.jpg"
+    "coverImage": "/images/83.jpg"
   },
   {
     "id": "84",
@@ -2185,7 +2183,7 @@ export const GAMES: GameData[] = [
       "text": "59 【大学生登山失踪事件 线索集（剧透慎点） - 銀河電燈_ | 小红书 - 你的生活兴趣社区】 😆 BwOnuqVpiGnoXW8 😆 https://www.xiaohongshu.com/discovery/item/68c3cfad000000001d02d461?source=webshare&xhsshare=pc_web&xsec_token=ABr7cVvUITZf7k8StozPl3SYNMThs6Kdxpmd374fD7ewk=&xsec_source=pc_share",
       "url": "https://www.xiaohongshu.com/discovery/item/68c3cfad000000001d02d461?source=webshare&xhsshare=pc_web&xsec_token=ABr7cVvUITZf7k8StozPl3SYNMThs6Kdxpmd374fD7ewk=&xsec_source=pc_share"
     },
-    "coverImage": "images/84.jpg"
+    "coverImage": "/images/84.jpg"
   },
   {
     "id": "85",
@@ -2211,34 +2209,7 @@ export const GAMES: GameData[] = [
       "text": "",
       "url": ""
     },
-    "coverImage": "images/85.jpg"
-  },
-  {
-    "id": "86",
-    "title": "电脑逃生",
-    "url": "https://escape-computer.hedyyy.cn/",
-    "releaseDate": "2026-02-07 00:00:00",
-    "status": "是",
-    "description": "一觉醒来，你发现自己竟被关在了一台Linux系统中，这里，是属于命令行的世界，作为电脑高手的你能否出？",
-    "author": {
-      "text": "@常棣",
-      "url": "https://www.xiaohongshu.com/user/profile/611a5c6a00000000010089fd?xsec_token=ABtisdX26OBvjHmTB1jDlLwsnvefm_DYfWBHryb1kzGG0%3D&xsec_source=pc_note"
-    },
-    "platform": {
-      "pc": false,
-      "pe": true
-    },
-    "tags": {
-      "hasJumpScare": false,
-      "hasSound": false
-    },
-    "duration": "",
-    "answer": {
-      "text": "攻略",
-      "url": "http://xhslink.com/o/9VJGP3L2lGq"
-    },
-    "coverImage": "images/86.jpg"
+    "coverImage": "/images/85.jpg"
   }
-
 
 ];
