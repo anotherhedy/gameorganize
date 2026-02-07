@@ -6,7 +6,7 @@ export const GAMES: GameData[] = [
   {
     "id": "1",
     "title": "张记早餐店",
-    "url": "resoundzhouerhe.top",
+    "url": "https://resoundzhouerhe.top",
     "releaseDate": "2026-01-27 00:00:00",
     "status": "是",
     "description": "早安·张记的老板张三失踪了,你感觉有点不对劲。",
