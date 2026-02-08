@@ -61,8 +61,8 @@ export const GAMES: GameData[] = [
     "status": "是",
     "description": "小林被苏局长派去了一个古堡......那里发生了什么?",
     "author": {
-      "text": "努力让洋老板致富的咨询牛马",
-      "url": "https://www.xiaohongshu.com/user/profile/601bbf1c0000000001004030?channel_type=web_search_result_notes&parent_page_channel_type=web_profile_board&xsec_token=AB0R3Y11tOUc9oz-6ituZEoHQ74z1kfHPif9x7Le9ZAhs=&xsec_source=pc_note"
+      "text": "Ymo34dh",
+      "url": "https://www.xiaohongshu.com/user/profile/6344fc97000000001802ef9f?channel_type=web_search_result_notes&parent_page_channel_type=web_profile_board&xsec_token=ABmpXRBF66-G_z5cuJw_WAZ2L2FjXha8wiSTfzv5WT-tA=&xsec_source=pc_note"
     },
     "platform": {
       "pc": false,
@@ -87,8 +87,8 @@ export const GAMES: GameData[] = [
     "status": "是",
     "description": "一个月前，你最要好的朋友陈念突然发来消息，说最近先不要联系了，家里出了些事需要处理。 那成了你们最后一次“正常”的对话。\n之后的一个月里，你不断尝试联系她，却几乎得不到回应。大多数消息无人查看，偶尔收到的，也只是冷淡而重复的几句话——“我挺好的”“不用担心”。那个曾经与你分享日常、情绪和秘密的陈念，好像被某种无形的东西替换了。\n你说不清哪里出了问题，只是直觉告诉你，这并不像她。你无法接受，这段关系会以如此突兀而空洞的方式结束。\n你知道陈念从小在福利院长大，家庭关系简单到几乎可以一眼看清。她唯一称得上亲近的，只是一位远房表亲。如果真的发生了什么变故，线索很可能指向那里——但关于这个人，你几乎一无所知。\n陈念曾经留下的，只有那些公开在网络上的痕迹。 她的账号、动态、看似日常的分享，仍然静静地存在着。\n你决定从这里开始，通过搜索、查找和比对，一点点追踪她的行踪。 因为你越来越确定，有些事情，并不是“不用担心”就能解释得了的。",
     "author": {
-      "text": "Ymo34dh",
-      "url": "https://www.xiaohongshu.com/user/profile/6344fc97000000001802ef9f?channel_type=web_search_result_notes&parent_page_channel_type=web_profile_board&xsec_token=ABmpXRBF66-G_z5cuJw_WAZ2L2FjXha8wiSTfzv5WT-tA=&xsec_source=pc_note"
+      "text": "努力让洋老板致富的咨询牛马",
+      "url": "https://www.xiaohongshu.com/user/profile/601bbf1c0000000001004030?channel_type=web_search_result_notes&parent_page_channel_type=web_profile_board&xsec_token=AB0R3Y11tOUc9oz-6ituZEoHQ74z1kfHPif9x7Le9ZAhs=&xsec_source=pc_note"
     },
     "platform": {
       "pc": false,
@@ -2210,6 +2210,31 @@ export const GAMES: GameData[] = [
       "url": ""
     },
     "coverImage": "/images/85.jpg"
+  },
+  {
+    "id": "86",
+    "title": "电脑逃生",
+    "url": "https://escape-computer.hedyyy.cn/",
+    "releaseDate": "2026-02-06 00:00:00",
+    "status": "是",
+    "description": "一觉醒来，你发现自己竟被关在了一台Linux系统中，这里，是属于命令行的世界，作为电脑高手的你能否出",
+    "author": {
+      "text": "@常棣",
+      "url": "https://www.xiaohongshu.com/user/profile/611a5c6a00000000010089fd?xsec_token=ABtisdX26OBvjHmTB1jDlLwsnvefm_DYfWBHryb1kzGG0%3D&xsec_source=pc_note"
+    },
+    "platform": {
+      "pc": false,
+      "pe": false
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "1-2小时",
+    "answer": {
+      "text": "攻略",
+      "url": "https://xhslink.com/o/9VJGP3L2lGq"
+    },
+    "coverImage": "/images/86.jpg"
   }
-
 ];
