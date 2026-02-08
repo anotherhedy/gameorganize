@@ -2217,7 +2217,7 @@ export const GAMES: GameData[] = [
     "url": "https://escape-computer.hedyyy.cn/",
     "releaseDate": "2026-02-06 00:00:00",
     "status": "是",
-    "description": "一觉醒来，你发现自己竟被关在了一台Linux系统中，这里，是属于命令行的世界，作为电脑高手的你能否出",
+    "description": "一觉醒来，你发现自己竟被关在了一台Linux系统中，这里，是属于命令行的世界，作为电脑高手的你能否顺利出逃？",
     "author": {
       "text": "@常棣",
       "url": "https://www.xiaohongshu.com/user/profile/611a5c6a00000000010089fd?xsec_token=ABtisdX26OBvjHmTB1jDlLwsnvefm_DYfWBHryb1kzGG0%3D&xsec_source=pc_note"
