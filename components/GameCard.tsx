@@ -4,9 +4,11 @@ import { Icons } from './Icon';
 
 interface GameCardProps {
   game: GameData;
+  onPlay?: () => void;
+  showNewTag?: boolean;
 }
 
-export const GameCard: React.FC<GameCardProps> = ({ game }) => {
+export const GameCard: React.FC<GameCardProps> = ({ game, onPlay, showNewTag }) => {
   const isActive = game.status === '是';
     // Resolve image source: if path is relative like "images/...", prefix with /data/
     const imgSrc = game.coverImage
@@ -24,6 +26,15 @@ export const GameCard: React.FC<GameCardProps> = ({ game }) => {
   return (
     <div className="group relative w-full h-[340px] rounded-xl overflow-hidden bg-[#0f0f13] border border-white/10 hover:border-white/20 transition-all duration-300 shadow-xl">
       
+            {/* New Tag Overlay */}
+            {showNewTag && (
+                <div className="absolute top-0 left-0 z-20 overflow-hidden w-16 h-16 pointer-events-none">
+                    <div className="absolute top-[10px] left-[-25px] w-[80px] py-0.5 bg-red-600 text-white text-[10px] font-bold text-center -rotate-45 shadow-lg uppercase tracking-wider">
+                        NEW
+                    </div>
+                </div>
+            )}
+
             {/* Background Image with Gradient Overlay */}
             <div className="absolute inset-0 z-0">
                 {imgSrc ? (
@@ -119,6 +130,9 @@ export const GameCard: React.FC<GameCardProps> = ({ game }) => {
                 href={isActive ? game.url : '#'}
                 target={isActive ? "_blank" : undefined}
                 rel="noreferrer"
+                onClick={() => {
+                    if (isActive && onPlay) onPlay();
+                }}
                 className={`flex items-center gap-2 text-lg font-bold transition-all group/link ${
                     isActive 
                     ? 'text-white hover:text-cyan-400 cursor-pointer' 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Info, Sparkles, Flame } from 'lucide-react';
 
 export const Header: React.FC = () => {
   return (
@@ -7,6 +8,15 @@ export const Header: React.FC = () => {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-purple-900/20 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="relative z-10 max-w-4xl mx-auto">
+        {/* New Feature Badge */}
+        <div 
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-purple-300 mb-6"
+          style={{ animation: 'bounce 1s ease-in-out 3' }}
+        >
+          <Sparkles size={14} className="text-yellow-400" />
+          <span>系统更新：热门推荐 & 最新收录已上线</span>
+        </div>
+
         <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 mb-8 tracking-tight drop-shadow-sm">
           特殊事件档案库
         </h1>
@@ -18,8 +28,28 @@ export const Header: React.FC = () => {
           <p>
             本网页由「特殊事件研究组」的群友鼎力支持，提供各类不寻常事件的线索与追踪体验。网页内容将不定期更新暂未收录的游戏，更新频率取决于研究员们的摸鱼时长。
           </p>
-          <p className="pt-4 text-gray-500 text-sm">
-            若在调查过程中发现任何异常，欢迎在群内提交，或联系系小红书 <span className="text-pink-400 cursor-pointer hover:underline">@摸鱼侦探社 🎰</span>。
+          <p className="pt-4 text-gray-500 text-sm"></p>
+          
+          <div className="flex flex-wrap justify-center gap-4 mt-6">
+            <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-xl text-sm">
+              <Flame size={16} className="text-orange-500" />
+              <span className="text-gray-300">热门推荐：追踪高频异常事件</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-xl text-sm">
+              <Sparkles size={16} className="text-yellow-400" />
+              <span className="text-gray-300">最新收录：第一时间锁定新案</span>
+            </div>
+          </div>
+
+          <p className="pt-8 text-gray-500 text-sm">
+            若在调查过程中发现任何异常，欢迎在群内提交，或联系系小红书 <a 
+    href="https://www.xiaohongshu.com/user/profile/69295a990000000037005e7a?xsec_token=YBJHiSXTrc7AmLou2oCMjzjrFcyggA1PUXWEpV_DoyANc%3D&xsec_source=app_share&xhsshare=&shareRedId=ODczQThIOko2NzUyOTgwNjY0OTc8PkxN&apptime=1770648404&share_id=a0d1c48864c14a53bf4a93d0a411d7e7&share_channel=copy_link" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="text-pink-400 cursor-pointer hover:underline"
+  >
+    @摸鱼侦探社 🎰
+  </a>。
           </p>
         </div>
       </div>
