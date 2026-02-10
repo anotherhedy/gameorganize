@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Header } from './components/Header';
-import { GameCard } from './components/GameCard';
-import { GAMES } from './games';
+import { Header } from './components/layout/Header';
+import { GameCard } from './components/game/GameCard';
+import { GAMES } from './data/games';
 import { Search, Flame, Sparkles, Dices, X } from 'lucide-react';
-import { fetchGameStats, incrementGameViews } from './src/api';
+import { fetchGameStats, incrementGameViews } from './services/supabase/api';
 import { GameData } from './types';
 
 const App: React.FC = () => {
@@ -34,10 +34,15 @@ const App: React.FC = () => {
       .slice(0, 4);
   }, [gameStats]);
 
-  // New games: sort by releaseDate desc, take top 4
+  // New games: sort by releaseDate desc, then id desc, take top 4
   const newGames = useMemo(() => {
     return [...GAMES]
-      .sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())
+      .sort((a, b) => {
+        const dateDiff = new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+        if (dateDiff !== 0) return dateDiff;
+        // If dates are the same, sort by ID in descending order (assuming larger ID is newer)
+        return parseInt(b.id) - parseInt(a.id);
+      })
       .slice(0, 4);
   }, []);
 
@@ -177,7 +182,7 @@ const App: React.FC = () => {
       {/* Footer */}
       <footer className="mt-24 border-t border-white/5 py-12 text-center text-gray-600 text-sm">
         <p>&copy; {new Date().getFullYear()} 特殊事件研究组 | 仅供内部流传</p>
-        <p className="mt-2">所有案件档案归其原作者所有</p>
+        <p className="mt-2">所有档案归其原作者所有</p>
       </footer>
 
       {/* Random Pick Modal */}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Info, Sparkles, Flame } from 'lucide-react';
+import { Sparkles, Flame } from 'lucide-react';
 
 export const Header: React.FC = () => {
   return (
