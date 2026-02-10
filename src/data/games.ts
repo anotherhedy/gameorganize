@@ -4,7 +4,7 @@ export const GAMES: GameData[] = [
   {
     "id": "1",
     "title": "张记早餐店",
-    "url": "http://resoundzhouerhe.top/",
+    "url": "http://resoundzhouerhe.top",
     "releaseDate": "2026-01-27 00:00:00",
     "status": "是",
     "description": "早安·张记的老板张三失踪了,你感觉有点不对劲。",
@@ -14,7 +14,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -40,7 +40,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -66,7 +66,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -144,7 +144,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -196,7 +196,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -222,7 +222,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -300,7 +300,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -326,7 +326,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -404,7 +404,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -430,7 +430,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -456,7 +456,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -508,7 +508,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -612,7 +612,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -794,7 +794,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -820,7 +820,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -846,7 +846,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -950,7 +950,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -976,7 +976,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1002,7 +1002,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -1028,7 +1028,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1054,7 +1054,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1080,7 +1080,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1158,7 +1158,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1184,7 +1184,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1262,7 +1262,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1340,7 +1340,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -1366,7 +1366,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1548,7 +1548,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1626,7 +1626,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1704,7 +1704,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -1756,7 +1756,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1782,7 +1782,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1912,7 +1912,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1938,7 +1938,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1990,7 +1990,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2146,7 +2146,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2172,7 +2172,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2198,7 +2198,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": true,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2224,7 +2224,7 @@ export const GAMES: GameData[] = [
     },
     "platform": {
       "pc": false,
-      "pe": false
+      "pe": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2232,7 +2232,7 @@ export const GAMES: GameData[] = [
     },
     "duration": "1-2小时",
     "answer": {
-      "text": "攻略",
+      "text": "https://xhslink.com/o/9VJGP3L2lGq",
       "url": "https://xhslink.com/o/9VJGP3L2lGq"
     },
     "coverImage": "/images/86.jpg"
