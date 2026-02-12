@@ -13,8 +13,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/682ec8ff000000000a03c892?xsec_token=ABK3P7ltjkDjzhZaMidm8mtnyevR7X6czLMwu_oi3hP60%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -39,8 +39,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/579f117e82ec3934fbc9c74d?xsec_token=AB1utji5vCFJnSt2_cbncCLgHaDdM3YHXTBKXjXrRdxYw%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -65,8 +65,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6344fc97000000001802ef9f?channel_type=web_search_result_notes&parent_page_channel_type=web_profile_board&xsec_token=ABmpXRBF66-G_z5cuJw_WAZ2L2FjXha8wiSTfzv5WT-tA=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -91,8 +91,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/601bbf1c0000000001004030?channel_type=web_search_result_notes&parent_page_channel_type=web_profile_board&xsec_token=AB0R3Y11tOUc9oz-6ituZEoHQ74z1kfHPif9x7Le9ZAhs=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -117,8 +117,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/61c2ca8d0000000002027f4f?channelType=web_user_card_popup_page&xsec_token=ABXO7mRVWEaTZsayJx935A11mBH7hxcUT7U1LLqnucso4%3D&xsec_source=pc_hovercard"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -143,8 +143,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/63613cfa000000001f01e39d?channelType=web_user_card_popup_page&xsec_token=ABfjjfSDjOa6lOdmsTksh6nLzix8YoZeM3ICDk2y8H43Y%3D&xsec_source=pc_hovercard"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -169,8 +169,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/638b882e000000001f01b164?channel_type=web_user_page&parent_page_channel_type=web_user_board&xsec_token=ABvDp9UMeCHJAsbEWNqZx7pb8rm_5EjU7_eDeR4Rhix9E=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -195,8 +195,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6695f15b00000000030338b1?channelType=web_user_card_popup_page&xsec_token=ABmZ02nRj03bLEvUORkDyIUh9pvDdZ0mHZiACw0x1Tji4%3D&xsec_source=pc_hovercard"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -221,8 +221,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5acad4d211be103a483990ae?channelType=web_user_card_popup_page&xsec_token=ABQ_oRlTyCZh9JAmogEmN_6YEoG9cPdBI99vxylpfzGzs%3D&xsec_source=pc_hovercard"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -247,8 +247,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/579f117e82ec3934fbc9c74d?xsec_token=AB1utji5vCFJnSt2_cbncCLgHaDdM3YHXTBKXjXrRdxYw%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -273,8 +273,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/64e2fc70000000000100eb64?xsec_token=ABufmmaGwrnNmLnNbRYSBInZbJztWCw-C5sBHKy5QPNoA=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -299,8 +299,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/65be4d6a000000000903cffb?xsec_token=ABBV5hEr-ZgW2ZA21VgOeNx1Yxztk_Z8F4WGhVGwoTSqc%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -325,8 +325,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/672793f2000000001c01b203?channel_type=web_user_page&parent_page_channel_type=web_user_board&xsec_token=ABl4p3rwWsmVL_M3i_QqgKHLNQa1Sgs8E7iq92yTW0MzE=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -351,8 +351,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/61f3b7b5000000001000ec85?channelType=web_user_card_popup_page&xsec_token=ABwIIo6WBun6hOnhnZkCOsCQa9mKl09XyT2dUIhZt_TjY%3D&xsec_source=pc_hovercard"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -377,8 +377,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/62a9c2e9000000001b0285d6?xsec_token=ABWdkMtUDGUnSA5av9n9_aXRSohJzrSb7Zbd-BDF3v2p8%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -403,8 +403,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/65d8bb2f0000000005030fe5?channel_type=web_search_result_notes&parent_page_channel_type=web_profile_board&xsec_token=AB9v7j7T21DEN-HA9Be1Is3UkdWEhy2SBgNFr-4VVBG8Y=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -429,8 +429,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6094fecd000000000100be51?channelType=web_user_card_popup_page&xsec_token=ABgFpxAWZ2odOT53MM5v-ZVqCCAqcHdW2mNwJIxbKHi4o%3D&xsec_source=pc_hovercard"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -455,8 +455,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/682ec8ff000000000a03c892?xsec_token=ABK3P7ltjkDjzhZaMidm8mtnyevR7X6czLMwu_oi3hP60%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -481,8 +481,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/64e2fc70000000000100eb64?xsec_token=ABufmmaGwrnNmLnNbRYSBInZbJztWCw-C5sBHKy5QPNoA=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -507,8 +507,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5cd597160000000010004f2f?channelType=web_user_card_popup_page&xsec_token=ABt6GIIY3gLUGGw0kK23tfQ7WPyeZZH7PLRIXGH8J5V0g%3D&xsec_source=pc_hovercard"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -533,8 +533,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6695f15b00000000030338b1?channelType=web_user_card_popup_page&xsec_token=ABmZ02nRj03bLEvUORkDyIUh9pvDdZ0mHZiACw0x1Tji4%3D&xsec_source=pc_hovercard"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -559,8 +559,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5ef029260000000001004890?channel_type=web_user_page&parent_page_channel_type=web_user_board&xsec_token=AB2Dm7h4exDJGZ1Az9LFHC26XAfXTPuv8jEpj_cdy4OKI=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -585,8 +585,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6344fc97000000001802ef9f?xsec_token=ABmpXRBF66-G_z5cuJw_WAZ7gVh5oRS5lbx78q2En_HI4%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -611,8 +611,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5d122cfa0000000016013c9a?xsec_token=ABzP0xbZhcc3FYzofn6Np14odsEifdhNFHQjHRDRk8JgY%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -637,8 +637,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/647e3b6c000000001f00441b?channelType=web_user_card_popup_page&xsec_token=ABvw0Esv9btofl8r7lXlXn4_L_emYOMr_mcvYEaB0mf5g%3D&xsec_source=pc_hovercard"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -663,8 +663,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/579f117e82ec3934fbc9c74d?xsec_token=AB1utji5vCFJnSt2_cbncCLgHaDdM3YHXTBKXjXrRdxYw%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -689,8 +689,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5ef029260000000001004890?channel_type=web_user_page&parent_page_channel_type=web_user_board&xsec_token=AB2Dm7h4exDJGZ1Az9LFHC26XAfXTPuv8jEpj_cdy4OKI=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -715,8 +715,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5bf890e50ddfda00011cb552?channel_type=web_user_page&parent_page_channel_type=web_user_board&xsec_token=ABD6HMPtyZl8RmIh8O_tjUfwpQ9bAmaFBlPXuPMTn-0u0=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -741,8 +741,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5ef029260000000001004890?channel_type=web_user_page&parent_page_channel_type=web_user_board&xsec_token=AB2Dm7h4exDJGZ1Az9LFHC26XAfXTPuv8jEpj_cdy4OKI=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -767,8 +767,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/62a9c2e9000000001b0285d6?xsec_token=ABWdkMtUDGUnSA5av9n9_aXRSohJzrSb7Zbd-BDF3v2p8%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -793,8 +793,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/66a8a008000000001d03253a?channelType=web_user_card_popup_page&xsec_token=ABPy1vzhZTAZ_ZNfhfSgK9zD09L0PuGdp9iNdNXxUPeTs%3D&xsec_source=pc_hovercard"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -819,8 +819,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/682ec8ff000000000a03c892?xsec_token=ABK3P7ltjkDjzhZaMidm8mtnyevR7X6czLMwu_oi3hP60%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -845,8 +845,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/579f117e82ec3934fbc9c74d?xsec_token=AB1utji5vCFJnSt2_cbncCLgHaDdM3YHXTBKXjXrRdxYw%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -871,8 +871,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/611a5c6a00000000010089fd?xsec_token=ABtisdX26OBvjHmTB1jDlLwsnvefm_DYfWBHryb1kzGG0%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -897,8 +897,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6871d85e000000001d015eba?xsec_token=ABzGDDY9W7VTi5uX-MrDlwta2GVwQkH-6gDxJR23q96B8%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -923,8 +923,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/638b882e000000001f01b164?xsec_token=ABvDp9UMeCHJAsbEWNqZx7pW6Vo72ZtUnK6kIXkZgqNi0%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -949,8 +949,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/682ec8ff000000000a03c892?xsec_token=ABK3P7ltjkDjzhZaMidm8mtnyevR7X6czLMwu_oi3hP60%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -975,8 +975,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6201b7140000000002021ee6?channel_type=web_search_result_notes&parent_page_channel_type=web_profile_board&xsec_token=ABd1HFrkhC4dpNfFIdtt090fP7O47Cdcn9A9GA3THPdhA=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1001,8 +1001,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/682ec8ff000000000a03c892?xsec_token=ABK3P7ltjkDjzhZaMidm8mtnyevR7X6czLMwu_oi3hP60%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -1027,8 +1027,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/579f117e82ec3934fbc9c74d?xsec_token=AB1utji5vCFJnSt2_cbncCLgHaDdM3YHXTBKXjXrRdxYw%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1053,8 +1053,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5bf890e50ddfda00011cb552?channel_type=web_user_page&parent_page_channel_type=web_user_board&xsec_token=ABD6HMPtyZl8RmIh8O_tjUfwpQ9bAmaFBlPXuPMTn-0u0=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1079,8 +1079,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5af4e11bf7e8b919a74c4735?xsec_token=ABVPi1yLREFL-SYe1Rr0PwLMDcSuhLpZ_Qck3e38MSO6k%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1105,8 +1105,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/615a1f72000000000201d8a1?xsec_token=ABCCXj9hkOIH6ohLI7qiwyg-0rV5zUcgb15lIFe8FQrXY%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1131,8 +1131,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/62d3af6d00000000020005b5?xsec_token=ABq8c1W0lMSGzS-y6zSxo9f9vQr_yAAxJPlf0Qo5-1qCM%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1157,8 +1157,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/65be4d6a000000000903cffb?xsec_token=ABBV5hEr-ZgW2ZA21VgOeNx1Yxztk_Z8F4WGhVGwoTSqc%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1183,8 +1183,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/682ec8ff000000000a03c892?xsec_token=ABK3P7ltjkDjzhZaMidm8mtnyevR7X6czLMwu_oi3hP60%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1209,8 +1209,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/64957b55000000002a035445?xsec_token=ABxNg18EP7qO_-U_aZdvecjg4qwNNjYNe_LhyDT9B-SQg%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1235,8 +1235,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6344fc97000000001802ef9f?xsec_token=ABmpXRBF66-G_z5cuJw_WAZ7gVh5oRS5lbx78q2En_HI4%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1261,8 +1261,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/61585950000000000201ccee?xsec_token=AB0QMlnhQ3KwiK4NYvN7UbhxwBfXR62OlsOjtdAlTtIt0%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1287,8 +1287,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/672793f2000000001c01b203?xsec_token=ABl4p3rwWsmVL_M3i_QqgKHKS-59Lzfg1GytLDxCJmIII%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -1313,8 +1313,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/579f117e82ec3934fbc9c74d?xsec_token=AB1utji5vCFJnSt2_cbncCLgHaDdM3YHXTBKXjXrRdxYw%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1339,8 +1339,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6871d85e000000001d015eba?xsec_token=ABzGDDY9W7VTi5uX-MrDlwta2GVwQkH-6gDxJR23q96B8%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -1365,8 +1365,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/682ec8ff000000000a03c892?xsec_token=ABK3P7ltjkDjzhZaMidm8mtnyevR7X6czLMwu_oi3hP60%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1391,8 +1391,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5a693a214eacab2a4490fe1f?xsec_token=ABRJ2qR945TC-ggwRhWEFhX3J3_DrHyxt9DsPrm8m2a78%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1417,8 +1417,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5af4e11bf7e8b919a74c4735?xsec_token=ABVPi1yLREFL-SYe1Rr0PwLMDcSuhLpZ_Qck3e38MSO6k%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1443,8 +1443,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/603394c9000000000101df43?channel_type=web_user_page&parent_page_channel_type=web_user_board&xsec_token=ABYgWijsRHAZ_dO68VDYMO6m8hBual0yFG6l5I8xcxDm4=&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1469,8 +1469,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/579f117e82ec3934fbc9c74d?xsec_token=AB1utji5vCFJnSt2_cbncCLgHaDdM3YHXTBKXjXrRdxYw%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1495,8 +1495,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/62a9c2e9000000001b0285d6?xsec_token=ABWdkMtUDGUnSA5av9n9_aXRSohJzrSb7Zbd-BDF3v2p8%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1521,8 +1521,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5771e8a2a9b2ed1611513bdc?xsec_token=ABTtEl1voT2LseR-DhnRA5ZhKxKsuRwx0_HYuM4eaxzl4%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1547,8 +1547,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5f1fcad00000000001007451?channelType=web_user_card_popup_page&xsec_token=ABZpLgH8ALIw91CZba-L0EHiDsw1ghiOnU2Q0ggcFjCec%3D&xsec_source=pc_hovercard"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1573,8 +1573,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6344fc97000000001802ef9f?xsec_token=ABmpXRBF66-G_z5cuJw_WAZ7gVh5oRS5lbx78q2En_HI4%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1599,8 +1599,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5db70f2f000000000100b685?xsec_token=ABd9rD-nWv-W26lRk9zMDpwGHIYw1l3S4jJSXMkro4kGc%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1625,8 +1625,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6616bbb5000000000d026d7b?xsec_token=ABF6bIu2mXNF4kuHEY_iJcNNeCm2xAWtVIuiHaf94uY58%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1651,8 +1651,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/68a6da95000000001900c892?xsec_token=ABqjoBix33FT6rLelgRujO7LTXd_-zwufiUu1EPlLOfTo%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1677,8 +1677,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/61c94cca0000000010006691?xsec_token=ABnbo0Tqyuvqrs1od5kWrrKKoBY1UBxXUoYgUhoUtvkgw%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1703,8 +1703,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5db4fdae0000000001006be9?xsec_token=ABuOEAw-DeLBpM3IpDYYljbVuQ1ynEphHfH8cM7WCK7Jk%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -1729,8 +1729,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5e5207ae0000000001002154?xsec_token=ABt0fRoP2oMAwPp7PiDBvLt3m3Yo1yvZZ6s9JaY2RL2-I%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1755,8 +1755,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/67f33690000000000d008db4?xsec_token=AB5GhU0YrTdPbB4HdvogrV1gkr2q8836x4KovYBNoQnJc%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1781,8 +1781,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/653735e80000000006007d76?xsec_token=AB0CDw1mbGpGaXbZFVH9DuRlkgL89jerayJzhONOlOrqU%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1807,8 +1807,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/580cd5526a6a6943b735378c?xsec_token=ABtkG3XatVQImMmQJDZUcoeGTj2UT2ZV145kAkv_u62yU%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1833,8 +1833,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5fe0321f00000000010006ce?xsec_token=ABaEsoqtszDv2eqNmKBGGn9sUPKWAcebugQaW-Dh3kP7Y%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1859,8 +1859,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6344fc97000000001802ef9f?xsec_token=ABmpXRBF66-G_z5cuJw_WAZ7gVh5oRS5lbx78q2En_HI4%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1885,8 +1885,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/672793f2000000001c01b203?xsec_token=ABl4p3rwWsmVL_M3i_QqgKHKS-59Lzfg1GytLDxCJmIII%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": true,
@@ -1911,8 +1911,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/64b740bc000000000a022ba0?xsec_token=ABqQpnXsYWEwau8DT_ckFaPxtnf0_7QGdbubytOVISJag%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1937,8 +1937,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5db70f2f000000000100b685?xsec_token=ABd9rD-nWv-W26lRk9zMDpwGHIYw1l3S4jJSXMkro4kGc%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1963,8 +1963,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/6344fc97000000001802ef9f?xsec_token=ABmpXRBF66-G_z5cuJw_WAZ7gVh5oRS5lbx78q2En_HI4%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -1989,8 +1989,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5771e8a2a9b2ed1611513bdc?xsec_token=ABTtEl1voT2LseR-DhnRA5ZhKxKsuRwx0_HYuM4eaxzl4%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2015,8 +2015,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5dcb8ce70000000001000fc3?xsec_token=ABhGiJkzwv--vdNrcBT7vrBJ1I4Bvc3iEyzpTfz779ExU%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2041,8 +2041,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5dcb8ce70000000001000fc3?xsec_token=ABhGiJkzwv--vdNrcBT7vrBJ1I4Bvc3iEyzpTfz779ExU%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2067,8 +2067,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/67f33690000000000d008db4?xsec_token=AB5GhU0YrTdPbB4HdvogrV1gkr2q8836x4KovYBNoQnJc%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2093,8 +2093,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/580cd5526a6a6943b735378c?xsec_token=ABtkG3XatVQImMmQJDZUcoeGTj2UT2ZV145kAkv_u62yU%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2119,8 +2119,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/632556550000000023024305?xsec_token=ABnqejzYFXd_VEf29TT15Svub9S_n6IkRZjb3czXXiGhI%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2145,8 +2145,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5771e8a2a9b2ed1611513bdc?xsec_token=ABTtEl1voT2LseR-DhnRA5ZhKxKsuRwx0_HYuM4eaxzl4%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2171,8 +2171,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/61585950000000000201ccee?xsec_token=AB0QMlnhQ3KwiK4NYvN7UbhxwBfXR62OlsOjtdAlTtIt0%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2197,8 +2197,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/5af4e11bf7e8b919a74c4735?xsec_token=ABVPi1yLREFL-SYe1Rr0PwLMDcSuhLpZ_Qck3e38MSO6k%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": true,
-      "pe": true
+      "pe": true,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2223,8 +2223,8 @@ export const GAMES: GameData[] = [
       "url": "https://www.xiaohongshu.com/user/profile/611a5c6a00000000010089fd?xsec_token=ABtisdX26OBvjHmTB1jDlLwsnvefm_DYfWBHryb1kzGG0%3D&xsec_source=pc_note"
     },
     "platform": {
-      "pc": false,
-      "pe": true
+      "pe": false,
+      "pc": true
     },
     "tags": {
       "hasJumpScare": false,
@@ -2236,5 +2236,31 @@ export const GAMES: GameData[] = [
       "url": "https://xhslink.com/o/9VJGP3L2lGq"
     },
     "coverImage": "/images/86.jpg"
+  },
+  {
+    "id": "87",
+    "title": "逃离宿舍",
+    "url": "http://resoundzhouerhe.top",
+    "releaseDate": "2026-02-10 00:00:00",
+    "status": "是",
+    "description": "醒来后发现自己在一个房间里，而且处处透露着不对劲……",
+    "author": {
+      "text": "@麦克斯韦盒",
+      "url": "https://www.xiaohongshu.com/user/profile/682ec8ff000000000a03c892?xsec_token=ABK3P7ltjkDjzhZaMidm8mtnyevR7X6czLMwu_oi3hP60%3D&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": false,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "0.5-1小时",
+    "answer": {
+      "text": "",
+      "url": ""
+    },
+    "coverImage": "/images/87.jpg"
   }
 ];
