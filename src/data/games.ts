@@ -2262,5 +2262,57 @@ export const GAMES: GameData[] = [
       "url": ""
     },
     "coverImage": "/images/87.jpg"
+  },
+  {
+    "id": "88",
+    "title": "ZW失踪事件",
+    "url": "https://ZW.jy-s.com",
+    "releaseDate": "2026-02-20 00:00:00",
+    "status": "是",
+    "description": "我的赛博诡秘已经整整失联一周了。最后一条微信停留在上周，为了找回她，我黑进了……不对，是做了一个网页ARG游戏。",
+    "author": {
+      "text": "@Sakugetsu",
+      "url": "https://www.xiaohongshu.com/user/profile/61e82ff9000000002102582d?xsec_token=YBHeLa6LrcT7wCDUgcOZD1bowzDof8_0EN9KrhqmHlowY%3D&xsec_source=app_share&xhsshare=&shareRedId=ODczQThIOko2NzUyOTgwNjY0OTc8PkxN&apptime=1771569209&share_id=67cd3b9a59144bfb8463536a6"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "1-2小时",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/699719e9000000000b010678?app_platform=android&ignoreEngage=true&app_version=9.19.4&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBJp_zZyu_0igDDw9TyrNLWpCbpzkr6AFTSAPkipOTTnI=&author_share=1&xhsshare=&shareRedId=ODczQThIOko2NzUyOTgwNjY0OTc8PkxN&apptime=1771569440&share_id=b66c1ba512e742a99be0f5907de05be9&share_channel=wechat",
+      "url": "https://www.xiaohongshu.com/explore/699719e9000000000b010678?app_platform=android&ignoreEngage=true&app_version=9.19.4&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBJp_zZyu_0igDDw9TyrNLWpCbpzkr6AFTSAPkipOTTnI=&author_share=1&xhsshare=&shareRedId=ODczQThIOko2NzUyOTgwNjY0OTc8PkxN&apptime=1771569440&share_id=b66c1ba512e742a99be0f5907de05be9&share_channel=wechat"
+    },
+    "coverImage": "/images/88.jpg"
+  },
+  {
+    "id": "89",
+    "title": "老朋友之死",
+    "url": "https://mobilephone1.pages.dev",
+    "releaseDate": "2026-02-20 00:00:00",
+    "status": "是",
+    "description": "向晴川的死讯并没有掀起太大的波澜，没有新闻报道，没有人关注，甚至朋友们也鲜少提起她，但是我项云归记得，我最好的朋友向晴川死了。",
+    "author": {
+      "text": "@秦晚照",
+      "url": "https://xhslink.com/m/3ADoejGDRiH"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "1-2小时",
+    "answer": {
+      "text": "http://xhslink.com/o/8d5ctlqXTCh",
+      "url": ""
+    },
+    "coverImage": "/images/89.jpg"
   }
 ];
