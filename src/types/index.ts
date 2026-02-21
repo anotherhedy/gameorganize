@@ -27,3 +27,11 @@ export interface GameData {
   answer: LinkResource; // Guide
   coverImage: string;
 }
+
+export interface Feedback {
+  id: number;
+  detective_name: string;
+  intel_content: string;
+  reply_content?: string;
+  created_at: string;
+}

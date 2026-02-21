@@ -6,6 +6,11 @@ import { Search, Flame, Sparkles, Dices, X, ArrowUp } from 'lucide-react';
 import { fetchGameStats, incrementGameViews } from './services/supabase/api';
 import { GameData } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
+import { FloatingEntry } from './components/intel/FloatingEntry';
+
+const IntelligenceWall = React.lazy(() => 
+  import('./components/intel/IntelligenceWall').then(module => ({ default: module.IntelligenceWall }))
+);
 
 const App: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,6 +19,7 @@ const App: React.FC = () => {
   const [isPicking, setIsPicking] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showIntelWall, setShowIntelWall] = useState(false);
 
   useEffect(() => {
     fetchGameStats().then((stats) => {
@@ -95,6 +101,18 @@ const App: React.FC = () => {
           正在接入档案库...
         </p>
       </div>
+    );
+  }
+
+  if (showIntelWall) {
+    return (
+      <React.Suspense fallback={
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <RingLoader color="#fbbf24" size={60} />
+        </div>
+      }>
+        <IntelligenceWall onBack={() => setShowIntelWall(false)} />
+      </React.Suspense>
     );
   }
 
@@ -279,6 +297,9 @@ const App: React.FC = () => {
       >
         <ArrowUp size={20} />
       </button>
+
+      {/* Floating Entry for Intelligence Wall */}
+      <FloatingEntry onClick={() => setShowIntelWall(true)} />
 
       {/* Random Pick Modal */}
       {randomGame && (

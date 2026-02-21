@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Flame } from 'lucide-react';
+import { Sparkles, Flame, MessageSquareQuote } from 'lucide-react';
 
 export const Header: React.FC = () => {
   return (
@@ -14,7 +14,7 @@ export const Header: React.FC = () => {
           style={{ animation: 'bounce 1s ease-in-out 3' }}
         >
           <Sparkles size={14} className="text-yellow-400" />
-          <span>系统更新：热门推荐 & 最新收录已上线</span>
+          <span>系统更新：情报墙已上线</span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 mb-6 sm:mb-8 tracking-tight drop-shadow-sm leading-tight">
@@ -37,6 +37,10 @@ export const Header: React.FC = () => {
             <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-xl text-xs sm:text-sm">
               <Sparkles size={16} className="text-yellow-400" />
               <span className="text-gray-300">最新收录：第一时间锁定新案</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-xl text-xs sm:text-sm">
+              <MessageSquareQuote size={16} className="text-cyan-400" />
+              <span className="text-gray-300">情报墙：反馈遇到的问题</span>
             </div>
           </div>
 
