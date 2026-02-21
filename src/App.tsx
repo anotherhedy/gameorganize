@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
 import { GAMES } from './data/games';
-import { Search, Flame, Sparkles, Dices, X } from 'lucide-react';
+import { Search, Flame, Sparkles, Dices, X, ArrowUp } from 'lucide-react';
 import { fetchGameStats, incrementGameViews } from './services/supabase/api';
 import { GameData } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
@@ -13,13 +13,25 @@ const App: React.FC = () => {
   const [randomGame, setRandomGame] = useState<GameData | null>(null);
   const [isPicking, setIsPicking] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     fetchGameStats().then((stats) => {
       setGameStats(stats);
       setIsLoading(false);
     });
+
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleRandomPick = () => {
     setIsPicking(true);
@@ -209,6 +221,7 @@ const App: React.FC = () => {
                     key={game.id} 
                     game={game} 
                     showNewTag={true}
+                    views={gameStats[game.id]}
                     onPlay={() => incrementGameViews(game.id)} 
                   />
                 ))}
@@ -255,6 +268,17 @@ const App: React.FC = () => {
         <p>&copy; {new Date().getFullYear()} 特殊事件研究组 | 仅供内部流传</p>
         <p className="mt-2">所有档案归其原作者所有</p>
       </footer>
+
+      {/* Scroll to Top Button */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed bottom-6 right-6 p-3 bg-purple-600 text-white rounded-full shadow-lg transition-all duration-300 z-40 hover:bg-purple-500 hover:shadow-purple-500/30 ${
+          showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
+        }`}
+        aria-label="Back to top"
+      >
+        <ArrowUp size={20} />
+      </button>
 
       {/* Random Pick Modal */}
       {randomGame && (

@@ -2265,7 +2265,7 @@ export const GAMES: GameData[] = [
   },
   {
     "id": "88",
-    "title": "ZW失踪事件",
+    "title": "张薇失踪事件",
     "url": "https://ZW.jy-s.com",
     "releaseDate": "2026-02-20 00:00:00",
     "status": "是",

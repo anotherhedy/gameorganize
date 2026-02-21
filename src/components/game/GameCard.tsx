@@ -8,7 +8,7 @@ interface GameCardProps {
   showNewTag?: boolean;
 }
 
-export const GameCard: React.FC<GameCardProps> = ({ game, onPlay, showNewTag }) => {
+export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, showNewTag }) => {
   const isActive = game.status === '是';
     // Resolve image source: if path is relative like "images/...", prefix with /data/
     const imgSrc = game.coverImage
@@ -41,6 +41,8 @@ export const GameCard: React.FC<GameCardProps> = ({ game, onPlay, showNewTag }) 
                     <img
                         src={imgSrc}
                         alt={game.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover opacity-60 transition-transform duration-700 ease-out group-hover:scale-105"
                         onError={(e) => {
                             (e.target as HTMLImageElement).src = `https://placehold.co/600x400/1e1e2e/FFF?text=${encodeURIComponent(game.title)}`;
@@ -159,4 +161,4 @@ export const GameCard: React.FC<GameCardProps> = ({ game, onPlay, showNewTag }) 
       </div>
     </div>
   );
-};
+});
