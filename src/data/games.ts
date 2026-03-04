@@ -2266,7 +2266,7 @@ export const GAMES: GameData[] = [
   {
     "id": "88",
     "title": "张薇失踪事件",
-    "url": "https://ZW.jy-s.com",
+    "url": "https://zw2.jy-s.com",
     "releaseDate": "2026-02-20 00:00:00",
     "status": "是",
     "description": "我的赛博诡秘已经整整失联一周了。最后一条微信停留在上周，为了找回她，我黑进了……不对，是做了一个网页ARG游戏。",
@@ -2314,5 +2314,83 @@ export const GAMES: GameData[] = [
       "url": ""
     },
     "coverImage": "/images/89.jpg"
+  },
+  {
+    "id": "90",
+    "title": "回声科技有限公司",
+    "url": "https://playful-unicorn-2b05be.netlify.app/",
+    "releaseDate": "2026-03-04 00:00:00",
+    "status": "是",
+    "description": "屏幕亮起，有人开口：“我们终于见面了。”你是谁？他是谁？答案，由你决定。",
+    "author": {
+      "text": "@皮蛋不叫solo粥",
+      "url": "https://www.xiaohongshu.com/user/profile/6003acea0000000001005e56?xsec_token=ABxXbodfzNVcz6hKqfa7ReThZCHDU1rqy-Ofjd1swpTfo=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "0.5小时",
+    "answer": {
+      "text": "",
+      "url": ""
+    },
+    "coverImage": "/images/90.jpg"
+  },
+  {
+    "id": "91",
+    "title": "白色房间",
+    "url": "https://game.itspro.cn/",
+    "releaseDate": "2026-03-04 00:00:00",
+    "status": "是",
+    "description": "一封没有姓名的神秘邮件，一个十倍价格的简单委托，一栋不起眼的白色公寓，一组...又或是无数组解不完的谜题。",
+    "author": {
+      "text": "@小猪的胖猪咪",
+      "url": "https://www.xiaohongshu.com/user/profile/5a9146dee8ac2b3be3dad922?xsec_token=AB0WBziznSwOQkHd4yUBw3gwajN4cg5H-a4ral-IsWNrc%3D&xsec_source=pc_search"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "0.5-1.5小时",
+    "answer": {
+      "text": "37 【《白色房间》（含攻略/剧透repo） - 杀死巨无霸 | 小红书 - 你的生活兴趣社区】 😆 7voNiau4xIYyFRc 😆 https://www.xiaohongshu.com/discovery/item/69a4363c0000000028023c7a?source=webshare&xhsshare=pc_web&xsec_token=ABneqngRw3LELql-ZRnqQyJunnbVFzfHWmX5kvB0jwOyA=&xsec_source=pc_share",
+      "url": ""
+    },
+    "coverImage": "/images/91.jpg"
+  },
+  {
+    "id": "92",
+    "title": "归宁旅馆",
+    "url": "https://guining-hotel.hedyyy.cn/",
+    "releaseDate": "2026-03-04 00:00:00",
+    "status": "是",
+    "description": "一家旅馆昨夜突起大火，滞留的6个灵魂全都失去了记忆，他们是谁？真相到底是什么？",
+    "author": {
+      "text": "@常棣",
+      "url": "https://www.xiaohongshu.com/user/profile/611a5c6a00000000010089fd?xsec_token=ABtisdX26OBvjHmTB1jDlLwsnvefm_DYfWBHryb1kzGG0%3D&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": false,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "2小时",
+    "answer": {
+      "text": "",
+      "url": ""
+    },
+    "coverImage": "/images/92.jpg"
   }
 ];

@@ -87,7 +87,7 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, sho
         </h3>
 
         {/* Description */}
-        <p className="text-gray-400 text-xs sm:text-sm leading-relaxed line-clamp-3 mb-4 sm:mb-6 opacity-90 h-[4.5em]">
+        <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6 opacity-90 h-[4.5em] overflow-y-auto custom-scrollbar pr-1">
             {game.description}
         </p>
 
