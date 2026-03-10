@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
 import { GAMES } from './data/games';
@@ -20,6 +20,38 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showIntelWall, setShowIntelWall] = useState(false);
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const prevSearchTermRef = useRef('');
+
+  // Use useCallback to prevent unnecessary re-renders of GameCard components
+  const handleGamePlay = React.useCallback((id: string) => {
+    incrementGameViews(id);
+  }, []);
+
+  // Scroll logic for searching (Debounced to avoid lag while typing/deleting)
+  useEffect(() => {
+    const isSearching = searchTerm.trim() !== '';
+    const wasSearching = prevSearchTermRef.current.trim() !== '';
+
+    if (isSearching) {
+      if (resultsRef.current) {
+        // Small delay to ensure the DOM has updated and user has stopped typing
+        const timeoutId = setTimeout(() => {
+          resultsRef.current?.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }, 500); // Increased delay for better typing performance
+        return () => clearTimeout(timeoutId);
+      }
+    } else if (searchTerm === '' && wasSearching) {
+      // Only scroll back to top if the search was explicitly cleared
+      scrollToTop();
+    }
+    
+    // Update the ref for next render
+    prevSearchTermRef.current = searchTerm;
+  }, [searchTerm]);
 
   useEffect(() => {
     fetchGameStats().then((stats) => {
@@ -71,13 +103,25 @@ const App: React.FC = () => {
 
   // Filter games based on search term
   const filteredGames = useMemo(() => {
+    const lowerTerm = searchTerm.trim().toLowerCase();
+    
+    // If search term is empty, return all games (or handle separately as per UI)
+    if (!lowerTerm) return GAMES;
+
     return GAMES.filter(game => {
-      const lowerTerm = searchTerm.toLowerCase();
-      return (
+      // Basic matching: Title and Author
+      const basicMatch = 
         game.title.toLowerCase().includes(lowerTerm) ||
-        game.author.text.toLowerCase().includes(lowerTerm) ||
-        game.description.toLowerCase().includes(lowerTerm)
-      );
+        game.author.text.toLowerCase().includes(lowerTerm);
+
+      // Tags matching
+      const tagsMatch = 
+        (lowerTerm === '无声音' && !game.tags.hasSound) ||
+        (lowerTerm === '有声音' && game.tags.hasSound) ||
+        (lowerTerm === '无跳脸' && !game.tags.hasJumpScare) ||
+        (lowerTerm === '微恐' && game.tags.hasJumpScare);
+
+      return basicMatch || tagsMatch;
     });
   }, [searchTerm]);
 
@@ -176,7 +220,7 @@ const App: React.FC = () => {
              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
              <input 
                 type="text" 
-                placeholder="检索档案 (名称/作者)..." 
+                placeholder="检索 (名称/作者/标签)..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-purple-500/50 focus:bg-white/10 transition-all w-full sm:w-64"
@@ -221,7 +265,7 @@ const App: React.FC = () => {
                   <GameCard 
                     key={game.id} 
                     game={game} 
-                    onPlay={() => incrementGameViews(game.id)} 
+                    onPlay={handleGamePlay} 
                   />
                 ))}
               </div>
@@ -240,7 +284,7 @@ const App: React.FC = () => {
                     game={game} 
                     showNewTag={true}
                     views={gameStats[game.id]}
-                    onPlay={() => incrementGameViews(game.id)} 
+                    onPlay={handleGamePlay} 
                   />
                 ))}
               </div>
@@ -252,7 +296,10 @@ const App: React.FC = () => {
         )}
 
         {/* Results Counter */}
-        <div className="mb-6 flex items-center gap-2 text-xs sm:text-sm text-gray-500">
+        <div 
+          ref={resultsRef}
+          className="mb-6 flex items-center gap-2 text-xs sm:text-sm text-gray-500 scroll-mt-20"
+        >
           <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
           <span>已检索到 {filteredGames.length} 份特殊档案</span>
         </div>
@@ -264,7 +311,7 @@ const App: React.FC = () => {
               <GameCard 
                 key={game.id} 
                 game={game} 
-                onPlay={() => incrementGameViews(game.id)}
+                onPlay={handleGamePlay}
               />
             ))}
           </div>
@@ -315,8 +362,8 @@ const App: React.FC = () => {
             <div className="p-0.5 sm:p-1">
               <GameCard 
                 game={randomGame} 
-                onPlay={() => {
-                  incrementGameViews(randomGame.id);
+                onPlay={(id) => {
+                  handleGamePlay(id);
                   setRandomGame(null);
                 }} 
               />

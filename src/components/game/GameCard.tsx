@@ -4,7 +4,7 @@ import { Icons } from './Icon';
 
 interface GameCardProps {
   game: GameData;
-  onPlay?: () => void;
+  onPlay?: (id: string) => void;
   showNewTag?: boolean;
 }
 
@@ -69,14 +69,19 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, sho
                     无跳脸
                 </span>
             )}
+            {game.tags.hasJumpScare && (
+                <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-red-900/40 border border-red-500/20 text-[9px] sm:text-[10px] text-red-300 backdrop-blur-sm">
+                    微恐
+                </span>
+            )}
             {!game.tags.hasSound && (
                 <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-black/40 border border-white/10 text-[9px] sm:text-[10px] text-gray-300 backdrop-blur-sm">
                     无声音
                 </span>
             )}
-            {game.tags.hasJumpScare && (
-                <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-red-900/40 border border-red-500/20 text-[9px] sm:text-[10px] text-red-300 backdrop-blur-sm">
-                    微恐
+            {game.tags.hasSound && (
+                <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-black/40 border border-white/10 text-[9px] sm:text-[10px] text-gray-300 backdrop-blur-sm">
+                    有声音
                 </span>
             )}
         </div>
@@ -133,7 +138,7 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, sho
                 target={isActive ? "_blank" : undefined}
                 rel="noreferrer"
                 onClick={() => {
-                    if (isActive && onPlay) onPlay();
+                    if (isActive && onPlay) onPlay(game.id);
                 }}
                 className={`flex items-center gap-1.5 sm:gap-2 text-base sm:text-lg font-bold transition-all group/link ${
                     isActive 
