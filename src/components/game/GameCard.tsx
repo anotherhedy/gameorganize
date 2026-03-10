@@ -64,24 +64,25 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, sho
         
         {/* Top Right Tags */}
         <div className="flex justify-end gap-1.5 sm:gap-2 mb-2">
-            {!game.tags.hasJumpScare && (
-                <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-black/40 border border-white/10 text-[9px] sm:text-[10px] text-gray-300 backdrop-blur-sm">
+            {game.tags.hasJumpScare ? (
+                <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-red-900/40 border border-red-500/20 text-[9px] sm:text-[10px] text-red-300 backdrop-blur-sm flex items-center gap-1">
+                    <Icons.Ghost className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                    微恐
+                </span>
+            ) : (
+                <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-black/40 border border-white/10 text-[9px] sm:text-[10px] text-gray-400 backdrop-blur-sm">
                     无跳脸
                 </span>
             )}
-            {game.tags.hasJumpScare && (
-                <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-red-900/40 border border-red-500/20 text-[9px] sm:text-[10px] text-red-300 backdrop-blur-sm">
-                    微恐
-                </span>
-            )}
-            {!game.tags.hasSound && (
-                <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-black/40 border border-white/10 text-[9px] sm:text-[10px] text-gray-300 backdrop-blur-sm">
-                    无声音
-                </span>
-            )}
-            {game.tags.hasSound && (
-                <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-black/40 border border-white/10 text-[9px] sm:text-[10px] text-gray-300 backdrop-blur-sm">
+            
+            {game.tags.hasSound ? (
+                <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-cyan-900/40 border border-cyan-500/20 text-[9px] sm:text-[10px] text-cyan-300 backdrop-blur-sm flex items-center gap-1">
+                    <Icons.Volume2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                     有声音
+                </span>
+            ) : (
+                <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-black/40 border border-white/10 text-[9px] sm:text-[10px] text-gray-400 backdrop-blur-sm">
+                    无声音
                 </span>
             )}
         </div>
