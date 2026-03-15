@@ -1,7 +1,4 @@
-import { GameData } from '../types';
-
-export const GAMES: GameData[] = [
-  {
+[  {
     "id": "1",
     "title": "张记早餐店",
     "url": "http://resoundzhouerhe.top",
@@ -2497,4 +2494,4 @@ export const GAMES: GameData[] = [
     },
     "coverImage": "/images/96.jpg"
   }
-];
+]

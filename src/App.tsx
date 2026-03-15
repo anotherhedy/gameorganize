@@ -1,18 +1,24 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
-import { GAMES } from './data/games';
-import { Search, Flame, Sparkles, Dices, X, ArrowUp } from 'lucide-react';
+import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2 } from 'lucide-react';
 import { fetchGameStats, incrementGameViews } from './services/supabase/api';
 import { GameData } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
 import { FloatingEntry } from './components/intel/FloatingEntry';
+import { VirtuosoGrid } from 'react-virtuoso';
+import * as OpenCC from 'opencc-js';
+
+// Initialize converter for simplified/traditional conversion
+const t2s = OpenCC.Converter({ from: 't', to: 'cn' });
+const s2t = OpenCC.Converter({ from: 'cn', to: 't' });
 
 const IntelligenceWall = React.lazy(() => 
   import('./components/intel/IntelligenceWall').then(module => ({ default: module.IntelligenceWall }))
 );
 
 const App: React.FC = () => {
+  const [games, setGames] = useState<GameData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [gameStats, setGameStats] = useState<Record<string, number>>({});
   const [randomGame, setRandomGame] = useState<GameData | null>(null);
@@ -54,10 +60,22 @@ const App: React.FC = () => {
   }, [searchTerm]);
 
   useEffect(() => {
-    fetchGameStats().then((stats) => {
-      setGameStats(stats);
-      setIsLoading(false);
-    });
+    const initApp = async () => {
+      try {
+        const [stats, gamesData] = await Promise.all([
+          fetchGameStats(),
+          fetch('/data/games.json').then(res => res.json())
+        ]);
+        setGameStats(stats);
+        setGames(gamesData);
+      } catch (error) {
+        console.error('Failed to initialize app:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initApp();
 
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 300);
@@ -75,7 +93,7 @@ const App: React.FC = () => {
     setIsPicking(true);
     // Add a small delay for "thinking" animation effect
     setTimeout(() => {
-      const activeGames = GAMES.filter(g => g.status === '是');
+      const activeGames = games.filter(g => g.status === '是');
       const randomIndex = Math.floor(Math.random() * activeGames.length);
       setRandomGame(activeGames[randomIndex]);
       setIsPicking(false);
@@ -84,14 +102,14 @@ const App: React.FC = () => {
 
   // Popular games: sort by views desc, take top 4
   const popularGames = useMemo(() => {
-    return [...GAMES]
+    return [...games]
       .sort((a, b) => (gameStats[b.id] || 0) - (gameStats[a.id] || 0))
       .slice(0, 4);
-  }, [gameStats]);
+  }, [gameStats, games]);
 
   // New games: sort by releaseDate desc, then id desc, take top 4
   const newGames = useMemo(() => {
-    return [...GAMES]
+    return [...games]
       .sort((a, b) => {
         const dateDiff = new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
         if (dateDiff !== 0) return dateDiff;
@@ -99,31 +117,54 @@ const App: React.FC = () => {
         return parseInt(b.id) - parseInt(a.id);
       })
       .slice(0, 4);
-  }, []);
+  }, [games]);
+
+  // Precompute searchable strings for all games once
+  const searchableGames = useMemo(() => {
+    return games.map(game => {
+      const title = game.title.toLowerCase();
+      const author = game.author.text.toLowerCase();
+      return {
+        ...game,
+        _searchStrings: {
+          titleS: t2s(title),
+          titleT: s2t(title),
+          authorS: t2s(author),
+          authorT: s2t(author),
+          titleOrig: title,
+          authorOrig: author
+        }
+      };
+    });
+  }, [games]);
 
   // Filter games based on search term
   const filteredGames = useMemo(() => {
-    const lowerTerm = searchTerm.trim().toLowerCase();
-    
-    // If search term is empty, return all games (or handle separately as per UI)
-    if (!lowerTerm) return GAMES;
+    const term = searchTerm.trim();
+    if (!term) return searchableGames;
 
-    return GAMES.filter(game => {
-      // Basic matching: Title and Author
+    const lowerTerm = term.toLowerCase();
+    const simplifiedTerm = t2s(lowerTerm);
+    const traditionalTerm = s2t(lowerTerm);
+
+    return searchableGames.filter(game => {
+      const { titleS, titleT, authorS, authorT, titleOrig, authorOrig } = game._searchStrings;
+
+      // Match against original, simplified and traditional versions
       const basicMatch = 
-        game.title.toLowerCase().includes(lowerTerm) ||
-        game.author.text.toLowerCase().includes(lowerTerm);
+        titleOrig.includes(lowerTerm) || titleS.includes(simplifiedTerm) || titleT.includes(traditionalTerm) ||
+        authorOrig.includes(lowerTerm) || authorS.includes(simplifiedTerm) || authorT.includes(traditionalTerm);
 
-      // Tags matching
+      // Tags matching - more flexible matching
       const tagsMatch = 
-        (lowerTerm === '无声音' && !game.tags.hasSound) ||
-        (lowerTerm === '有声音' && game.tags.hasSound) ||
-        (lowerTerm === '无跳脸' && !game.tags.hasJumpScare) ||
-        (lowerTerm === '微恐' && game.tags.hasJumpScare);
+        ((lowerTerm.includes('无声音') || lowerTerm === '无声' || simplifiedTerm.includes('无声音')) && !game.tags.hasSound) ||
+        ((lowerTerm.includes('有声音') || lowerTerm === '声音' || lowerTerm === '有声' || simplifiedTerm.includes('有声音')) && game.tags.hasSound) ||
+        ((lowerTerm.includes('无跳脸') || lowerTerm === '无跳' || simplifiedTerm.includes('无跳脸')) && !game.tags.hasJumpScare) ||
+        ((lowerTerm.includes('微恐') || lowerTerm === '恐怖' || lowerTerm === '跳脸' || simplifiedTerm.includes('微恐')) && game.tags.hasJumpScare);
 
       return basicMatch || tagsMatch;
     });
-  }, [searchTerm]);
+  }, [searchTerm, searchableGames]);
 
   if (isLoading) {
     return (
@@ -151,8 +192,8 @@ const App: React.FC = () => {
   if (showIntelWall) {
     return (
       <React.Suspense fallback={
-        <div className="min-h-screen bg-black flex items-center justify-center">
-          <RingLoader color="#fbbf24" size={60} />
+        <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+          <Loader2 className="w-12 h-12 animate-spin text-yellow-500" />
         </div>
       }>
         <IntelligenceWall onBack={() => setShowIntelWall(false)} />
@@ -304,17 +345,22 @@ const App: React.FC = () => {
           <span>已检索到 {filteredGames.length} 份特殊档案</span>
         </div>
 
-        {/* Grid Layout - 2 Columns on medium+ screens to ensure "one row two cards" */}
+        {/* Grid Layout - Virtualized for performance */}
         {filteredGames.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-            {filteredGames.map(game => (
-              <GameCard 
-                key={game.id} 
-                game={game} 
-                onPlay={handleGamePlay}
-              />
-            ))}
-          </div>
+          <VirtuosoGrid
+            useWindowScroll
+            data={filteredGames}
+            listClassName="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6"
+            itemClassName="w-full"
+            itemContent={(index, game) => (
+              <div className="pb-4">
+                <GameCard 
+                  game={game} 
+                  onPlay={handleGamePlay}
+                />
+              </div>
+            )}
+          />
         ) : (
           <div className="text-center py-16 sm:py-20 border border-dashed border-white/10 rounded-xl px-4">
             <p className="text-gray-500 text-base sm:text-lg">未找到匹配的档案记录...</p>
