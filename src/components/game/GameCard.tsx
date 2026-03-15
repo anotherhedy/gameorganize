@@ -6,9 +6,10 @@ interface GameCardProps {
   game: GameData;
   onPlay?: (id: string) => void;
   showNewTag?: boolean;
+  views?: number;
 }
 
-export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, showNewTag }) => {
+export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, showNewTag, views = 0 }) => {
   const isActive = game.status === '是';
     // Resolve image source: if path is relative like "images/...", prefix with /data/
     const imgSrc = game.coverImage
@@ -24,7 +25,7 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, sho
   const platformText = platforms.join(', ');
 
   return (
-    <div className="group relative w-full h-auto sm:h-[340px] rounded-xl overflow-hidden bg-[#0f0f13] border border-white/10 hover:border-white/20 transition-all duration-300 shadow-xl flex flex-col">
+    <div className="group relative w-full h-auto min-h-[340px] rounded-xl overflow-hidden bg-[#0f0f13] border border-white/10 hover:border-white/20 transition-all duration-300 shadow-xl flex flex-col">
       
             {/* New Tag Overlay */}
             {showNewTag && (
@@ -85,10 +86,15 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, sho
                     无声音
                 </span>
             )}
+
+            <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded bg-purple-900/40 border border-purple-500/20 text-[9px] sm:text-[10px] text-purple-300 backdrop-blur-sm flex items-center gap-1">
+                <Icons.Eye className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                {views.toLocaleString()}
+            </span>
         </div>
 
         {/* Title */}
-        <h3 className="text-xl sm:text-2xl font-bold text-white tracking-wide mb-2 sm:mb-3 drop-shadow-sm truncate pr-4">
+        <h3 className="text-xl sm:text-2xl font-bold text-white tracking-wide mb-2 sm:mb-3 drop-shadow-sm leading-tight pr-4">
             {game.title}
         </h3>
 

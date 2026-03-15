@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Calendar, Clock, Monitor, Smartphone, ArrowRight, ExternalLink, Globe, BookOpen, Star, Volume2, VolumeX, Coffee, Ghost } from 'lucide-react';
+import { User, Calendar, Clock, Monitor, Smartphone, ArrowRight, ExternalLink, Globe, BookOpen, Star, Volume2, VolumeX, Coffee, Ghost, Eye } from 'lucide-react';
 
 export const Icons = {
   User: ({ className }: { className?: string }) => <User className={className} size={16} />,
@@ -16,4 +16,5 @@ export const Icons = {
   VolumeX: ({ className }: { className?: string }) => <VolumeX className={className} size={16} />,
   Coffee: ({ className }: { className?: string }) => <Coffee className={className} size={16} />,
   Ghost: ({ className }: { className?: string }) => <Ghost className={className} size={16} />,
+  Eye: ({ className }: { className?: string }) => <Eye className={className} size={16} />,
 };

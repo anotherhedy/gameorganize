@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
-import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2 } from 'lucide-react';
+import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown } from 'lucide-react';
 import { fetchGameStats, incrementGameViews } from './services/supabase/api';
 import { GameData } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
@@ -17,10 +17,19 @@ const IntelligenceWall = React.lazy(() =>
   import('./components/intel/IntelligenceWall').then(module => ({ default: module.IntelligenceWall }))
 );
 
+type SortOption = 'releaseDate' | 'views';
+type DurationFilter = 'all' | '<60' | '60-180' | '>180';
+
 const App: React.FC = () => {
   const [games, setGames] = useState<GameData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [gameStats, setGameStats] = useState<Record<string, number>>({});
+  const [sortBy, setSortBy] = useState<SortOption>('releaseDate');
+  const [durationFilter, setDurationFilter] = useState<DurationFilter>('all');
+  const [tagsFilter, setTagsFilter] = useState<{ sound: boolean | null, jumpscare: boolean | null }>({
+    sound: null,
+    jumpscare: null
+  });
   const [randomGame, setRandomGame] = useState<GameData | null>(null);
   const [isPicking, setIsPicking] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -103,7 +112,11 @@ const App: React.FC = () => {
   // Popular games: sort by views desc, take top 4
   const popularGames = useMemo(() => {
     return [...games]
-      .sort((a, b) => (gameStats[b.id] || 0) - (gameStats[a.id] || 0))
+      .sort((a, b) => {
+        const viewsA = gameStats[a.id] || 0;
+        const viewsB = gameStats[b.id] || 0;
+        return viewsB - viewsA;
+      })
       .slice(0, 4);
   }, [gameStats, games]);
 
@@ -138,33 +151,73 @@ const App: React.FC = () => {
     });
   }, [games]);
 
-  // Filter games based on search term
+  // Helper to parse duration string to minutes
+  const parseDurationMinutes = (durationStr: string): number => {
+    if (!durationStr) return 0;
+    
+    // Normalize to handle "h", "小时", "min", "分钟"
+    const str = durationStr.toLowerCase().replace(/\s+/g, '');
+    
+    // Extract numbers (could be ranges like "0.5-1")
+    const matches = str.match(/(\d+(\.\d+)?)/g);
+    if (!matches) return 0;
+    
+    // Take the average if it's a range, otherwise take the first number
+    const nums = matches.map(Number);
+    const val = nums.length > 1 ? (nums[0] + nums[1]) / 2 : nums[0];
+    
+    // Determine unit
+    if (str.includes('h') || str.includes('小时')) {
+      return val * 60;
+    }
+    return val; // Default to minutes
+  };
+
+  // Filter games based on search term, tags, duration and sorting
   const filteredGames = useMemo(() => {
-    const term = searchTerm.trim();
-    if (!term) return searchableGames;
+    const term = searchTerm.trim().toLowerCase();
+    const simplifiedTerm = t2s(term);
+    const traditionalTerm = s2t(term);
 
-    const lowerTerm = term.toLowerCase();
-    const simplifiedTerm = t2s(lowerTerm);
-    const traditionalTerm = s2t(lowerTerm);
-
-    return searchableGames.filter(game => {
+    let result = searchableGames.filter(game => {
+      // 1. Text Search (Title/Author)
       const { titleS, titleT, authorS, authorT, titleOrig, authorOrig } = game._searchStrings;
+      const textMatch = !term || 
+        titleOrig.includes(term) || titleS.includes(simplifiedTerm) || titleT.includes(traditionalTerm) ||
+        authorOrig.includes(term) || authorS.includes(simplifiedTerm) || authorT.includes(traditionalTerm);
+      
+      if (!textMatch) return false;
 
-      // Match against original, simplified and traditional versions
-      const basicMatch = 
-        titleOrig.includes(lowerTerm) || titleS.includes(simplifiedTerm) || titleT.includes(traditionalTerm) ||
-        authorOrig.includes(lowerTerm) || authorS.includes(simplifiedTerm) || authorT.includes(traditionalTerm);
+      // 2. Tag Filters
+      if (tagsFilter.sound !== null && game.tags?.hasSound !== tagsFilter.sound) return false;
+      if (tagsFilter.jumpscare !== null && game.tags?.hasJumpScare !== tagsFilter.jumpscare) return false;
 
-      // Tags matching - more flexible matching
-      const tagsMatch = 
-        ((lowerTerm.includes('无声音') || lowerTerm === '无声' || simplifiedTerm.includes('无声音')) && !game.tags.hasSound) ||
-        ((lowerTerm.includes('有声音') || lowerTerm === '声音' || lowerTerm === '有声' || simplifiedTerm.includes('有声音')) && game.tags.hasSound) ||
-        ((lowerTerm.includes('无跳脸') || lowerTerm === '无跳' || simplifiedTerm.includes('无跳脸')) && !game.tags.hasJumpScare) ||
-        ((lowerTerm.includes('微恐') || lowerTerm === '恐怖' || lowerTerm === '跳脸' || simplifiedTerm.includes('微恐')) && game.tags.hasJumpScare);
+      // 3. Duration Filter
+      if (durationFilter !== 'all') {
+        const mins = parseDurationMinutes(game.duration);
+        if (durationFilter === '<60' && mins >= 60) return false;
+        if (durationFilter === '60-180' && (mins < 60 || mins > 180)) return false;
+        if (durationFilter === '>180' && mins <= 180) return false;
+      }
 
-      return basicMatch || tagsMatch;
+      return true;
     });
-  }, [searchTerm, searchableGames]);
+
+    // 4. Sorting
+    return result.sort((a, b) => {
+      if (sortBy === 'releaseDate') {
+        const dateA = new Date(a.releaseDate).getTime();
+        const dateB = new Date(b.releaseDate).getTime();
+        if (dateB !== dateA) return dateB - dateA;
+        return parseInt(b.id) - parseInt(a.id);
+      } else {
+        const viewsA = gameStats[a.id] || 0;
+        const viewsB = gameStats[b.id] || 0;
+        if (viewsB !== viewsA) return viewsB - viewsA;
+        return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+      }
+    });
+  }, [searchTerm, searchableGames, tagsFilter, durationFilter, sortBy, gameStats]);
 
   if (isLoading) {
     return (
@@ -261,7 +314,7 @@ const App: React.FC = () => {
              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
              <input 
                 type="text" 
-                placeholder="检索 (名称/作者/标签)..." 
+                placeholder="检索 (名称/作者)..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-purple-500/50 focus:bg-white/10 transition-all w-full sm:w-64"
@@ -306,6 +359,7 @@ const App: React.FC = () => {
                   <GameCard 
                     key={game.id} 
                     game={game} 
+                    views={gameStats[game.id] || 0}
                     onPlay={handleGamePlay} 
                   />
                 ))}
@@ -324,7 +378,7 @@ const App: React.FC = () => {
                     key={game.id} 
                     game={game} 
                     showNewTag={true}
-                    views={gameStats[game.id]}
+                    views={gameStats[game.id] || 0}
                     onPlay={handleGamePlay} 
                   />
                 ))}
@@ -332,7 +386,96 @@ const App: React.FC = () => {
             </section>
 
             <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-8 sm:mb-10" />
-            <h2 className="text-lg sm:text-xl font-bold text-gray-400 mb-6 pl-2 border-l-4 border-purple-500">全部档案库</h2>
+            
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-400 pl-2 border-l-4 border-purple-500">全部档案库</h2>
+              
+              {/* Filter & Sort Bar - Only for All Archive */}
+              <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                <div className="flex flex-wrap items-center gap-3">
+                  {/* Duration Filter */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                      <Clock size={14} /> 时长:
+                    </span>
+                    <div className="flex bg-black/20 rounded-lg p-1">
+                      {[
+                        { label: '全部', value: 'all' },
+                        { label: '<1h', value: '<60' },
+                        { label: '1-3h', value: '60-180' },
+                        { label: '>3h', value: '>180' }
+                      ].map((item) => (
+                        <button
+                          key={item.value}
+                          onClick={() => setDurationFilter(item.value as DurationFilter)}
+                          className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all ${
+                            durationFilter === item.value 
+                            ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' 
+                            : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                          }`}
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Tag Filters */}
+                  <div className="h-4 w-px bg-white/10 mx-1 hidden sm:block" />
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                      <Filter size={14} /> 标签:
+                    </span>
+                    <div className="flex gap-2">
+                  <button
+                    onClick={() => setTagsFilter(prev => ({ ...prev, sound: prev.sound === true ? null : true }))}
+                    className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                      tagsFilter.sound === true
+                      ? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400'
+                      : 'bg-black/20 border-white/10 text-gray-400 hover:border-white/20'
+                    }`}
+                  >
+                    有声音
+                  </button>
+                  <button
+                    onClick={() => setTagsFilter(prev => ({ ...prev, jumpscare: prev.jumpscare === true ? null : true }))}
+                    className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                      tagsFilter.jumpscare === true
+                      ? 'bg-red-500/10 border-red-500/50 text-red-400'
+                      : 'bg-black/20 border-white/10 text-gray-400 hover:border-white/20'
+                    }`}
+                  >
+                    微恐
+                  </button>
+                </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 w-full lg:w-auto border-t lg:border-t-0 border-white/5 pt-4 lg:pt-0">
+                  <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                    <ArrowUpDown size={14} /> 排序:
+                  </span>
+                  <div className="flex bg-black/20 rounded-lg p-1 w-full lg:w-auto">
+                    {[
+                      { label: '最新发布', value: 'releaseDate' },
+                      { label: '浏览量', value: 'views' }
+                    ].map((item) => (
+                      <button
+                        key={item.value}
+                        onClick={() => setSortBy(item.value as SortOption)}
+                        className={`flex-1 lg:flex-none px-4 py-1 rounded-md text-[11px] font-bold transition-all ${
+                          sortBy === item.value 
+                          ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' 
+                          : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                        }`}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </>
         )}
 
@@ -352,14 +495,18 @@ const App: React.FC = () => {
             data={filteredGames}
             listClassName="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6"
             itemClassName="w-full"
-            itemContent={(index, game) => (
-              <div className="pb-4">
-                <GameCard 
-                  game={game} 
-                  onPlay={handleGamePlay}
-                />
-              </div>
-            )}
+            itemContent={(index, game) => {
+              return (
+                <div className="p-2 sm:p-3">
+                  <GameCard 
+                    game={game} 
+                    showNewTag={false}
+                    views={gameStats[game.id] || 0}
+                    onPlay={handleGamePlay}
+                  />
+                </div>
+              );
+            }}
           />
         ) : (
           <div className="text-center py-16 sm:py-20 border border-dashed border-white/10 rounded-xl px-4">
@@ -408,6 +555,7 @@ const App: React.FC = () => {
             <div className="p-0.5 sm:p-1">
               <GameCard 
                 game={randomGame} 
+                views={gameStats[randomGame.id] || 0}
                 onPlay={(id) => {
                   handleGamePlay(id);
                   setRandomGame(null);
