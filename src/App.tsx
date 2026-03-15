@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
-import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown } from 'lucide-react';
+import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, ChevronRight, Database } from 'lucide-react';
 import { fetchGameStats, incrementGameViews } from './services/supabase/api';
 import { GameData } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
@@ -18,7 +18,8 @@ const IntelligenceWall = React.lazy(() =>
 );
 
 type SortOption = 'releaseDate' | 'views';
-type DurationFilter = 'all' | '<60' | '60-180' | '>180';
+type DurationFilter = 'all' | '<1h' | '1h-3h' | '>3h';
+type TabOption = 'all' | 'popular' | 'new';
 
 const App: React.FC = () => {
   const [games, setGames] = useState<GameData[]>([]);
@@ -33,8 +34,10 @@ const App: React.FC = () => {
   const [randomGame, setRandomGame] = useState<GameData | null>(null);
   const [isPicking, setIsPicking] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showIntelWall, setShowIntelWall] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabOption>('all');
   const resultsRef = useRef<HTMLDivElement>(null);
   const prevSearchTermRef = useRef('');
 
@@ -94,6 +97,7 @@ const App: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Scroll to top with passive listener support and optimization
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -132,23 +136,19 @@ const App: React.FC = () => {
       .slice(0, 4);
   }, [games]);
 
-  // Precompute searchable strings for all games once
+  // Performance optimized filter logic
   const searchableGames = useMemo(() => {
-    return games.map(game => {
-      const title = game.title.toLowerCase();
-      const author = game.author.text.toLowerCase();
-      return {
-        ...game,
-        _searchStrings: {
-          titleS: t2s(title),
-          titleT: s2t(title),
-          authorS: t2s(author),
-          authorT: s2t(author),
-          titleOrig: title,
-          authorOrig: author
-        }
-      };
-    });
+    return games.map(game => ({
+      ...game,
+      _searchStrings: {
+        titleS: t2s(game.title.toLowerCase()),
+        titleT: s2t(game.title.toLowerCase()),
+        authorS: t2s((game.author?.text || '').toLowerCase()),
+        authorT: s2t((game.author?.text || '').toLowerCase()),
+        titleOrig: game.title.toLowerCase(),
+        authorOrig: (game.author?.text || '').toLowerCase()
+      }
+    }));
   }, [games]);
 
   // Helper to parse duration string to minutes
@@ -195,9 +195,9 @@ const App: React.FC = () => {
       // 3. Duration Filter
       if (durationFilter !== 'all') {
         const mins = parseDurationMinutes(game.duration);
-        if (durationFilter === '<60' && mins >= 60) return false;
-        if (durationFilter === '60-180' && (mins < 60 || mins > 180)) return false;
-        if (durationFilter === '>180' && mins <= 180) return false;
+        if (durationFilter === '<1h' && mins >= 60) return false;
+        if (durationFilter === '1h-3h' && (mins < 60 || mins > 180)) return false;
+        if (durationFilter === '>3h' && mins <= 180) return false;
       }
 
       return true;
@@ -343,156 +343,309 @@ const App: React.FC = () => {
       {/* Hero Header */}
       <Header />
 
+      {/* Main Content Tabs */}
+      {!searchTerm && (
+        <div className="max-w-7xl mx-auto px-4 md:px-6 mb-8 relative z-10">
+          <div className="flex items-center justify-between border-b border-white/5 pb-0.5">
+            <div className="flex gap-4 sm:gap-8 overflow-x-auto no-scrollbar">
+              {[
+                { id: 'all', label: '全部档案库', icon: <Database size={18} /> },
+                { id: 'popular', label: '热门排行', icon: <Flame size={18} /> },
+                { id: 'new', label: '最新收录', icon: <Sparkles size={18} /> },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as TabOption)}
+                  className={`flex items-center gap-2 pb-3 px-1 transition-all relative whitespace-nowrap ${
+                    activeTab === tab.id 
+                    ? 'text-purple-400 font-bold' 
+                    : 'text-gray-500 hover:text-gray-300'
+                  }`}
+                >
+                  {tab.icon}
+                  <span className="text-sm sm:text-base tracking-wide">{tab.label}</span>
+                  {activeTab === tab.id && (
+                    <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-purple-600 to-blue-600 rounded-t-full shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Total Count Badge (Only on desktop) */}
+            <div className="hidden sm:flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1 rounded-full mb-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-[10px] text-gray-400 font-medium uppercase tracking-widest">
+                Database: {games.length} Entries
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Grid Content */}
       <main className="max-w-7xl mx-auto px-4 md:px-6">
         
         {!searchTerm && (
-          <>
-            {/* Popular Games Section */}
-            <section className="mb-10 sm:mb-12">
-              <div className="flex items-center gap-2 mb-4 sm:mb-6 border-b border-white/10 pb-2">
-                <Flame className="text-orange-500" size={20} />
-                <h2 className="text-xl sm:text-2xl font-bold text-white tracking-wide">热门档案</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                {popularGames.map(game => (
-                  <GameCard 
-                    key={game.id} 
-                    game={game} 
-                    views={gameStats[game.id] || 0}
-                    onPlay={handleGamePlay} 
-                  />
-                ))}
-              </div>
-            </section>
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+            {/* Popular Games View */}
+            {activeTab === 'popular' && (
+              <section className="mb-10 sm:mb-12">
+                <div className="flex items-center gap-2 mb-4 sm:mb-6 border-b border-white/10 pb-2">
+                  <Flame className="text-orange-500" size={20} />
+                  <h2 className="text-xl sm:text-2xl font-bold text-white tracking-wide">本周最热</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  {popularGames.map(game => (
+                    <GameCard 
+                      key={game.id} 
+                      game={game} 
+                      views={gameStats[game.id] || 0}
+                      onPlay={handleGamePlay} 
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
 
-            {/* New Games Section */}
-            <section className="mb-10 sm:mb-12">
-              <div className="flex items-center gap-2 mb-4 sm:mb-6 border-b border-white/10 pb-2">
-                <Sparkles className="text-yellow-400" size={20} />
-                <h2 className="text-xl sm:text-2xl font-bold text-white tracking-wide">最新收录</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                {newGames.map(game => (
-                  <GameCard 
-                    key={game.id} 
-                    game={game} 
-                    showNewTag={true}
-                    views={gameStats[game.id] || 0}
-                    onPlay={handleGamePlay} 
-                  />
-                ))}
-              </div>
-            </section>
+            {/* New Games View */}
+            {activeTab === 'new' && (
+              <section className="mb-10 sm:mb-12">
+                <div className="flex items-center gap-2 mb-4 sm:mb-6 border-b border-white/10 pb-2">
+                  <Sparkles className="text-yellow-400" size={20} />
+                  <h2 className="text-xl sm:text-2xl font-bold text-white tracking-wide">近期新增</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  {newGames.map(game => (
+                    <GameCard 
+                      key={game.id} 
+                      game={game} 
+                      showNewTag={true}
+                      views={gameStats[game.id] || 0}
+                      onPlay={handleGamePlay} 
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
 
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-8 sm:mb-10" />
-            
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-400 pl-2 border-l-4 border-purple-500">全部档案库</h2>
-              
-              {/* Filter & Sort Bar - Only for All Archive */}
-              <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
-                <div className="flex flex-wrap items-center gap-3">
-                  {/* Duration Filter */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
-                      <Clock size={14} /> 时长:
-                    </span>
-                    <div className="flex bg-black/20 rounded-lg p-1">
-                      {[
-                        { label: '全部', value: 'all' },
-                        { label: '<1h', value: '<60' },
-                        { label: '1-3h', value: '60-180' },
-                        { label: '>3h', value: '>180' }
-                      ].map((item) => (
-                        <button
-                          key={item.value}
-                          onClick={() => setDurationFilter(item.value as DurationFilter)}
-                          className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all ${
-                            durationFilter === item.value 
-                            ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' 
-                            : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
-                          }`}
-                        >
-                          {item.label}
-                        </button>
-                      ))}
+            {/* All Games View (Full Database with Filters) */}
+            {activeTab === 'all' && (
+              <>
+                <div className="flex flex-col gap-4 mb-6">
+                  <div className="flex items-center justify-between relative min-h-[44px]">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-400 pl-2 border-l-4 border-purple-500 shrink-0 uppercase tracking-wider">档案记录</h2>
+                    
+                    <div className="flex items-center gap-3">
+                      {/* Expandable Filter & Sort Bar - Desktop */}
+                      <div 
+                        className={`hidden lg:flex items-center transition-all duration-500 ease-in-out origin-right overflow-hidden ${
+                          isFilterOpen 
+                          ? 'max-w-[1000px] opacity-100 translate-x-0' 
+                          : 'max-w-0 opacity-0 translate-x-10 pointer-events-none'
+                        }`}
+                      >
+                        <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm whitespace-nowrap">
+                          <div className="flex items-center gap-3">
+                            {/* Duration Filter */}
+                            <div className="flex items-center gap-2">
+                              <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                                <Clock size={14} /> 时长:
+                              </span>
+                              <div className="flex bg-black/20 rounded-lg p-1">
+                                {[
+                                  { label: '全部', value: 'all' },
+                                  { label: '<1h', value: '<1h' },
+                                  { label: '1-3h', value: '1h-3h' },
+                                  { label: '>3h', value: '>3h' }
+                                ].map((item) => (
+                                  <button
+                                    key={item.value}
+                                    onClick={() => setDurationFilter(item.value as DurationFilter)}
+                                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all ${
+                                      durationFilter === item.value 
+                                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' 
+                                      : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                                    }`}
+                                  >
+                                    {item.label}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Tag Filters */}
+                            <div className="h-4 w-px bg-white/10 mx-1" />
+                            <div className="flex items-center gap-2">
+                              <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                                <Filter size={14} /> 标签:
+                              </span>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => setTagsFilter(prev => ({ ...prev, sound: prev.sound === true ? null : true }))}
+                                  className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                                    tagsFilter.sound === true
+                                    ? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400'
+                                    : 'bg-black/20 border-white/10 text-gray-400 hover:border-white/20'
+                                  }`}
+                                >
+                                  有声音
+                                </button>
+                                <button
+                                  onClick={() => setTagsFilter(prev => ({ ...prev, jumpscare: prev.jumpscare === true ? null : true }))}
+                                  className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                                    tagsFilter.jumpscare === true
+                                    ? 'bg-red-500/10 border-red-500/50 text-red-400'
+                                    : 'bg-black/20 border-white/10 text-gray-400 hover:border-white/20'
+                                  }`}
+                                >
+                                  微恐
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 border-l border-white/10 pl-4">
+                            <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                              <ArrowUpDown size={14} /> 排序:
+                            </span>
+                            <div className="flex bg-black/20 rounded-lg p-1">
+                              {[
+                                { label: '最新发布', value: 'releaseDate' },
+                                { label: '浏览量', value: 'views' }
+                              ].map((item) => (
+                                <button
+                                  key={item.value}
+                                  onClick={() => setSortBy(item.value as SortOption)}
+                                  className={`px-4 py-1 rounded-md text-[11px] font-bold transition-all ${
+                                    sortBy === item.value 
+                                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' 
+                                    : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                                  }`}
+                                >
+                                  {item.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Toggle Button */}
+                      <button
+                        onClick={() => setIsFilterOpen(!isFilterOpen)}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 border shadow-lg ${
+                          isFilterOpen 
+                          ? 'bg-purple-600 border-purple-500 text-white shadow-purple-500/40 scale-105' 
+                          : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:border-white/20 hover:scale-105'
+                        }`}
+                      >
+                        <Sliders size={18} />
+                        <span className="font-bold text-sm tracking-wide">筛选器</span>
+                        <ChevronDown size={16} className={`transition-transform duration-500 ${isFilterOpen ? 'rotate-180' : ''}`} />
+                      </button>
                     </div>
                   </div>
 
-                  {/* Tag Filters */}
-                  <div className="h-4 w-px bg-white/10 mx-1 hidden sm:block" />
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
-                      <Filter size={14} /> 标签:
-                    </span>
-                    <div className="flex gap-2">
-                  <button
-                    onClick={() => setTagsFilter(prev => ({ ...prev, sound: prev.sound === true ? null : true }))}
-                    className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
-                      tagsFilter.sound === true
-                      ? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400'
-                      : 'bg-black/20 border-white/10 text-gray-400 hover:border-white/20'
+                  {/* Mobile Filter Bar - Original Style */}
+                  <div 
+                    className={`lg:hidden overflow-hidden transition-all duration-500 ease-in-out ${
+                      isFilterOpen 
+                      ? 'max-h-[500px] opacity-100 mt-2' 
+                      : 'max-h-0 opacity-0 mt-0 pointer-events-none'
                     }`}
                   >
-                    有声音
-                  </button>
-                  <button
-                    onClick={() => setTagsFilter(prev => ({ ...prev, jumpscare: prev.jumpscare === true ? null : true }))}
-                    className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
-                      tagsFilter.jumpscare === true
-                      ? 'bg-red-500/10 border-red-500/50 text-red-400'
-                      : 'bg-black/20 border-white/10 text-gray-400 hover:border-white/20'
-                    }`}
-                  >
-                    微恐
-                  </button>
-                </div>
+                    <div className="flex flex-col gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                            <Clock size={14} /> 时长:
+                          </span>
+                          <div className="flex bg-black/20 rounded-lg p-1">
+                            {['all', '<1h', '1h-3h', '>3h'].map((v) => (
+                              <button
+                                key={v}
+                                onClick={() => setDurationFilter(v as DurationFilter)}
+                                className={`px-2 py-1 rounded-md text-[11px] font-bold transition-all ${
+                                  durationFilter === v ? 'bg-purple-600 text-white' : 'text-gray-400'
+                                }`}
+                              >
+                                {v === 'all' ? '全部' : v}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="h-4 w-px bg-white/10 mx-1 hidden sm:block" />
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                            <Filter size={14} /> 标签:
+                          </span>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => setTagsFilter(prev => ({ ...prev, sound: prev.sound === true ? null : true }))}
+                              className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                                tagsFilter.sound === true ? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400' : 'bg-black/20 border-white/10 text-gray-400'
+                              }`}
+                            >
+                              有声音
+                            </button>
+                            <button
+                              onClick={() => setTagsFilter(prev => ({ ...prev, jumpscare: prev.jumpscare === true ? null : true }))}
+                              className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                                tagsFilter.jumpscare === true ? 'bg-red-500/10 border-red-500/50 text-red-400' : 'bg-black/20 border-white/10 text-gray-400'
+                              }`}
+                            >
+                              微恐
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 w-full border-t border-white/5 pt-4">
+                        <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                          <ArrowUpDown size={14} /> 排序:
+                        </span>
+                        <div className="flex bg-black/20 rounded-lg p-1 w-full">
+                          {[
+                            { label: '最新发布', value: 'releaseDate' },
+                            { label: '浏览量', value: 'views' }
+                          ].map((item) => (
+                            <button
+                              key={item.value}
+                              onClick={() => setSortBy(item.value as SortOption)}
+                              className={`flex-1 px-4 py-1 rounded-md text-[11px] font-bold transition-all ${
+                                sortBy === item.value ? 'bg-purple-600 text-white' : 'text-gray-400'
+                              }`}
+                            >
+                              {item.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-3 w-full lg:w-auto border-t lg:border-t-0 border-white/5 pt-4 lg:pt-0">
-                  <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
-                    <ArrowUpDown size={14} /> 排序:
-                  </span>
-                  <div className="flex bg-black/20 rounded-lg p-1 w-full lg:w-auto">
-                    {[
-                      { label: '最新发布', value: 'releaseDate' },
-                      { label: '浏览量', value: 'views' }
-                    ].map((item) => (
-                      <button
-                        key={item.value}
-                        onClick={() => setSortBy(item.value as SortOption)}
-                        className={`flex-1 lg:flex-none px-4 py-1 rounded-md text-[11px] font-bold transition-all ${
-                          sortBy === item.value 
-                          ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' 
-                          : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
-                        }`}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
+              </>
+            )}
+          </div>
         )}
 
-        {/* Results Counter */}
-        <div 
-          ref={resultsRef}
-          className="mb-6 flex items-center gap-2 text-xs sm:text-sm text-gray-500 scroll-mt-20"
-        >
-          <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-          <span>已检索到 {filteredGames.length} 份特殊档案</span>
-        </div>
+        {/* Results Counter - Only show when searching or in Archive Tab */}
+        {(searchTerm || activeTab === 'all') && (
+          <div 
+            ref={resultsRef}
+            className="mb-6 flex items-center gap-2 text-xs sm:text-sm text-gray-500 scroll-mt-20 animate-in fade-in duration-700"
+          >
+            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+            <span>已检索到 {filteredGames.length} 份特殊档案</span>
+          </div>
+        )}
 
-        {/* Grid Layout - Virtualized for performance */}
-        {filteredGames.length > 0 ? (
+      {/* Grid Layout - Virtualized for performance */}
+      {filteredGames.length > 0 ? (
+        (searchTerm || activeTab === 'all') && (
           <VirtuosoGrid
             useWindowScroll
             data={filteredGames}
+            overscan={400} // Pre-render more items for smoother scrolling
             listClassName="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6"
             itemClassName="w-full"
             itemContent={(index, game) => {
@@ -508,16 +661,19 @@ const App: React.FC = () => {
               );
             }}
           />
+        )
         ) : (
-          <div className="text-center py-16 sm:py-20 border border-dashed border-white/10 rounded-xl px-4">
-            <p className="text-gray-500 text-base sm:text-lg">未找到匹配的档案记录...</p>
-            <button 
-              onClick={() => setSearchTerm('')}
-              className="mt-4 text-purple-400 hover:text-purple-300 text-sm underline"
-            >
-              清除检索条件
-            </button>
-          </div>
+          (searchTerm || activeTab === 'all') && (
+            <div className="text-center py-16 sm:py-20 border border-dashed border-white/10 rounded-xl px-4">
+              <p className="text-gray-500 text-base sm:text-lg">未找到匹配的档案记录...</p>
+              <button 
+                onClick={() => setSearchTerm('')}
+                className="mt-4 text-purple-400 hover:text-purple-300 text-sm underline"
+              >
+                清除检索条件
+              </button>
+            </div>
+          )
         )}
       </main>
 
