@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
-import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, ChevronRight, Database } from 'lucide-react';
+import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, Database } from 'lucide-react';
 import { fetchGameStats, incrementGameViews } from './services/supabase/api';
 import { GameData } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
@@ -76,15 +76,20 @@ const App: React.FC = () => {
   useEffect(() => {
     const initApp = async () => {
       try {
-        const [stats, gamesData] = await Promise.all([
-          fetchGameStats(),
-          fetch('/data/games.json').then(res => res.json())
-        ]);
-        setGameStats(stats);
+        // 1. First fetch critical game data to unblock FCP
+        const response = await fetch('/data/games.json');
+        const gamesData = await response.json();
         setGames(gamesData);
+        setIsLoading(false); // Unblock rendering as soon as games are available
+
+        // 2. Then fetch non-critical stats in background
+        fetchGameStats().then(stats => {
+          setGameStats(stats);
+        }).catch(err => {
+          console.error('Failed to fetch game stats:', err);
+        });
       } catch (error) {
         console.error('Failed to initialize app:', error);
-      } finally {
         setIsLoading(false);
       }
     };
@@ -397,12 +402,13 @@ const App: React.FC = () => {
                   <h2 className="text-xl sm:text-2xl font-bold text-white tracking-wide">本周最热</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                  {popularGames.map(game => (
+                  {popularGames.map((game, index) => (
                     <GameCard 
                       key={game.id} 
                       game={game} 
                       views={gameStats[game.id] || 0}
                       onPlay={handleGamePlay} 
+                      priority={index < 2}
                     />
                   ))}
                 </div>
@@ -417,13 +423,14 @@ const App: React.FC = () => {
                   <h2 className="text-xl sm:text-2xl font-bold text-white tracking-wide">近期新增</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                  {newGames.map(game => (
+                  {newGames.map((game, index) => (
                     <GameCard 
                       key={game.id} 
                       game={game} 
                       showNewTag={true}
                       views={gameStats[game.id] || 0}
                       onPlay={handleGamePlay} 
+                      priority={index < 2}
                     />
                   ))}
                 </div>

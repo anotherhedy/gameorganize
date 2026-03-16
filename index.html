@@ -5,19 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>特殊事件档案库</title>
     
+    <!-- Critical CSS to prevent white screen -->
+    <style>
+      body {
+        background-color: #0a0a12;
+        margin: 0;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      #root { min-height: 100vh; }
+    </style>
+
     <!-- Preload Critical Data -->
     <link rel="preload" href="/data/games.json" as="fetch" crossorigin>
     
-    <!-- DNS Prefetch and Preconnect for CN Users -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.cn">
-    <link rel="dns-prefetch" href="https://fonts.gstatic.cn">
-    <link rel="preconnect" href="https://fonts.googleapis.cn">
-    <link rel="preconnect" href="https://fonts.gstatic.cn" crossorigin>
-    
-    <!-- Preload critical fonts -->
-    <link href="https://fonts.googleapis.cn/css2?family=Inter:wght@400;600;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Remove redundant importmap as Vite handles dependencies -->
+    <!-- Preload Critical Fonts (Latin subset for UI) -->
+    <link rel="preload" href="/fonts/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2" as="font" type="font/woff2" crossorigin>
 </head>
   <body>
     <div id="root"></div>
