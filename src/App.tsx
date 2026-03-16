@@ -53,13 +53,15 @@ const App: React.FC = () => {
 
     if (isSearching) {
       if (resultsRef.current) {
-        // Small delay to ensure the DOM has updated and user has stopped typing
+        // Use requestAnimationFrame to avoid forced reflow in some browsers
         const timeoutId = setTimeout(() => {
-          resultsRef.current?.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start' 
+          requestAnimationFrame(() => {
+            resultsRef.current?.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
           });
-        }, 500); // Increased delay for better typing performance
+        }, 800); // Increased delay for better typing performance on mobile
         return () => clearTimeout(timeoutId);
       }
     } else if (searchTerm === '' && wasSearching) {
@@ -93,7 +95,7 @@ const App: React.FC = () => {
       setShowScrollTop(window.scrollY > 300);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 

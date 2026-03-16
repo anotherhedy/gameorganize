@@ -26,7 +26,12 @@ export const Header: React.FC = () => {
             呀哈哈，欢迎各位特殊事件研究员光临本所，这里正在发生大量不寻常的事件，我们邀请你沉浸其中，与我们一同追踪、分析并还原真相。
           </p>
           <p className="hidden sm:block">
-            本网页由「特殊事件研究组」的群友鼎力支持，提供各类不寻常事件的线索与追踪体验。网页内容将不定期更新暂未收录的游戏，更新频率取决于研究员们的摸鱼时长。
+            本网页由「特殊事件研究组」的群友和<a 
+              href="https://www.xiaohongshu.com/user/profile/69295a990000000037005e7a?xsec_token=YBJHiSXTrc7AmLou2oCMjzjrFcyggA1PUXWEpV_DoyANc%3D&xsec_source=app_share&xhsshare=&shareRedId=ODczQThIOko2NzUyOTgwNjY0OTc8PkxN&apptime=1770648404&share_id=a0d1c48864c14a53bf4a93d0a411d7e7&share_channel=copy_link" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-pink-400 cursor-pointer hover:underline"
+            >@摸鱼侦探社 🎰</a>鼎力支持，提供各类不寻常事件的线索与追踪体验。网页内容将不定期更新暂未收录的游戏，更新频率取决于研究员们的摸鱼时长。
           </p>
           
           <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 mt-6 sm:mt-8">
@@ -46,12 +51,12 @@ export const Header: React.FC = () => {
 
           <p className="pt-6 sm:pt-8 text-gray-500 text-xs sm:text-sm">
             若在调查过程中发现任何异常，欢迎在群内提交，或联系小红书 <a 
-    href="https://www.xiaohongshu.com/user/profile/69295a990000000037005e7a?xsec_token=YBJHiSXTrc7AmLou2oCMjzjrFcyggA1PUXWEpV_DoyANc%3D&xsec_source=app_share&xhsshare=&shareRedId=ODczQThIOko2NzUyOTgwNjY0OTc8PkxN&apptime=1770648404&share_id=a0d1c48864c14a53bf4a93d0a411d7e7&share_channel=copy_link" 
+    href="https://www.xiaohongshu.com/user/profile/611a5c6a00000000010089fd?xsec_token=ABtisdX26OBvjHmTB1jDlLwsnvefm_DYfWBHryb1kzGG0%3D&xsec_source=pc_note" 
     target="_blank" 
     rel="noopener noreferrer"
     className="text-pink-400 cursor-pointer hover:underline"
   >
-    @摸鱼侦探社 🎰
+    @常棣
   </a>。
           </p>
         </div>

@@ -12,6 +12,7 @@ interface GameCardProps {
 export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, showNewTag, views = 0 }) => {
   const isActive = game.status === '是';
     // Resolve image source: if path is relative like "images/...", prefix with /data/
+    // Optimization: Check for .webp version if available or use as-is
     const imgSrc = game.coverImage
         ? (game.coverImage.startsWith('http') || game.coverImage.startsWith('/')
                 ? game.coverImage
@@ -37,13 +38,15 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, sho
             )}
 
             {/* Background Image with Gradient Overlay */}
-            <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 z-0 bg-[#1a1a24]">
                 {imgSrc ? (
                     <img
                         src={imgSrc}
                         alt={game.title}
                         loading="lazy"
                         decoding="async"
+                        width="400"
+                        height="260"
                         className="w-full h-full object-cover opacity-60 transition-transform duration-700 ease-out group-hover:scale-105"
                         onError={(e) => {
                             (e.target as HTMLImageElement).src = `https://placehold.co/600x400/1e1e2e/FFF?text=${encodeURIComponent(game.title)}`;
