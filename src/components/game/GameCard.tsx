@@ -7,9 +7,11 @@ interface GameCardProps {
   onPlay?: (id: string) => void;
   showNewTag?: boolean;
   views?: number;
+  priority?: boolean;
 }
 
-export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, showNewTag, views = 0 }) => {
+export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, showNewTag, views = 0, priority = false }) => {
+  const [isLoaded, setIsLoaded] = React.useState(false);
   const isActive = game.status === '是';
     // Resolve image source: if path is relative like "images/...", prefix with /data/
     // Optimization: Check for .webp version if available or use as-is
@@ -43,13 +45,16 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({ game, onPlay, sho
                     <img
                         src={imgSrc}
                         alt={game.title}
-                        loading="lazy"
+                        loading={priority ? "eager" : "lazy"}
                         decoding="async"
+                        fetchPriority={priority ? "high" : "auto"}
                         width="400"
                         height="260"
-                        className="w-full h-full object-cover opacity-60 transition-transform duration-700 ease-out group-hover:scale-105"
+                        className={`w-full h-full object-cover opacity-60 transition-all duration-700 ease-out group-hover:scale-105 ${isLoaded ? 'blur-0' : 'blur-lg scale-110'}`}
+                        onLoad={() => setIsLoaded(true)}
                         onError={(e) => {
                             (e.target as HTMLImageElement).src = `https://placehold.co/600x400/1e1e2e/FFF?text=${encodeURIComponent(game.title)}`;
+                            setIsLoaded(true);
                         }}
                     />
                 ) : (

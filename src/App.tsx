@@ -658,6 +658,7 @@ const App: React.FC = () => {
                     showNewTag={false}
                     views={gameStats[game.id] || 0}
                     onPlay={handleGamePlay}
+                    priority={index < 4}
                   />
                 </div>
               );

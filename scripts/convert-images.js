@@ -48,8 +48,8 @@ async function convertImages() {
       }
 
       await sharp(filePath)
-        .webp({ quality: 80 }) // 80 is a good balance between size and quality
-        .resize({ width: 1200, withoutEnlargement: true }) // Fix "larger than needed" issue
+        .webp({ quality: 75 }) // Lower quality for mobile speed
+        .resize({ width: 600, withoutEnlargement: true }) // Match test.py for consistency
         .toFile(outputPath);
       
       console.log(`✅ Converted: ${file} -> ${outputFileName}`);
