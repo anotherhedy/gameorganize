@@ -25,7 +25,7 @@ export const Header: React.FC = () => {
           <p>
             呀哈哈，欢迎各位特殊事件研究员光临本所，这里正在发生大量不寻常的事件，我们邀请你沉浸其中，与我们一同追踪、分析并还原真相。
           </p>
-          <p className="hidden sm:block">
+          <p>
             本网页由「特殊事件研究组」的群友和<a 
               href="https://www.xiaohongshu.com/user/profile/69295a990000000037005e7a?xsec_token=YBJHiSXTrc7AmLou2oCMjzjrFcyggA1PUXWEpV_DoyANc%3D&xsec_source=app_share&xhsshare=&shareRedId=ODczQThIOko2NzUyOTgwNjY0OTc8PkxN&apptime=1770648404&share_id=a0d1c48864c14a53bf4a93d0a411d7e7&share_channel=copy_link" 
               target="_blank" 
