@@ -2494,5 +2494,83 @@
       "url": "https://www.bilibili.com/video/BV1HUNczTEXV?vd_source=e2982b25679e1b5e60721a685527af91"
     },
     "coverImage": "/images/96.webp"
+  },
+  {
+    "id": "97",
+    "title": "404番外篇·婚礼来信事件",
+    "url": "https://xsn1204.github.io/dxt/",
+    "releaseDate": "2026-03-17 00:00:00",
+    "status": "是",
+    "description": "这一次，你在游戏中扮演一位受邀参加婚礼的学姐。\n婚礼在即，新郎的一份深夜求助打破了你平静的生活。准新娘，也是你的学妹，在路过一家早已记不起名字的奶茶店时神情落寞，作为她中学时代的挚友，你成为了新郎眼中的希望。\n喜帖发出之前，有一个名字需要被找回……",
+    "author": {
+      "text": "AAA自装地下党",
+      "url": "https://www.xiaohongshu.com/user/profile/638b882e000000001f01b164?channel_type=web_user_page&parent_page_channel_type=web_user_board&xsec_token=ABvDp9UMeCHJAsbEWNqZx7pb8rm_5EjU7_eDeR4Rhix9E=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": false,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/69b14cc4000000001503b5ef?xsec_token=ABAxWHORNvJVlU1DjHjSPvL4-EmePhV3sImDK4DGk6Ey0=&xsec_source=pc_user",
+      "url": "https://www.xiaohongshu.com/explore/69b14cc4000000001503b5ef?xsec_token=ABAxWHORNvJVlU1DjHjSPvL4-EmePhV3sImDK4DGk6Ey0=&xsec_source=pc_user"
+    },
+    "coverImage": ""
+  },
+  {
+    "id": "98",
+    "title": "《南山的羔羊》Demo/支线",
+    "url": "http://rummi.codehub.xin/",
+    "releaseDate": "2026-03-18 00:00:00",
+    "status": "是",
+    "description": "在本作中，你将跟随/作为主角\"苞米\"，调查一起发生在朋友身上的案件，找到案件背后的真相，沉浸式过一把推理解谜瘾。",
+    "author": {
+      "text": "@哄哄",
+      "url": "https://www.xiaohongshu.com/user/profile/655ddefb00000000080021f3?xsec_token=ABn6Y8bngwLtTsdQkFHduTLn2b7cc7QRzRdPM9U8w8T4Q%3D&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": false,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "4.5-6h",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/69b13665000000000600deb8?xsec_token=ABAxWHORNvJVlU1DjHjSPvL_Pl7IzMLVKI68rdqzO2ess=&xsec_source=pc_user",
+      "url": "https://www.xiaohongshu.com/explore/69b13665000000000600deb8?xsec_token=ABAxWHORNvJVlU1DjHjSPvL_Pl7IzMLVKI68rdqzO2ess=&xsec_source=pc_user"
+    },
+    "coverImage": "/images/98.webp"
+  },
+  {
+    "id": "99",
+    "title": "锦华旧梦·上",
+    "url": "https://sylvie-seven-cq.top/jhjm/begin.html",
+    "releaseDate": "2026-03-16 00:00:00",
+    "status": "是",
+    "description": "你是华苑·静乔公寓的业主，一个春日的午后，你在小区花园里遇到了邻居王大妈。\n\n她正坐在长椅上，手里摩挲着一块褪色的手帕，上面隐约可见\"锦华纺织厂\"几个绣字。\n\n\"那会儿啊，我们厂里的姑娘们，手巧得很...\"王大妈不经意地开了口，但话到一半，王大妈却停下不说了，只是轻轻叹了口气。\n\n你心中涌起强烈的好奇，还想知道更多她年轻时候的故事，想知道那块手帕背后的秘密，想知道锦华纺织厂曾经的辉煌与变迁。",
+    "author": {
+      "text": "@棖柒本柒",
+      "url": "https://www.xiaohongshu.com/user/profile/62a9c2e9000000001b0285d6?xsec_token=ABWdkMtUDGUnSA5av9n9_aXRSohJzrSb7Zbd-BDF3v2p8%3D&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "3-7h",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/69b6560200000000280082bd?xsec_token=ABS0RBAYSyObtkZq2R7emf_Gg4bEFmEiFonGQNXgxdBBc=&xsec_source=pc_user",
+      "url": "https://www.xiaohongshu.com/explore/69b6560200000000280082bd?xsec_token=ABS0RBAYSyObtkZq2R7emf_Gg4bEFmEiFonGQNXgxdBBc=&xsec_source=pc_user"
+    },
+    "coverImage": "/images/99.webp"
   }
 ]
