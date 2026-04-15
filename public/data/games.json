@@ -2540,7 +2540,7 @@
       "hasJumpScare": false,
       "hasSound": false
     },
-    "duration": "4.5-6h",
+    "duration": "4.5-6小时",
     "answer": {
       "text": "https://www.xiaohongshu.com/explore/69b13665000000000600deb8?xsec_token=ABAxWHORNvJVlU1DjHjSPvL_Pl7IzMLVKI68rdqzO2ess=&xsec_source=pc_user",
       "url": "https://www.xiaohongshu.com/explore/69b13665000000000600deb8?xsec_token=ABAxWHORNvJVlU1DjHjSPvL_Pl7IzMLVKI68rdqzO2ess=&xsec_source=pc_user"
@@ -2566,11 +2566,323 @@
       "hasJumpScare": false,
       "hasSound": false
     },
-    "duration": "3-7h",
+    "duration": "3-7小时",
     "answer": {
       "text": "https://www.xiaohongshu.com/explore/69b6560200000000280082bd?xsec_token=ABS0RBAYSyObtkZq2R7emf_Gg4bEFmEiFonGQNXgxdBBc=&xsec_source=pc_user",
       "url": "https://www.xiaohongshu.com/explore/69b6560200000000280082bd?xsec_token=ABS0RBAYSyObtkZq2R7emf_Gg4bEFmEiFonGQNXgxdBBc=&xsec_source=pc_user"
     },
     "coverImage": "/images/99.webp"
+  },
+  {
+    "id": "100",
+    "title": "静默无声",
+    "url": "https://chenner001.github.io/sz17/",
+    "releaseDate": "2026-04-05 00:00:00",
+    "status": "是",
+    "description": "你是林述。一个专门承接“没人愿意碰”的调查委托的侦探。\n三年前，你还在报社做深度报道，因为一篇揭露科技公司数据滥用的稿子被撤职、被警告、被跟踪。后来你明白了：有些真相不是不能挖，而是挖出来也没人敢发。于是你单干，接私活，帮人找失踪的猫、查婚外情、验学历真伪——直到那天，苏见秋发来了消息。",
+    "author": {
+      "text": "@Romonosovp",
+      "url": "https://www.xiaohongshu.com/user/profile/5ae977d94eacab1e028fd04f?xsec_token=AB7W1Bc8R9ug4s8lFDufCOr9KRbqUK7eLHEcmlyrPByD8=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "1-2小时",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/69ca0cb2000000001a021169?xsec_token=ABa1yayf4Zg35O6C4tUKupuZ9LjDYGgWf1IjspCz1RHIE=&xsec_source=pc_user",
+      "url": "https://www.xiaohongshu.com/explore/69ca0cb2000000001a021169?xsec_token=ABa1yayf4Zg35O6C4tUKupuZ9LjDYGgWf1IjspCz1RHIE=&xsec_source=pc_user"
+    },
+    "coverImage": "/images/100.webp"
+  },
+  {
+    "id": "101",
+    "title": "代号：1147",
+    "url": "https://chenner001.github.io/1147/",
+    "releaseDate": "2026-04-05 00:00:00",
+    "status": "是",
+    "description": "你拆开发小林星朗寄来的包裹，里面只有一张皱巴巴的快递单和一把钥匙。\n单号栏印着“ΛΧ-1147”。\n他已经失联三天。最后一条微信停在三天前：“如果三天后我没再联系你，请启动我的电脑。”你当时回了三个问号，再没有等来回复。",
+    "author": {
+      "text": "@Romonosovp",
+      "url": "https://www.xiaohongshu.com/user/profile/5ae977d94eacab1e028fd04f?xsec_token=AB7W1Bc8R9ug4s8lFDufCOr9KRbqUK7eLHEcmlyrPByD8=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "0.5-1小时",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/69ce22d80000000020038a2e?xsec_token=ABTHsddyg19e1t4g_t8LC6lkDd9pbZt6lrmyLLnuTHrIA=&xsec_source=pc_user",
+      "url": "https://www.xiaohongshu.com/explore/69ce22d80000000020038a2e?xsec_token=ABTHsddyg19e1t4g_t8LC6lkDd9pbZt6lrmyLLnuTHrIA=&xsec_source=pc_user"
+    },
+    "coverImage": "/images/101.webp"
+  },
+  {
+    "id": "102",
+    "title": "微光昭雪",
+    "url": "https://www.kaixinmoyu.com/feijo/glimmerjustice/",
+    "releaseDate": "2026-03-05 00:00:00",
+    "status": "是",
+    "description": "同住一个房间的室友老张，最近突然不见了。老张的消失一定有蹊跷，麻烦您帮我调查一下。",
+    "author": {
+      "text": "@肥啾桑📷",
+      "url": "https://www.xiaohongshu.com/user/profile/579f117e82ec3934fbc9c74d?xsec_token=ABgVDFPLAGpYywbDnDUyNhMlrvx4hZEo-Kgdi1ntxRouY%3D&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "1-2小时",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/69b2b5570000000009020282?xsec_token=ABQjf9b4VHwr4UKPVm7vAsnuaFhHdlrzwmfBwqU9rwauQ=&xsec_source=pc_search&source=web_profile_page",
+      "url": "https://www.xiaohongshu.com/explore/69b2b5570000000009020282?xsec_token=ABQjf9b4VHwr4UKPVm7vAsnuaFhHdlrzwmfBwqU9rwauQ=&xsec_source=pc_search&source=web_profile_page"
+    },
+    "coverImage": "/images/102.webp"
+  },
+  {
+    "id": "103",
+    "title": "工作交接",
+    "url": "http://handover.fun/",
+    "releaseDate": "2026-04-04 00:00:00",
+    "status": "是",
+    "description": "作为新入职的员工，准备好入职的第一天了吗？认真学习业务知识，和老前辈完成工作交接，以及发现公司一些小小的隐藏秘密……？",
+    "author": {
+      "text": "@打算一直放鸽子的up主",
+      "url": "https://www.xiaohongshu.com/user/profile/61c94cca0000000010006691?xsec_token=AB8Fj-PG7Iee-T9YaFusaSr1NsXEm4QIsD7MtPTVBzM2o=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": false,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "1-2小时",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/69d5a6940000000023012a82?xsec_token=ABweJB1wLr3ZpmaU12rnCvWYCns7Mlck8TG950opKKet0=&xsec_source=pc_collect",
+      "url": "https://www.xiaohongshu.com/explore/69d5a6940000000023012a82?xsec_token=ABweJB1wLr3ZpmaU12rnCvWYCns7Mlck8TG950opKKet0=&xsec_source=pc_collect"
+    },
+    "coverImage": "/images/103.webp"
+  },
+  {
+    "id": "104",
+    "title": "希尔山菜单规则怪谈",
+    "url": "https://menuxiershan.netlify.app/",
+    "releaseDate": "2026-03-24 00:00:00",
+    "status": "是",
+    "description": "放假期间，你独自来到希尔山，打算走完希尔山的徒步路线。连续走了好几个小时之后，你听到了肚子发出的叫声。你停下来翻了翻包，才想起来自己带的吃的落在车上了。正当你想这种地方恐怕不会有吃的时，你看到不远处的湖边有一座小木屋，木屋上写着「希尔餐厅」。你愣了一下，随即快步走了过去。",
+    "author": {
+      "text": "@橙色蝴蝶",
+      "url": "https://www.xiaohongshu.com/user/profile/60e844a70000000001001bd9?xsec_token=ABaKtaZMb-xSb5TRQK7G1ANgz9UaB1O4yu00vF39F7vm4=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "0.5-1小时",
+    "answer": {
+      "text": "",
+      "url": ""
+    },
+    "coverImage": "/images/104.webp"
+  },
+  {
+    "id": "105",
+    "title": "希尔山现场作业系统",
+    "url": "https://hillinvestigation.netlify.app/",
+    "releaseDate": "2026-04-02 00:00:00",
+    "status": "是",
+    "description": "你受到公司指派，要去希尔山监测站进行设备检查。十年前，有一支队伍在这里神秘失踪，其中就包括了你的哥哥。你打算借此机会，弄清楚当年到底发生了什么？",
+    "author": {
+      "text": "@橙色蝴蝶",
+      "url": "https://www.xiaohongshu.com/user/profile/60e844a70000000001001bd9?xsec_token=ABaKtaZMb-xSb5TRQK7G1ANgz9UaB1O4yu00vF39F7vm4=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "",
+    "answer": {
+      "text": "",
+      "url": ""
+    },
+    "coverImage": "/images/105.webp"
+  },
+  {
+    "id": "106",
+    "title": "青山疗养院",
+    "url": "https://qingshan-sanatorium1.top/",
+    "releaseDate": "2026-03-27 00:00:00",
+    "status": "是",
+    "description": "三个月前，你的妹妹在青山疗养院离奇失踪。警方调查无果，院方坚称\"从未有过此人\"。但你找到了妹妹的日记，里面记录着令人不安的内容…",
+    "author": {
+      "text": "@yadnus",
+      "url": "https://www.xiaohongshu.com/user/profile/630574160000000012000930?xsec_token=ABlPhaQ27sLgZ6BwSTxmpFdBM8b1vJuzlRx6Q0iQkscfg=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "1-2小时",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/69cacca8000000001a028766?xsec_token=ABmPYooNU7FS3SGyw6SlEEfF7j2FZJnuhcoL3_j02i5c0=&xsec_source=pc_search&source=web_user_page",
+      "url": "https://www.xiaohongshu.com/explore/69cacca8000000001a028766?xsec_token=ABmPYooNU7FS3SGyw6SlEEfF7j2FZJnuhcoL3_j02i5c0=&xsec_source=pc_search&source=web_user_page"
+    },
+    "coverImage": "/images/106.webp"
+  },
+  {
+    "id": "107",
+    "title": "七",
+    "url": "https://game.itspro.cn/05.seven/",
+    "releaseDate": "2026-03-24 00:00:00",
+    "status": "是",
+    "description": "陈悦醒来时，窗外的阳光正透过窗帘缝隙。天幕明亮，不刺眼也不黯淡，十分标准的七月上午七点的阳光。天空是均匀的靛蓝色，七片云，和昨天的天气预报一样。一切井然有序。陈悦喜欢这种秩序。",
+    "author": {
+      "text": "@小猪的胖猫咪",
+      "url": "https://www.xiaohongshu.com/user/profile/5a9146dee8ac2b3be3dad922?channel_type=web_profile_page&xsec_token=ABBwvkkxKfPJ0tJopSZFlcD8C2VBGf9yF_MKnD0eJ99sQ%3D&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "2-3小时",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/69c14ca30000000023017694?xsec_token=ABr3ggvo_6qPwV03PGG2w76c30aLxI5yzCc6qQ8eAH3NA=&xsec_source=pc_user",
+      "url": "https://www.xiaohongshu.com/explore/69c14ca30000000023017694?xsec_token=ABr3ggvo_6qPwV03PGG2w76c30aLxI5yzCc6qQ8eAH3NA=&xsec_source=pc_user"
+    },
+    "coverImage": "/images/107.webp"
+  },
+  {
+    "id": "108",
+    "title": "流沙",
+    "url": "https://jitter-hedgers-3c.github.io/liushaaa/",
+    "releaseDate": "2026-04-05 00:00:00",
+    "status": "是",
+    "description": "今天是2008年7月10日，你在深夜浏览流沙论坛时发现了一个有趣的帖子，帖主向大家公开了一个邮箱号，是她和她的网络笔友在线上聊天时共同使用的，但诡异的是她的笔友好像失踪了，一切都只能从这个学校的官网查起。。。。",
+    "author": {
+      "text": "@QZWLY\n\n@穿马丁靴的冒失鬼",
+      "url": "https://www.xiaohongshu.com/user/profile/5e4b259c0000000001005c06?xsec_token=ABU66LdElCLXyBs9VT-jtP2WsilLvXDxLIxP6FnoZd84o=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "2-3小时",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/69d22aaf000000001e00ef5d?xsec_token=ABAl70A4QFcTec2L6X9cLIV4Pj_8GQiiIUJxgpJO-1u_0=&xsec_source=pc_user",
+      "url": "https://www.xiaohongshu.com/explore/69d22aaf000000001e00ef5d?xsec_token=ABAl70A4QFcTec2L6X9cLIV4Pj_8GQiiIUJxgpJO-1u_0=&xsec_source=pc_user"
+    },
+    "coverImage": "/images/108.webp"
+  },
+  {
+    "id": "109",
+    "title": "黑室记录",
+    "url": "https://www.35f066.cn/story/",
+    "releaseDate": "2026-03-10 00:00:00",
+    "status": "是",
+    "description": "大家好，我是陈默，一名市属高中的计算机老师。按理说，我的自我介绍应该到此为止了。毕竟一个普通老师的日常，无非是上课、修电脑、在办公室泡枸杞，日子平淡得像是被按了重复键。但最近发生了一件事，让我不得不重新审视“平淡”这个词的含义。如果你点进这个帖子，说明你对我身上的“意外”多少有点好奇。说实话，我自己也还没完全弄明白发生了什么。我只记得一阵混乱，然后是无边的黑暗，以及黑暗中自己略显急促的呼吸声。",
+    "author": {
+      "text": "@丘丘文游",
+      "url": "https://www.xiaohongshu.com/user/profile/65e49e5f000000000d025954?xsec_token=AB9_JOvHkIHn3cdaZ0LYRVT7oYVoouCvHcxuKxVMikRrg=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "1-2小时",
+    "answer": {
+      "text": "",
+      "url": ""
+    },
+    "coverImage": "/images/109.webp"
+  },
+  {
+    "id": "110",
+    "title": "黑室记录2",
+    "url": "https://www.35f066.cn/story2/",
+    "releaseDate": "2026-04-03 00:00:00",
+    "status": "是",
+    "description": "我是陈玥，我给你讲的是2018年的故事。高二那年的暑假，我被困在了一间屋子里。没有窗，没有灯，只有墙和一个个锁。我发现这整栋房子是按「计划」盖的，两个被关在不同房间的人、名单、手机里的短信。赎金、证据、归途、通道，每一个词都在说：这不是偶然，是一张早就铺好的网。这件事远没有结束，而哥哥话里的笃定，让我心里多了一道说不清的疑问。直到今天，也许答案终于呼之欲出了。",
+    "author": {
+      "text": "@丘丘文游",
+      "url": "https://www.xiaohongshu.com/user/profile/65e49e5f000000000d025954?xsec_token=AB9_JOvHkIHn3cdaZ0LYRVT7oYVoouCvHcxuKxVMikRrg=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": true,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "1-2小时",
+    "answer": {
+      "text": "",
+      "url": ""
+    },
+    "coverImage": "/images/110.webp"
+  },
+  {
+    "id": "111",
+    "title": "她的踪迹",
+    "url": "https://haruuu555.github.io/girlfriendgame/",
+    "releaseDate": "2026-03-08 00:00:00",
+    "status": "是",
+    "description": "你的女友失踪了，你的主线目标就是寻找她失踪的原因，找回她。",
+    "author": {
+      "text": "@ハル",
+      "url": "https://www.xiaohongshu.com/user/profile/62fb950300000000120015df?xsec_token=ABaq-YW-qm7fTPxKtR0Vx1I7HiEl48GAs2umJwfrXuayY%3D&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": false,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "1-2小时",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/69b03aac0000000005032d5e?xsec_token=ABiq4iU_JKtSwjKBlZlF6BLDESD1zi-dgLtxA18pfo1sI=&xsec_source=pc_user",
+      "url": "https://www.xiaohongshu.com/explore/69b03aac0000000005032d5e?xsec_token=ABiq4iU_JKtSwjKBlZlF6BLDESD1zi-dgLtxA18pfo1sI=&xsec_source=pc_user"
+    },
+    "coverImage": "/images/111.webp"
   }
 ]
