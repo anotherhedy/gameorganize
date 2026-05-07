@@ -47,21 +47,28 @@ async function syncGames() {
     console.log(`正在读取 JSON 数据，共 ${gamesJson.length} 条...`);
 
     // 格式化数据以匹配数据库结构
-    const formattedGames = gamesJson.map(game => ({
-      id: parseInt(game.id),
-      title: game.title,
-      url: game.url,
-      description: game.description,
-      image_url: game.coverImage || '',
-      category: [game.duration].filter(Boolean),
-      tags: [
-        game.platform.pc ? 'PC' : null,
-        game.platform.pe ? 'PE' : null,
-        game.tags.hasJumpScare ? '有跳杀' : null,
-        game.tags.hasSound ? '有声音' : null
-      ].filter(Boolean),
-      created_at: game.releaseDate || new Date().toISOString()
-    }));
+    const formattedGames = gamesJson.map(game => {
+      // 尝试解析 ID，如果不是数字则保持原样（取决于数据库列类型）
+      // 假设你的数据库 id 列是 integer，如果不是，请移除 parseInt
+      const numericId = parseInt(game.id);
+      const finalId = isNaN(numericId) ? game.id : numericId;
+
+      return {
+        id: finalId,
+        title: game.title,
+        url: game.url,
+        description: game.description,
+        image_url: game.coverImage || '',
+        category: [game.duration].filter(Boolean),
+        tags: [
+          game.platform?.pc ? 'PC' : null,
+          game.platform?.pe ? 'PE' : null,
+          game.tags?.hasJumpScare ? '有跳杀' : null,
+          game.tags?.hasSound ? '有声音' : null
+        ].filter(Boolean),
+        created_at: game.releaseDate || new Date().toISOString()
+      };
+    });
 
     console.log('正在同步到 Supabase...');
 
