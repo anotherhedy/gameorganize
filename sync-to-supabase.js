@@ -66,7 +66,12 @@ async function syncGames() {
           game.tags?.hasJumpScare ? '有跳杀' : null,
           game.tags?.hasSound ? '有声音' : null
         ].filter(Boolean),
-        created_at: game.releaseDate || new Date().toISOString()
+        created_at: game.releaseDate || new Date().toISOString(),
+        author_name: game.author?.text || '研究员',
+        author_url: game.author?.url || '',
+        answer_text: game.answer?.text || '',
+        answer_url: game.answer?.url || '',
+        status: game.status || '是'
       };
     });
 

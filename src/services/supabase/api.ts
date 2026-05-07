@@ -4,7 +4,7 @@ import { GameData } from '../../types';
 export async function fetchAllGames(): Promise<GameData[]> {
   const { data, error } = await supabase
     .from('games')
-    .select('id, title, url, created_at, description, tags, category, image_url')
+    .select('id, title, url, description, image_url, category, tags, created_at, author_name, author_url, answer_text, answer_url, status')
     .order('id', { ascending: true });
 
   if (error) {
@@ -17,10 +17,13 @@ export async function fetchAllGames(): Promise<GameData[]> {
     id: dbGame.id.toString(),
     title: dbGame.title,
     url: dbGame.url,
-    releaseDate: dbGame.created_at, // 或者你数据库里存的发布日期字段
-    status: '是', // 数据库里的默认为活跃
+    releaseDate: dbGame.created_at ? dbGame.created_at.split('T')[0] : '未知',
+    status: dbGame.status || '是',
     description: dbGame.description,
-    author: { text: '', url: '' }, // 后续 CMS 完善后可存储作者信息
+    author: { 
+      text: dbGame.author_name || '研究员', 
+      url: dbGame.author_url || '' 
+    },
     platform: {
       pc: dbGame.tags?.includes('PC') || false,
       pe: dbGame.tags?.includes('PE') || false
@@ -30,7 +33,10 @@ export async function fetchAllGames(): Promise<GameData[]> {
       hasSound: dbGame.tags?.includes('有声音') || false
     },
     duration: dbGame.category?.[0] || '',
-    answer: { text: '', url: '' },
+    answer: { 
+      text: dbGame.answer_text || '', 
+      url: dbGame.answer_url || '' 
+    },
     coverImage: dbGame.image_url
   }));
 }
