@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
-import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, Database } from 'lucide-react';
-import { fetchGameStats, incrementGameViews } from './services/supabase/api';
+import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, Database, CheckCircle2, Circle, Activity } from 'lucide-react';
+import { fetchGameStats, incrementGameViews, fetchAllGames } from './services/supabase/api';
 import { GameData } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
 import { FloatingEntry } from './components/intel/FloatingEntry';
@@ -21,12 +21,26 @@ type SortOption = 'releaseDate' | 'views';
 type DurationFilter = 'all' | '<1h' | '1h-3h' | '>3h';
 type TabOption = 'all' | 'popular' | 'new';
 
+import { AuthModal } from './components/auth/AuthModal';
+import { UserProfileModal } from './components/auth/UserProfileModal';
+import { AdminCMS } from './components/admin/AdminCMS';
+import { supabase } from './services/supabase/supabaseClient';
+import { LogIn, User as UserIcon, LogOut, Settings, CircleUserRound } from 'lucide-react';
+
 const App: React.FC = () => {
   const [games, setGames] = useState<GameData[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null); // 新增：存放数据库里的用户信息
+  const [solvedGameIds, setSolvedGameIds] = useState<Set<string>>(new Set());
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isAdminCMSOpen, setIsAdminCMSOpen] = useState(false);
+  const [gameToEdit, setGameToEdit] = useState<GameData | null>(null); // 新增：待编辑的游戏
   const [searchTerm, setSearchTerm] = useState('');
   const [gameStats, setGameStats] = useState<Record<string, number>>({});
   const [sortBy, setSortBy] = useState<SortOption>('releaseDate');
   const [durationFilter, setDurationFilter] = useState<DurationFilter>('all');
+  const [solvedFilter, setSolvedFilter] = useState<'all' | 'played' | 'unplayed'>('all'); // 新增进度筛选状态
   const [tagsFilter, setTagsFilter] = useState<{ sound: boolean | null, jumpscare: boolean | null }>({
     sound: null,
     jumpscare: null
@@ -41,9 +55,21 @@ const App: React.FC = () => {
   const resultsRef = useRef<HTMLDivElement>(null);
   const prevSearchTermRef = useRef('');
 
+  // 计算是否为管理员 (支持 metadata 和 profile 两种方式)
+  const isAdmin = useMemo(() => {
+    return user?.user_metadata?.role === 'admin' || profile?.role === 'admin';
+  }, [user, profile]);
+
   // Use useCallback to prevent unnecessary re-renders of GameCard components
   const handleGamePlay = React.useCallback((id: string) => {
-    incrementGameViews(id);
+    console.log('Incrementing views for:', id);
+    incrementGameViews(id).then(() => {
+      // 增加本地状态，以便立即看到效果
+      setGameStats(prev => ({
+        ...prev,
+        [id]: (prev[id] || 0) + 1
+      }));
+    });
   }, []);
 
   // Scroll logic for searching (Debounced to avoid lag while typing/deleting)
@@ -76,11 +102,10 @@ const App: React.FC = () => {
   useEffect(() => {
     const initApp = async () => {
       try {
-        // 1. First fetch critical game data to unblock FCP
-        const response = await fetch('/data/games.json');
-        const gamesData = await response.json();
+        // 1. First fetch critical game data from Supabase (formerly from JSON)
+        const gamesData = await fetchAllGames();
         setGames(gamesData);
-        setIsLoading(false); // Unblock rendering as soon as games are available
+        setIsLoading(false); 
 
         // 2. Then fetch non-critical stats in background
         fetchGameStats().then(stats => {
@@ -96,12 +121,73 @@ const App: React.FC = () => {
 
     initApp();
 
+    // Listen for auth state changes
+    const setupAuth = async () => {
+      // 1. 获取初始会话
+      const { data: { session }, error } = await supabase.auth.getSession();
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+
+      if (currentUser) {
+        // 同时拉取 Profile 信息
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', currentUser.id)
+          .single();
+        if (profileData) {
+          setProfile(profileData);
+          // 从 profile 恢复已侦破进度
+          if (profileData.solved_game_ids) {
+            setSolvedGameIds(new Set(profileData.solved_game_ids));
+          }
+        }
+      }
+
+      // 2. 监听后续状态变化
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        const updatedUser = session?.user ?? null;
+        console.log('认证状态变更事件:', _event);
+        setUser(updatedUser);
+        
+        if (updatedUser) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', updatedUser.id)
+            .single();
+          if (profileData) {
+            setProfile(profileData);
+            if (profileData.solved_game_ids) {
+              setSolvedGameIds(new Set(profileData.solved_game_ids));
+            }
+          }
+        } else {
+          setSolvedGameIds(new Set());
+          setProfile(null);
+        }
+
+        if (_event === 'SIGNED_IN' || _event === 'USER_UPDATED') {
+          setIsAuthModalOpen(false);
+          setIsProfileModalOpen(false); // 新增：用户信息更新后自动关闭个人档案弹窗
+        }
+      });
+
+      return subscription;
+    };
+
+    const authSubscriptionPromise = setupAuth();
+
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 300);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      authSubscriptionPromise.then(sub => sub.unsubscribe());
+    };
   }, []);
 
   // Scroll to top with passive listener support and optimization
@@ -187,6 +273,10 @@ const App: React.FC = () => {
     const traditionalTerm = s2t(term);
 
     let result = searchableGames.filter(game => {
+      // 0. Played/Unplayed Filter
+      if (solvedFilter === 'played' && !solvedGameIds.has(game.id)) return false;
+      if (solvedFilter === 'unplayed' && solvedGameIds.has(game.id)) return false;
+
       // 1. Text Search (Title/Author)
       const { titleS, titleT, authorS, authorT, titleOrig, authorOrig } = game._searchStrings;
       const textMatch = !term || 
@@ -224,7 +314,7 @@ const App: React.FC = () => {
         return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
       }
     });
-  }, [searchTerm, searchableGames, tagsFilter, durationFilter, sortBy, gameStats]);
+  }, [searchTerm, searchableGames, tagsFilter, durationFilter, sortBy, gameStats, solvedFilter, solvedGameIds]);
 
   if (isLoading) {
     return (
@@ -256,10 +346,57 @@ const App: React.FC = () => {
           <Loader2 className="w-12 h-12 animate-spin text-yellow-500" />
         </div>
       }>
-        <IntelligenceWall onBack={() => setShowIntelWall(false)} />
+        <IntelligenceWall 
+          onBack={() => setShowIntelWall(false)} 
+          currentUser={user}
+          userProfile={profile}
+        />
       </React.Suspense>
     );
   }
+
+  const handleGameAdded = () => {
+    fetchAllGames().then(data => setGames(data));
+    setGameToEdit(null);
+  };
+
+  const handleEditGame = (game: GameData) => {
+    setGameToEdit(game);
+    setIsAdminCMSOpen(true);
+  };
+
+  const handleToggleSolved = async (gameId: string, isSolving: boolean) => {
+    if (!user || !profile) return;
+
+    const currentSolved = Array.from(solvedGameIds);
+    const newSolvedIds = isSolving 
+      ? [...currentSolved, gameId]
+      : currentSolved.filter(id => id !== gameId);
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ solved_game_ids: newSolvedIds })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      // 同步本地状态
+      setSolvedGameIds(new Set(newSolvedIds));
+      setProfile({ ...profile, solved_game_ids: newSolvedIds });
+    } catch (error) {
+      console.error('Failed to sync progress:', error);
+      alert('同步进度失败，请重试');
+      throw error;
+    }
+  };
+
+  const handleProfileUpdate = (updatedProfile: any) => {
+    setProfile(updatedProfile);
+    if (updatedProfile.solved_game_ids) {
+      setSolvedGameIds(new Set(updatedProfile.solved_game_ids));
+    }
+  };
 
   return (
     <div className="min-h-screen bg-archive-dark selection:bg-purple-500/30 selection:text-white pb-20">
@@ -305,7 +442,33 @@ const App: React.FC = () => {
               <span className="font-bold text-gray-200 tracking-wider text-xs block sm:hidden">S.E.A. DB</span>
             </div>
 
-            <div className="sm:hidden">
+            <div className="sm:hidden flex items-center gap-2">
+              {user ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsProfileModalOpen(true)}
+                    className="p-1.5 bg-white/5 border border-white/10 rounded-full text-purple-400"
+                  >
+                    <CircleUserRound size={18} />
+                  </button>
+                  {isAdmin && (
+                    <button
+                      onClick={() => setIsAdminCMSOpen(true)}
+                      className="p-1.5 bg-purple-600/20 border border-purple-500/30 rounded-full text-purple-400"
+                    >
+                      <Settings size={18} />
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="p-1.5 bg-white/5 border border-white/10 rounded-full text-purple-400"
+                  title="登录"
+                >
+                  <LogIn size={18} />
+                </button>
+              )}
               <button
                 onClick={handleRandomPick}
                 disabled={isPicking}
@@ -328,24 +491,94 @@ const App: React.FC = () => {
              />
           </div>
 
-          <div className="hidden sm:block relative group">
-            {/* Guide Tooltip */}
-            <div className="absolute -bottom-10 right-0 whitespace-nowrap bg-gradient-to-r from-purple-600 to-blue-600 text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
-              不知道玩哪个？试试随机按钮
-              <div className="absolute -top-1 right-8 w-2 h-2 bg-purple-600 rotate-45" />
+          <div className="hidden sm:block flex items-center gap-3">
+            <div className="flex items-center gap-3">
+              {user ? (
+                <div className="flex items-center gap-3">
+                  <div 
+                    className="flex flex-col items-end cursor-pointer group/profile"
+                    onClick={() => setIsProfileModalOpen(true)}
+                  >
+                    <span className="text-xs font-bold text-white tracking-wider group-hover/profile:text-purple-400 transition-colors">
+                      {profile?.username || user.user_metadata?.username || '研究员'}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <CircleUserRound size={10} className="text-purple-500" />
+                      <span className="text-[10px] text-gray-500 uppercase tracking-tighter">
+                        个人档案
+                      </span>
+                    </div>
+                  </div>
+                  {user.user_metadata?.role === 'admin' || profile?.role === 'admin' ? (
+                    <button
+                      onClick={() => setIsAdminCMSOpen(true)}
+                      className="p-2 bg-purple-600/20 border border-purple-500/30 rounded-full text-purple-400 hover:text-white hover:bg-purple-600 transition-all shadow-[0_0_10px_rgba(168,85,247,0.2)]"
+                      title="进入管理中心"
+                    >
+                      <Settings size={18} />
+                    </button>
+                  ) : null}
+                  <button
+                    onClick={() => supabase.auth.signOut()}
+                    className="p-2 bg-white/5 border border-white/10 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+                    title="注销登录"
+                  >
+                    <LogOut size={18} />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="flex items-center gap-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white px-4 py-1.5 rounded-full text-sm font-bold transition-all"
+                >
+                  <LogIn size={18} className="text-purple-400" />
+                  <span>登录</span>
+                </button>
+              )}
+              
+              <div className="relative group">
+                {/* Guide Tooltip */}
+                <div className="absolute -bottom-10 right-0 whitespace-nowrap bg-gradient-to-r from-purple-600 to-blue-600 text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg z-50">
+                  不知道玩哪个？试试随机按钮
+                  <div className="absolute -top-1 right-8 w-2 h-2 bg-purple-600 rotate-45" />
+                </div>
+                
+                <button
+                  onClick={handleRandomPick}
+                  disabled={isPicking}
+                  className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-4 py-1.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-purple-500/20 active:scale-95 disabled:opacity-50"
+                >
+                  <Dices size={18} className={isPicking ? 'animate-spin' : ''} />
+                  <span>{isPicking ? '正在抽取...' : '随机抽取'}</span>
+                </button>
+              </div>
             </div>
-            
-            <button
-              onClick={handleRandomPick}
-              disabled={isPicking}
-              className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-4 py-1.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-purple-500/20 active:scale-95 disabled:opacity-50"
-            >
-              <Dices size={18} className={isPicking ? 'animate-spin' : ''} />
-              <span>{isPicking ? '正在抽取...' : '随机抽取'}</span>
-            </button>
           </div>
         </div>
       </nav>
+
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
+
+      <UserProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        user={user}
+        profile={profile}
+        onProfileUpdate={handleProfileUpdate}
+      />
+
+      <AdminCMS 
+        isOpen={isAdminCMSOpen} 
+        onClose={() => {
+          setIsAdminCMSOpen(false);
+          setGameToEdit(null);
+        }} 
+        onGameAdded={handleGameAdded}
+        gameToEdit={gameToEdit}
+      />
 
       {/* Hero Header */}
       <Header />
@@ -358,24 +591,26 @@ const App: React.FC = () => {
               {[
                 { id: 'all', label: '全部档案库', icon: <Database size={18} /> },
                 { id: 'popular', label: '热门排行', icon: <Flame size={18} /> },
-                { id: 'new', label: '最新收录', icon: <Sparkles size={18} /> },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as TabOption)}
-                  className={`flex items-center gap-2 pb-3 px-1 transition-all relative whitespace-nowrap ${
-                    activeTab === tab.id 
-                    ? 'text-purple-400 font-bold' 
-                    : 'text-gray-500 hover:text-gray-300'
-                  }`}
-                >
-                  {tab.icon}
-                  <span className="text-sm sm:text-base tracking-wide">{tab.label}</span>
-                  {activeTab === tab.id && (
-                    <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-purple-600 to-blue-600 rounded-t-full shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
-                  )}
-                </button>
-              ))}
+                 { id: 'new', label: '最新收录', icon: <Sparkles size={18} /> },
+               ].map((tab) => {
+                 return (
+                   <button
+                     key={tab.id}
+                     onClick={() => setActiveTab(tab.id as any)}
+                     className={`flex items-center gap-2 pb-3 px-1 transition-all relative whitespace-nowrap ${
+                       activeTab === tab.id 
+                       ? 'text-purple-400 font-bold' 
+                       : 'text-gray-500 hover:text-gray-300'
+                     }`}
+                   >
+                     {tab.icon}
+                     <span className="text-sm sm:text-base tracking-wide">{tab.label}</span>
+                     {activeTab === tab.id && (
+                       <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-purple-600 to-blue-600 rounded-t-full shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+                     )}
+                   </button>
+                 );
+               })}
             </div>
 
             {/* Total Count Badge (Only on desktop) */}
@@ -409,6 +644,11 @@ const App: React.FC = () => {
                       views={gameStats[game.id] || 0}
                       onPlay={handleGamePlay} 
                       priority={index < 2}
+                      isAdmin={isAdmin}
+                      onEdit={handleEditGame}
+                      onToggleSolved={handleToggleSolved}
+                      userId={user?.id}
+                      isSolved={solvedGameIds.has(game.id)}
                     />
                   ))}
                 </div>
@@ -431,6 +671,11 @@ const App: React.FC = () => {
                       views={gameStats[game.id] || 0}
                       onPlay={handleGamePlay} 
                       priority={index < 2}
+                      isAdmin={isAdmin}
+                      onEdit={handleEditGame}
+                      onToggleSolved={handleToggleSolved}
+                      userId={user?.id}
+                      isSolved={solvedGameIds.has(game.id)}
                     />
                   ))}
                 </div>
@@ -449,11 +694,40 @@ const App: React.FC = () => {
                       <div 
                         className={`hidden lg:flex items-center transition-all duration-500 ease-in-out origin-right overflow-hidden ${
                           isFilterOpen 
-                          ? 'max-w-[1000px] opacity-100 translate-x-0' 
+                          ? 'max-w-[1200px] opacity-100 translate-x-0' 
                           : 'max-w-0 opacity-0 translate-x-10 pointer-events-none'
                         }`}
                       >
                         <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm whitespace-nowrap">
+                          {/* 进度筛选 (仅登录可见) - Desktop */}
+                          {user && (
+                            <div className="flex items-center gap-2 border-r border-white/10 pr-4 mr-1">
+                              <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                                <Activity size={14} /> 进度:
+                              </span>
+                              <div className="flex bg-black/20 rounded-lg p-1">
+                                {[
+                                  { id: 'all', label: '全部', icon: Database },
+                                  { id: 'played', label: '已破案', icon: CheckCircle2 },
+                                  { id: 'unplayed', label: '未侦破', icon: Circle }
+                                ].map((opt) => (
+                                  <button
+                                    key={opt.id}
+                                    onClick={() => setSolvedFilter(opt.id as any)}
+                                    className={`px-3 py-1 rounded-md text-[11px] font-bold transition-all flex items-center gap-1.5 ${
+                                      solvedFilter === opt.id
+                                        ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20'
+                                        : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                                    }`}
+                                  >
+                                    <opt.icon size={12} />
+                                    {opt.label}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
                           <div className="flex items-center gap-3">
                             {/* Duration Filter */}
                             <div className="flex items-center gap-2">
@@ -564,6 +838,29 @@ const App: React.FC = () => {
                     }`}
                   >
                     <div className="flex flex-col gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                      {/* 进度筛选 (仅登录可见) */}
+                      {user && (
+                        <div className="grid grid-cols-3 gap-2 border-b border-white/5 pb-4">
+                          {[
+                            { id: 'all', label: '全部状态', icon: Database },
+                            { id: 'played', label: '已破案', icon: CheckCircle2 },
+                            { id: 'unplayed', label: '未侦破', icon: Circle }
+                          ].map((opt) => (
+                            <button
+                              key={opt.id}
+                              onClick={() => setSolvedFilter(opt.id as any)}
+                              className={`flex items-center justify-center gap-2 py-2 rounded-lg text-[10px] font-bold transition-all border ${
+                                solvedFilter === opt.id
+                                  ? 'bg-purple-500/20 border-purple-500 text-purple-300'
+                                  : 'bg-white/5 border-white/5 text-gray-500 hover:text-gray-300'
+                              }`}
+                            >
+                              <opt.icon size={12} />
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                       <div className="flex flex-wrap items-center gap-3">
                         <div className="flex items-center gap-2">
                           <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
@@ -666,6 +963,11 @@ const App: React.FC = () => {
                     views={gameStats[game.id] || 0}
                     onPlay={handleGamePlay}
                     priority={index < 4}
+                    isSolved={solvedGameIds.has(game.id)}
+                    userId={user?.id}
+                    isAdmin={isAdmin}
+                    onEdit={handleEditGame}
+                    onToggleSolved={handleToggleSolved}
                   />
                 </div>
               );
@@ -726,6 +1028,11 @@ const App: React.FC = () => {
                   handleGamePlay(id);
                   setRandomGame(null);
                 }} 
+                isAdmin={isAdmin}
+                onEdit={handleEditGame}
+                onToggleSolved={handleToggleSolved}
+                userId={user?.id}
+                isSolved={solvedGameIds.has(randomGame.id)}
               />
             </div>
 

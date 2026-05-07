@@ -34,4 +34,5 @@ export interface Feedback {
   intel_content: string;
   reply_content?: string;
   created_at: string;
+  user_id?: string; // 新增：发送者的用户 ID
 }

@@ -5,17 +5,33 @@ interface IntelModalProps {
   onClose: () => void;
   onSubmit: (data: { detective_name: string; intel_content: string }) => Promise<void>;
   isOpen: boolean;
+  currentUser?: any;
+  userProfile?: any;
+  initialData?: any; // 新增：初始编辑数据
 }
 
-export const IntelModal: React.FC<IntelModalProps> = ({ onClose, onSubmit, isOpen }) => {
+export const IntelModal: React.FC<IntelModalProps> = ({ onClose, onSubmit, isOpen, currentUser, userProfile, initialData }) => {
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showGuidelines, setShowGuidelines] = useState(false);
   const [dailyCount, setDailyCount] = useState(0);
 
+  // 当弹窗打开或用户信息/编辑数据变化时，填充内容
   useEffect(() => {
     if (isOpen) {
+        if (initialData) {
+            setName(initialData.detective_name);
+            setContent(initialData.intel_content);
+        } else {
+            if (userProfile?.username) {
+                setName(userProfile.username);
+            } else if (currentUser?.user_metadata?.username) {
+                setName(currentUser.user_metadata.username);
+            }
+            setContent('');
+        }
+        
         const today = new Date().toLocaleDateString();
         const storedDate = localStorage.getItem('intel_submission_date');
         const storedCount = parseInt(localStorage.getItem('intel_submission_count') || '0', 10);
@@ -71,7 +87,7 @@ export const IntelModal: React.FC<IntelModalProps> = ({ onClose, onSubmit, isOpe
         <div className="bg-gray-900 text-white p-3 sm:p-4 flex justify-between items-center border-b-4 border-yellow-500">
           <h2 className="text-lg sm:text-xl font-bold flex items-center gap-2">
             <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />
-            加密情报传输
+            {initialData ? '修改情报记录' : '加密情报传输'}
           </h2>
           <button onClick={onClose} className="hover:bg-white/20 p-1 rounded transition-colors">
             <X className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -89,10 +105,18 @@ export const IntelModal: React.FC<IntelModalProps> = ({ onClose, onSubmit, isOpe
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="flex-1 border border-gray-300 rounded px-3 py-2 bg-gray-50 text-black focus:ring-2 focus:ring-yellow-500 focus:border-transparent font-mono"
+                readOnly={!!currentUser}
+                className={`flex-1 border border-gray-300 rounded px-3 py-2 text-black focus:ring-2 focus:ring-yellow-500 focus:border-transparent font-mono ${
+                  currentUser ? 'bg-gray-100 cursor-not-allowed opacity-80' : 'bg-gray-50'
+                }`}
                 placeholder="匿名研究员"
               />
             </div>
+            {currentUser && (
+              <p className="text-[10px] text-gray-400 mt-1 italic">
+                * 已自动关联您的研究员档案
+              </p>
+            )}
           </div>
 
           <div>
@@ -165,11 +189,12 @@ export const IntelModal: React.FC<IntelModalProps> = ({ onClose, onSubmit, isOpe
                 </button>
              </div>
              <div className="flex-1 overflow-y-auto text-sm text-gray-700 space-y-3">
-                <p>1. 支持侦探们对于游戏或者游戏作者的推荐</p>
+                <p>1. 支持研究员们对于游戏或者游戏作者的推荐</p>
                 <p>2. 支持反馈该汇总网站的问题和功能优化建议</p>
                 <p>3. 具体游戏过程中的问题请反馈相关作者</p>
                 <p>4. 为避免发送通道拥堵，每位研究员每天最多发送3个情报，内容200字以内</p>
-                <p className="text-red-600 font-bold">5. 禁止发布无关内容！禁止攻击、诋毁每一个游戏作品！不当言论将被删除！</p>
+                <p>5. 已登录的研究员可以修改自己发送的情报，删除需要联系管理员</p>
+                <p className="text-red-600 font-bold">6. 禁止发布无关内容！禁止攻击、诋毁每一个游戏作品！不当言论将被删除！</p>
              </div>
              <button 
                onClick={() => setShowGuidelines(false)}

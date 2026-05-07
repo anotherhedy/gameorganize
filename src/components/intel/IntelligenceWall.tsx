@@ -3,20 +3,28 @@ import { supabase } from '../../services/supabase/supabaseClient';
 import { Feedback } from '../../types';
 import { IntelCard } from './IntelCard';
 import { IntelModal } from './IntelModal';
+import { IntelReplyModal } from './IntelReplyModal';
 import { Loader2, Plus, ArrowLeft, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
 
 const PAGE_SIZE = 6;
 
 interface IntelligenceWallProps {
   onBack: () => void;
+  currentUser?: any;
+  userProfile?: any;
 }
 
-export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack }) => {
+export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, currentUser, userProfile }) => {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [intelToEdit, setIntelToEdit] = useState<Feedback | null>(null);
+  const [intelToReply, setIntelToReply] = useState<Feedback | null>(null);
+  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
+
+  const isAdmin = userProfile?.role === 'admin';
 
   const fetchFeedbacks = useCallback(async (pageNumber: number) => {
     setLoading(true);
@@ -47,24 +55,85 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack }) =>
 
   const handlePostIntel = async (data: { detective_name: string; intel_content: string }) => {
     try {
-      const { error } = await supabase.from('feedback').insert([
-        {
-          detective_name: data.detective_name,
-          intel_content: data.intel_content,
-        },
-      ]);
+      if (intelToEdit) {
+        // 更新现有情报
+        const { error } = await supabase
+          .from('feedback')
+          .update({
+            detective_name: data.detective_name,
+            intel_content: data.intel_content,
+          })
+          .eq('id', intelToEdit.id);
+        if (error) throw error;
+        alert('情报已更新');
+      } else {
+        // 发送新情报
+        const { error } = await supabase.from('feedback').insert([
+          {
+            detective_name: data.detective_name,
+            intel_content: data.intel_content,
+            user_id: currentUser?.id || null,
+          },
+        ]);
+        if (error) throw error;
+      }
 
-      if (error) throw error;
-
+      setIntelToEdit(null);
       // Refresh current page or go to page 1
       if (page === 1) {
         await fetchFeedbacks(1);
       } else {
-        setPage(1); // Go to first page to see new post
+        setPage(1);
       }
     } catch (error) {
       console.error('Error posting feedback:', error);
-      alert('发送失败，请稍后重试');
+      alert('操作失败，请检查权限或网络');
+    }
+  };
+
+  const handleDeleteIntel = async (id: number) => {
+    if (!window.confirm('确定要永久销毁这份情报吗？')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('feedback')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      alert('情报已销毁');
+      fetchFeedbacks(page);
+    } catch (error) {
+      console.error('Error deleting feedback:', error);
+      alert('删除失败，仅限特殊研究员操作');
+    }
+  };
+
+  const handleEditClick = (feedback: Feedback) => {
+    setIntelToEdit(feedback);
+    setIsModalOpen(true);
+  };
+
+  const handleReplyClick = (feedback: Feedback) => {
+    setIntelToReply(feedback);
+    setIsReplyModalOpen(true);
+  };
+
+  const handlePostReply = async (id: number, content: string) => {
+    try {
+      const { error } = await supabase
+        .from('feedback')
+        .update({ reply_content: content })
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      alert('回应已发布');
+      fetchFeedbacks(page);
+    } catch (error) {
+      console.error('Error replying to feedback:', error);
+      alert('发布失败，请检查权限');
     }
   };
 
@@ -123,7 +192,15 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack }) =>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 p-4">
                 {feedbacks.map((feedback, index) => (
                   <div key={feedback.id} className="transform hover:z-20 transition-all duration-300">
-                     <IntelCard feedback={feedback} index={index} />
+                     <IntelCard 
+                        feedback={feedback} 
+                        index={index} 
+                        currentUserId={currentUser?.id}
+                        isAdmin={isAdmin}
+                        onDelete={handleDeleteIntel}
+                        onEdit={handleEditClick}
+                        onReply={handleReplyClick}
+                     />
                   </div>
                 ))}
               </div>
@@ -173,8 +250,25 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack }) =>
       {/* Submission Modal */}
       <IntelModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setIntelToEdit(null);
+        }}
         onSubmit={handlePostIntel}
+        currentUser={currentUser}
+        userProfile={userProfile}
+        initialData={intelToEdit}
+      />
+
+      {/* Reply Modal */}
+      <IntelReplyModal
+        isOpen={isReplyModalOpen}
+        onClose={() => {
+          setIsReplyModalOpen(false);
+          setIntelToReply(null);
+        }}
+        onSubmit={handlePostReply}
+        initialData={intelToReply}
       />
     </div>
   );
