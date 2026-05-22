@@ -2789,7 +2789,7 @@
     "status": "是",
     "description": "今天是2008年7月10日，你在深夜浏览流沙论坛时发现了一个有趣的帖子，帖主向大家公开了一个邮箱号，是她和她的网络笔友在线上聊天时共同使用的，但诡异的是她的笔友好像失踪了，一切都只能从这个学校的官网查起。。。。",
     "author": {
-      "text": "@QZWLY\n\n@穿马丁靴的冒失鬼",
+      "text": "@QZWLY",
       "url": "https://www.xiaohongshu.com/user/profile/5e4b259c0000000001005c06?xsec_token=ABU66LdElCLXyBs9VT-jtP2WsilLvXDxLIxP6FnoZd84o=&xsec_source=pc_note"
     },
     "platform": {
@@ -2901,7 +2901,7 @@
       "pc": true
     },
     "tags": {
-      "hasJumpScare": true,
+      "hasJumpScare": false,
       "hasSound": false
     },
     "duration": "0.5-1小时",
@@ -2988,5 +2988,135 @@
       "url": "https://www.xiaohongshu.com/explore/69ee8a9c0000000038037c14?xsec_token=ABdJmgI4AeETsjKEp9LxoK9ErFGgWSGexRL1uHa9AsmyM=&xsec_source=pc_user"
     },
     "coverImage": "/images/115.webp"
+  },
+  {
+    "id": "116",
+    "title": "堰青回声",
+    "url": "https://cindyheidi.github.io/yanqing-huisheng/",
+    "releaseDate": "2026-05-06 00:00:00",
+    "status": "是",
+    "description": "你是堰青市这座安静的、温馨的小城中一名普通的高中生，过着两点一线、按部就班的安稳生活。直到一天，你收到一封没有主题的匿名邮件，关键信息似乎被刻意隐藏起来：就算堰青一中集体失声，我也要开口说话。你能听见，全世界就能听见。",
+    "author": {
+      "text": "@山的那边是海",
+      "url": "https://www.xiaohongshu.com/user/profile/5f2a381f0000000001008265?xsec_token=ABkcpmA2fDjcDbOv5QmeYbQDqgigLLu37HH2YWg5YohcI=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": false,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "1~2小时",
+    "answer": {
+      "text": "https://www.bilibili.com/video/BV1JW5J6bEh9/?vd_source=e6422919186dc80cb856640be8ba3356",
+      "url": "https://www.bilibili.com/video/BV1JW5J6bEh9/?vd_source=e6422919186dc80cb856640be8ba3356"
+    },
+    "coverImage": "/images/116.webp"
+  },
+  {
+    "id": "117",
+    "title": "校舍幽影",
+    "url": "https://www.prismirage.tech/?d=xsyy",
+    "releaseDate": "2026-04-25 00:00:00",
+    "status": "是",
+    "description": "你需要通过对话的形式来帮助一名女高中生逃离危险。",
+    "author": {
+      "text": "@無名遊戲",
+      "url": "https://www.xiaohongshu.com/user/profile/5a693a214eacab2a4490fe1f?xsec_token=ABK7WcETV26TNVK-j9kiEW8bSiwmDSLr4NpWXK-r79L2o=&xsec_source=pc_note"
+    },
+    "platform": {
+      "pe": false,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": true
+    },
+    "duration": "10min",
+    "answer": {
+      "text": "/",
+      "url": ""
+    },
+    "coverImage": "/images/117.webp"
+  },
+  {
+    "id": "118",
+    "title": "审讯室",
+    "url": "https://sxs.slackoff.icu/",
+    "releaseDate": "2026-05-09 00:00:00",
+    "status": "是",
+    "description": "2025年11月14日\n科讯科技大厦 9层，A区办公区\n死者: 林悦，女，29岁\n身份: 科讯科技 项目部高级项目经理\n死者从9层A区窗户坠落，当场死亡。办公室内灯亮着，桌上有一台开着的笔记本电脑和一张纸条。公司走廊存在监控系统。警方初步判定为意外失足，但死者家属坚持认为不可能。死者有恐高症——家属说\"她不会主动在窗边久留\"。\n你的任务：在结案前完成对三名相关人员的问询，还原真相。",
+    "author": {
+      "text": "@烤榴莲Bbqdurian",
+      "url": "https://www.xiaohongshu.com/user/profile/65412ba30000000004009c28?channelType=web_engagement_notification_page&channelTabId=mentions&xsec_token=ABZZkRWMDtsEM89T4rs86LO7PB4iUcgCc3l5jpO5cWxyU%3D&xsec_source=pc_notice"
+    },
+    "platform": {
+      "pe": false,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "1小时",
+    "answer": {
+      "text": "/",
+      "url": ""
+    },
+    "coverImage": "/images/118.webp"
+  },
+  {
+    "id": "119",
+    "title": "婆罗洲红珍珠主线",
+    "url": "https://bushmonkey.itch.io/the-red-pearls-of-borneo-chinese-fan-translation",
+    "releaseDate": "2026-04-18 00:00:00",
+    "status": "是",
+    "description": "【需🎇】你扮演通灵调查员，在非线性时间轴上穿梭，探索1941年的婆罗洲。跨越时空，挖掘动机，揭开二战日军入侵前夜，古德威尔烟草种植园中的真相。",
+    "author": {
+      "text": "/",
+      "url": ""
+    },
+    "platform": {
+      "pe": false,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": true
+    },
+    "duration": "5~6小时",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/69d70eeb000000001a02dad3?xsec_token=AB9snLWgOtdis4OFzHH8ij0_DaUZVs1fWZkJlo2sjq9vg=&xsec_source=pc_collect",
+      "url": "https://www.xiaohongshu.com/explore/69d70eeb000000001a02dad3?xsec_token=AB9snLWgOtdis4OFzHH8ij0_DaUZVs1fWZkJlo2sjq9vg=&xsec_source=pc_collect"
+    },
+    "coverImage": "/images/119.webp"
+  },
+  {
+    "id": "120",
+    "title": "Type Help（汉化版）",
+    "url": "https://www.qidiantu.com/type-help.html",
+    "releaseDate": "2025-01-25 00:00:00",
+    "status": "是",
+    "description": "你需要调查一台旧电脑上的文件，这台电脑曾经属于一位神秘的特工。这些文件详细记录了嘉利别墅（Galley House）的恐怖离奇故事，这曾被认为是一桩无法侦破的悬案。嘉利别墅究竟发生了什么？那位特工又到底发现了什么，以至于招来杀身之祸？当你一步步拼凑出这幅巨大的拼图时，你将深入一层又一层更深的谜团核心。\n请记住……嘉利别墅里没有幽灵！",
+    "author": {
+      "text": "/",
+      "url": ""
+    },
+    "platform": {
+      "pe": false,
+      "pc": true
+    },
+    "tags": {
+      "hasJumpScare": false,
+      "hasSound": false
+    },
+    "duration": "7~8小时",
+    "answer": {
+      "text": "https://www.xiaohongshu.com/explore/68a85874000000001d003083?xsec_token=ABgk9_PUaOmDfvUBJCeIzMPsqN_Hn4KDCvVw_nyRZwP04=&xsec_source=pc_search&source=web_search_result_notes",
+      "url": "https://www.xiaohongshu.com/explore/68a85874000000001d003083?xsec_token=ABgk9_PUaOmDfvUBJCeIzMPsqN_Hn4KDCvVw_nyRZwP04=&xsec_source=pc_search&source=web_search_result_notes"
+    },
+    "coverImage": "/images/120.webp"
   }
 ]

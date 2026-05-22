@@ -226,7 +226,7 @@ const App: React.FC = () => {
         // If dates are the same, sort by ID in descending order (assuming larger ID is newer)
         return parseInt(b.id) - parseInt(a.id);
       })
-      .slice(0, 4);
+      .slice(0, 6);
   }, [games]);
 
   // Performance optimized filter logic
@@ -636,14 +636,14 @@ const App: React.FC = () => {
                   <Flame className="text-orange-500" size={20} />
                   <h2 className="text-xl sm:text-2xl font-bold text-white tracking-wide">本周最热</h2>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {popularGames.map((game, index) => (
                     <GameCard 
                       key={game.id} 
                       game={game} 
                       views={gameStats[game.id] || 0}
                       onPlay={handleGamePlay} 
-                      priority={index < 2}
+                      priority={index < 3}
                       isAdmin={isAdmin}
                       onEdit={handleEditGame}
                       onToggleSolved={handleToggleSolved}
@@ -662,7 +662,7 @@ const App: React.FC = () => {
                   <Sparkles className="text-yellow-400" size={20} />
                   <h2 className="text-xl sm:text-2xl font-bold text-white tracking-wide">近期新增</h2>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {newGames.map((game, index) => (
                     <GameCard 
                       key={game.id} 
