@@ -17,6 +17,8 @@ interface GameCardProps {
   isAdmin?: boolean;  // 新增：是否是管理员
 }
 
+const failedImageSrc = new Set<string>();
+
 export const GameCard: React.FC<GameCardProps> = React.memo(({ 
   game, 
   onPlay, 
@@ -32,6 +34,7 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [isSolved, setIsSolved] = useState(initialSolved);
   const [isUpdating, setIsUpdating] = useState(false);
+  const imageFailedRef = React.useRef(false);
 
   // 同步外部状态（当 App.tsx 加载完数据库数据后）
   React.useEffect(() => {
@@ -62,6 +65,7 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({
                 ? game.coverImage
                 : `/data/${game.coverImage}`)
         : undefined;
+    const hasImageFailed = imgSrc ? failedImageSrc.has(imgSrc) : false;
   
   // Format platform text
   const platforms = [];
@@ -114,7 +118,7 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({
 
             {/* Background Image with Gradient Overlay */}
             <div className="absolute inset-0 z-0 bg-[#1a1a24]">
-                {imgSrc ? (
+                {imgSrc && !hasImageFailed ? (
                     <img
                         src={imgSrc}
                         alt={game.title}
@@ -126,6 +130,10 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({
                         className={`w-full h-full object-cover opacity-50 sm:opacity-60 transition-all duration-700 ease-out group-hover:scale-105 ${isLoaded ? 'blur-0' : 'blur-lg scale-110'}`}
                         onLoad={() => setIsLoaded(true)}
                         onError={(e) => {
+                            if (imageFailedRef.current) return;
+                            imageFailedRef.current = true;
+                            const src = (e.target as HTMLImageElement).src;
+                            failedImageSrc.add(src);
                             (e.target as HTMLImageElement).src = `https://placehold.co/600x400/1e1e2e/FFF?text=${encodeURIComponent(game.title)}`;
                             setIsLoaded(true);
                         }}
