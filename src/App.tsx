@@ -214,7 +214,7 @@ const App: React.FC = () => {
         const viewsB = gameStats[b.id] || 0;
         return viewsB - viewsA;
       })
-      .slice(0, 4);
+      .slice(0, 6);
   }, [gameStats, games]);
 
   // New games: sort by releaseDate desc, then id desc, take top 4
