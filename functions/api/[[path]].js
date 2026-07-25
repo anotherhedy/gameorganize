@@ -27,6 +27,34 @@ export async function onRequest(context) {
     });
   }
 
+  // 🔍 调试端点：测试 CF → Supabase 连通性
+  if (pathname === '/ping') {
+    const start = Date.now();
+    try {
+      const resp = await fetch(`${SUPABASE_URL}/rest/v1/games?select=id&limit=1`, {
+        headers: { apikey: request.headers.get('apikey') || '' },
+      });
+      return new Response(JSON.stringify({
+        ok: resp.ok,
+        status: resp.status,
+        latency_ms: Date.now() - start,
+        data: await resp.json().catch(() => null),
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    } catch (err) {
+      return new Response(JSON.stringify({
+        ok: false,
+        latency_ms: Date.now() - start,
+        error: err.message,
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+  }
+
   // 原样转发 headers，supabase-js 已带 anon key
   const headers = new Headers(request.headers);
   headers.delete('host');
