@@ -113,15 +113,15 @@ function withTimeout<T>(thenable: PromiseLike<T>, ms: number, label: string): Pr
   ]);
 }
 
-/** 检查游戏名称或链接是否已存在 */
-export async function checkDuplicateGame(title: string, url: string): Promise<{ isDuplicate: boolean; existingTitle?: string }> {
+/** 检查游戏名称是否已存在（链接可重复——同一个作者可能用同个网站发布多个游戏） */
+export async function checkDuplicateGame(title: string): Promise<{ isDuplicate: boolean; existingTitle?: string }> {
   try {
-    // 一次查询同时检查标题和链接，6 秒超时（国内网络可能很慢）
+    // 按标题查重，6 秒超时（国内网络可能很慢）
     const { data, error } = await withTimeout(
       supabase
         .from('games')
         .select('id, title')
-        .or(`title.eq.${JSON.stringify(title)},url.eq.${JSON.stringify(url)}`)
+        .eq('title', title)
         .limit(1),
       6000,
       'checkDuplicateGame'
@@ -144,51 +144,72 @@ export async function checkDuplicateGame(title: string, url: string): Promise<{ 
 }
 
 export async function submitGameForReview(payload: GameSubmitPayload & { submitted_by: string }) {
-  // 获取安全的自增 ID（兼容手动录入的整数 ID），8 秒超时
-  const { data: maxRow } = await withTimeout(
-    supabase
-      .from('games')
-      .select('id')
-      .order('id', { ascending: false })
-      .limit(1),
-    8000,
-    'submitGame-getMaxId'
-  );
+  // 并发安全：最多重试 3 次，避免两人同时提交抢到同一个 ID
+  const MAX_RETRIES = 3;
 
-  let nextId = 1;
-  if (maxRow && maxRow.length > 0) {
-    const parsed = parseInt(String(maxRow[0].id), 10);
-    if (!isNaN(parsed)) nextId = parsed + 1;
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    // 每次重试都重新取 max id（以防上一次冲突后 id 已被占用）
+    const { data: maxRow } = await withTimeout(
+      supabase
+        .from('games')
+        .select('id')
+        .order('id', { ascending: false })
+        .limit(1),
+      8000,
+      'submitGame-getMaxId'
+    );
+
+    let nextId = 1;
+    if (maxRow && maxRow.length > 0) {
+      const parsed = parseInt(String(maxRow[0].id), 10);
+      if (!isNaN(parsed)) nextId = parsed + 1;
+    }
+
+    if (attempt > 0) {
+      console.log(`[提交] 重试第${attempt}次, nextId=${nextId}`);
+    }
+
+    // 插入，10 秒超时
+    const { error } = await withTimeout(
+      supabase
+        .from('games')
+        .insert({
+        id: nextId,
+        title: payload.title,
+        url: payload.url,
+        image_url: payload.image_url,
+        description: payload.description,
+        category: [payload.duration].filter(Boolean),
+        author_name: payload.author_name,
+        author_url: payload.author_url,
+        answer_url: payload.answer_url || null,
+        tags: [
+          payload.pc ? 'PC' : null,
+          payload.pe ? 'PE' : null,
+          payload.jumpscare ? '有跳杀' : null,
+          payload.sound ? '有声音' : null
+        ].filter(Boolean),
+        status: '审核中',
+        submitted_by: payload.submitted_by
+      }),
+      10000,
+      'submitGame-insert'
+    );
+
+    // 插入成功
+    if (!error) return;
+
+    // 唯一键冲突（23505）或主键冲突 → 重试
+    if ((error as any)?.code === '23505') {
+      console.warn(`[提交] ID ${nextId} 已被占用，重试...`);
+      continue;
+    }
+
+    // 其他错误直接抛
+    throw error;
   }
 
-  // 插入，10 秒超时
-  const { error } = await withTimeout(
-    supabase
-      .from('games')
-      .insert({
-      id: nextId,
-      title: payload.title,
-      url: payload.url,
-      image_url: payload.image_url,
-      description: payload.description,
-      category: [payload.duration].filter(Boolean),
-      author_name: payload.author_name,
-      author_url: payload.author_url,
-      answer_url: payload.answer_url || null,
-      tags: [
-        payload.pc ? 'PC' : null,
-        payload.pe ? 'PE' : null,
-        payload.jumpscare ? '有跳杀' : null,
-        payload.sound ? '有声音' : null
-      ].filter(Boolean),
-      status: '审核中',
-      submitted_by: payload.submitted_by
-    }),
-    10000,
-    'submitGame-insert'
-  );
-
-  if (error) throw error;
+  throw new Error('提交失败：ID 分配冲突，请重试');
 }
 
 export async function fetchPendingGames(): Promise<GameData[]> {

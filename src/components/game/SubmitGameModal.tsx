@@ -122,9 +122,9 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
     setError(null);
 
     try {
-      // 1. 先检查是否与已有游戏重复
+      // 1. 先按标题查重（链接可重复——同作者可能用同网站发多个游戏）
       console.log('[提交] 步骤1: 检查重复...');
-      const { isDuplicate, existingTitle } = await checkDuplicateGame(title.trim(), url.trim());
+      const { isDuplicate, existingTitle } = await checkDuplicateGame(title.trim());
       if (isDuplicate) {
         setError(`已收录该游戏：${existingTitle || ''}`);
         setLoading(false);
