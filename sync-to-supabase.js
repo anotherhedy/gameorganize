@@ -71,7 +71,8 @@ async function syncGames() {
         author_url: game.author?.url || '',
         answer_text: game.answer?.text || '',
         answer_url: game.answer?.url || '',
-        status: game.status || '是'
+        status: game.status || '是',
+        submitted_by: game.submitted_by || null
       };
     });
 

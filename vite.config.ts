@@ -9,6 +9,14 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
+        proxy: {
+          '/api': {
+            target: 'https://dbgekqlyliksvipakmpg.supabase.co',
+            changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/api/, ''),
+            // 不覆盖 headers — supabase-js 自己会带正确的 anon key
+          },
+        },
       },
       plugins: [react(), tailwindcss()],
       define: {

@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
 import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, Database, CheckCircle2, Circle, Activity } from 'lucide-react';
-import { fetchGameStats, incrementGameViews, fetchAllGames } from './services/supabase/api';
+import { fetchGameStats, incrementGameViews, fetchAllGames, fetchPendingCount } from './services/supabase/api';
 import { GameData } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
 import { FloatingEntry } from './components/intel/FloatingEntry';
@@ -22,8 +22,9 @@ type DurationFilter = 'all' | '<1h' | '1h-3h' | '>3h';
 type TabOption = 'all' | 'popular' | 'new';
 
 import { AuthModal } from './components/auth/AuthModal';
-import { UserProfileModal } from './components/auth/UserProfileModal';
+import { UserDashboard } from './components/auth/UserDashboard';
 import { AdminCMS } from './components/admin/AdminCMS';
+import { SubmitGameModal } from './components/game/SubmitGameModal';
 import { supabase } from './services/supabase/supabaseClient';
 import { LogIn, User as UserIcon, LogOut, Settings, CircleUserRound } from 'lucide-react';
 
@@ -33,8 +34,10 @@ const App: React.FC = () => {
   const [profile, setProfile] = useState<any>(null); // 新增：存放数据库里的用户信息
   const [solvedGameIds, setSolvedGameIds] = useState<Set<string>>(new Set());
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isAdminCMSOpen, setIsAdminCMSOpen] = useState(false);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
   const [gameToEdit, setGameToEdit] = useState<GameData | null>(null); // 新增：待编辑的游戏
   const [searchTerm, setSearchTerm] = useState('');
   const [gameStats, setGameStats] = useState<Record<string, number>>({});
@@ -44,6 +47,10 @@ const App: React.FC = () => {
   const [tagsFilter, setTagsFilter] = useState<{ sound: boolean | null, jumpscare: boolean | null }>({
     sound: null,
     jumpscare: null
+  });
+  const [platformFilter, setPlatformFilter] = useState<{ pc: boolean | null, pe: boolean | null }>({
+    pc: null,
+    pe: null
   });
   const [randomGame, setRandomGame] = useState<GameData | null>(null);
   const [isPicking, setIsPicking] = useState(false);
@@ -113,6 +120,11 @@ const App: React.FC = () => {
         }).catch(err => {
           console.error('Failed to fetch game stats:', err);
         });
+
+        // 3. Fetch pending count for admin badge
+        fetchPendingCount().then(count => {
+          setPendingCount(count);
+        }).catch(() => {});
       } catch (error) {
         console.error('Failed to initialize app:', error);
         setIsLoading(false);
@@ -169,7 +181,7 @@ const App: React.FC = () => {
 
         if (_event === 'SIGNED_IN' || _event === 'USER_UPDATED') {
           setIsAuthModalOpen(false);
-          setIsProfileModalOpen(false); // 新增：用户信息更新后自动关闭个人档案弹窗
+          setIsDashboardOpen(false); // 新增：用户信息更新后自动关闭用户中心
         }
       });
 
@@ -289,6 +301,10 @@ const App: React.FC = () => {
       if (tagsFilter.sound !== null && game.tags?.hasSound !== tagsFilter.sound) return false;
       if (tagsFilter.jumpscare !== null && game.tags?.hasJumpScare !== tagsFilter.jumpscare) return false;
 
+      // 2.5 Platform Filters
+      if (platformFilter.pc !== null && game.platform?.pc !== platformFilter.pc) return false;
+      if (platformFilter.pe !== null && game.platform?.pe !== platformFilter.pe) return false;
+
       // 3. Duration Filter
       if (durationFilter !== 'all') {
         const mins = parseDurationMinutes(game.duration);
@@ -314,7 +330,7 @@ const App: React.FC = () => {
         return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
       }
     });
-  }, [searchTerm, searchableGames, tagsFilter, durationFilter, sortBy, gameStats, solvedFilter, solvedGameIds]);
+  }, [searchTerm, searchableGames, tagsFilter, platformFilter, durationFilter, sortBy, gameStats, solvedFilter, solvedGameIds]);
 
   if (isLoading) {
     return (
@@ -357,6 +373,7 @@ const App: React.FC = () => {
 
   const handleGameAdded = () => {
     fetchAllGames().then(data => setGames(data));
+    fetchPendingCount().then(count => setPendingCount(count)).catch(() => {});
     setGameToEdit(null);
   };
 
@@ -444,22 +461,12 @@ const App: React.FC = () => {
 
             <div className="sm:hidden flex items-center gap-2">
               {user ? (
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setIsProfileModalOpen(true)}
-                    className="p-1.5 bg-white/5 border border-white/10 rounded-full text-purple-400"
-                  >
-                    <CircleUserRound size={18} />
-                  </button>
-                  {isAdmin && (
-                    <button
-                      onClick={() => setIsAdminCMSOpen(true)}
-                      className="p-1.5 bg-purple-600/20 border border-purple-500/30 rounded-full text-purple-400"
-                    >
-                      <Settings size={18} />
-                    </button>
-                  )}
-                </div>
+                <button
+                  onClick={() => setIsDashboardOpen(true)}
+                  className="p-1.5 bg-white/5 border border-white/10 rounded-full text-purple-400"
+                >
+                  <CircleUserRound size={18} />
+                </button>
               ) : (
                 <button
                   onClick={() => setIsAuthModalOpen(true)}
@@ -495,9 +502,9 @@ const App: React.FC = () => {
             <div className="flex items-center gap-3">
               {user ? (
                 <div className="flex items-center gap-3">
-                  <div 
+                  <div
                     className="flex flex-col items-end cursor-pointer group/profile"
-                    onClick={() => setIsProfileModalOpen(true)}
+                    onClick={() => setIsDashboardOpen(true)}
                   >
                     <span className="text-xs font-bold text-white tracking-wider group-hover/profile:text-purple-400 transition-colors">
                       {profile?.username || user.user_metadata?.username || '研究员'}
@@ -505,19 +512,10 @@ const App: React.FC = () => {
                     <div className="flex items-center gap-1">
                       <CircleUserRound size={10} className="text-purple-500" />
                       <span className="text-[10px] text-gray-500 uppercase tracking-tighter">
-                        个人档案
+                        用户中心
                       </span>
                     </div>
                   </div>
-                  {user.user_metadata?.role === 'admin' || profile?.role === 'admin' ? (
-                    <button
-                      onClick={() => setIsAdminCMSOpen(true)}
-                      className="p-2 bg-purple-600/20 border border-purple-500/30 rounded-full text-purple-400 hover:text-white hover:bg-purple-600 transition-all shadow-[0_0_10px_rgba(168,85,247,0.2)]"
-                      title="进入管理中心"
-                    >
-                      <Settings size={18} />
-                    </button>
-                  ) : null}
                   <button
                     onClick={() => supabase.auth.signOut()}
                     className="p-2 bg-white/5 border border-white/10 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all"
@@ -562,15 +560,28 @@ const App: React.FC = () => {
         onClose={() => setIsAuthModalOpen(false)} 
       />
 
-      <UserProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
+      <UserDashboard
+        isOpen={isDashboardOpen}
+        onClose={() => setIsDashboardOpen(false)}
         user={user}
         profile={profile}
         onProfileUpdate={handleProfileUpdate}
+        solvedGameIds={solvedGameIds}
+        games={games}
+        isAdmin={isAdmin}
+        pendingCount={pendingCount}
+        onOpenSubmit={() => setIsSubmitModalOpen(true)}
+        onOpenCMS={() => setIsAdminCMSOpen(true)}
       />
 
-      <AdminCMS 
+      <SubmitGameModal
+        isOpen={isSubmitModalOpen}
+        onClose={() => setIsSubmitModalOpen(false)}
+        userId={user?.id}
+        onSubmitted={handleGameAdded}
+      />
+
+      <AdminCMS
         isOpen={isAdminCMSOpen} 
         onClose={() => {
           setIsAdminCMSOpen(false);
@@ -649,6 +660,7 @@ const App: React.FC = () => {
                       onToggleSolved={handleToggleSolved}
                       userId={user?.id}
                       isSolved={solvedGameIds.has(game.id)}
+                      isOwner={game.submitted_by === user?.id}
                     />
                   ))}
                 </div>
@@ -676,6 +688,7 @@ const App: React.FC = () => {
                       onToggleSolved={handleToggleSolved}
                       userId={user?.id}
                       isSolved={solvedGameIds.has(game.id)}
+                      isOwner={game.submitted_by === user?.id}
                     />
                   ))}
                 </div>
@@ -691,11 +704,11 @@ const App: React.FC = () => {
                     
                     <div className="flex items-center gap-3">
                       {/* Expandable Filter & Sort Bar - Desktop */}
-                      <div 
-                        className={`hidden lg:flex items-center transition-all duration-500 ease-in-out origin-right overflow-hidden ${
-                          isFilterOpen 
-                          ? 'max-w-[1200px] opacity-100 translate-x-0' 
-                          : 'max-w-0 opacity-0 translate-x-10 pointer-events-none'
+                      <div
+                        className={`hidden lg:block transition-all duration-400 ease-in-out overflow-hidden ${
+                          isFilterOpen
+                          ? 'max-h-32 opacity-100'
+                          : 'max-h-0 opacity-0 pointer-events-none'
                         }`}
                       >
                         <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm whitespace-nowrap">
@@ -728,86 +741,117 @@ const App: React.FC = () => {
                             </div>
                           )}
 
-                          <div className="flex items-center gap-3">
-                            {/* Duration Filter */}
-                            <div className="flex items-center gap-2">
-                              <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
-                                <Clock size={14} /> 时长:
-                              </span>
-                              <div className="flex bg-black/20 rounded-lg p-1">
-                                {[
-                                  { label: '全部', value: 'all' },
-                                  { label: '<1h', value: '<1h' },
-                                  { label: '1-3h', value: '1h-3h' },
-                                  { label: '>3h', value: '>3h' }
-                                ].map((item) => (
+                          <div className="flex flex-col gap-2">
+                            {/* 第一行：时长 + 排序 */}
+                            <div className="flex items-center gap-3 flex-wrap">
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                                  <Clock size={14} /> 时长:
+                                </span>
+                                <div className="flex bg-black/20 rounded-lg p-1">
+                                  {[
+                                    { label: '全部', value: 'all' },
+                                    { label: '<1h', value: '<1h' },
+                                    { label: '1-3h', value: '1h-3h' },
+                                    { label: '>3h', value: '>3h' }
+                                  ].map((item) => (
+                                    <button
+                                      key={item.value}
+                                      onClick={() => setDurationFilter(item.value as DurationFilter)}
+                                      className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all ${
+                                        durationFilter === item.value
+                                        ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20'
+                                        : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                                      }`}
+                                    >
+                                      {item.label}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+
+                              <div className="h-4 w-px bg-white/10" />
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                                  <ArrowUpDown size={14} /> 排序:
+                                </span>
+                                <div className="flex bg-black/20 rounded-lg p-1">
+                                  {[
+                                    { label: '最新发布', value: 'releaseDate' },
+                                    { label: '浏览量', value: 'views' }
+                                  ].map((item) => (
+                                    <button
+                                      key={item.value}
+                                      onClick={() => setSortBy(item.value as SortOption)}
+                                      className={`px-4 py-1 rounded-md text-[11px] font-bold transition-all ${
+                                        sortBy === item.value
+                                        ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20'
+                                        : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                                      }`}
+                                    >
+                                      {item.label}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* 第二行：标签 + 平台 */}
+                            <div className="flex items-center gap-3 flex-wrap">
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
+                                  <Filter size={14} /> 标签:
+                                </span>
+                                <div className="flex gap-2">
                                   <button
-                                    key={item.value}
-                                    onClick={() => setDurationFilter(item.value as DurationFilter)}
-                                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all ${
-                                      durationFilter === item.value 
-                                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' 
-                                      : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                                    onClick={() => setTagsFilter(prev => ({ ...prev, sound: prev.sound === true ? null : true }))}
+                                    className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                                      tagsFilter.sound === true
+                                      ? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400'
+                                      : 'bg-black/20 border-white/10 text-gray-400 hover:border-white/20'
                                     }`}
                                   >
-                                    {item.label}
+                                    有声音
                                   </button>
-                                ))}
+                                  <button
+                                    onClick={() => setTagsFilter(prev => ({ ...prev, jumpscare: prev.jumpscare === true ? null : true }))}
+                                    className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                                      tagsFilter.jumpscare === true
+                                      ? 'bg-red-500/10 border-red-500/50 text-red-400'
+                                      : 'bg-black/20 border-white/10 text-gray-400 hover:border-white/20'
+                                    }`}
+                                  >
+                                    微恐
+                                  </button>
+                                </div>
                               </div>
-                            </div>
 
-                            {/* Tag Filters */}
-                            <div className="h-4 w-px bg-white/10 mx-1" />
-                            <div className="flex items-center gap-2">
-                              <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
-                                <Filter size={14} /> 标签:
-                              </span>
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => setTagsFilter(prev => ({ ...prev, sound: prev.sound === true ? null : true }))}
-                                  className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
-                                    tagsFilter.sound === true
-                                    ? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400'
-                                    : 'bg-black/20 border-white/10 text-gray-400 hover:border-white/20'
-                                  }`}
-                                >
-                                  有声音
-                                </button>
-                                <button
-                                  onClick={() => setTagsFilter(prev => ({ ...prev, jumpscare: prev.jumpscare === true ? null : true }))}
-                                  className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
-                                    tagsFilter.jumpscare === true
-                                    ? 'bg-red-500/10 border-red-500/50 text-red-400'
-                                    : 'bg-black/20 border-white/10 text-gray-400 hover:border-white/20'
-                                  }`}
-                                >
-                                  微恐
-                                </button>
+                              <div className="h-4 w-px bg-white/10" />
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-500 text-xs font-medium">平台:</span>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => setPlatformFilter(prev => ({ ...prev, pc: prev.pc === true ? null : true }))}
+                                    className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                                      platformFilter.pc === true
+                                      ? 'bg-purple-500/10 border-purple-500/50 text-purple-400'
+                                      : 'bg-black/20 border-white/10 text-gray-400 hover:border-white/20'
+                                    }`}
+                                  >
+                                    💻 PC
+                                  </button>
+                                  <button
+                                    onClick={() => setPlatformFilter(prev => ({ ...prev, pe: prev.pe === true ? null : true }))}
+                                    className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                                      platformFilter.pe === true
+                                      ? 'bg-blue-500/10 border-blue-500/50 text-blue-400'
+                                      : 'bg-black/20 border-white/10 text-gray-400 hover:border-white/20'
+                                    }`}
+                                  >
+                                    📱 手机
+                                  </button>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-3 border-l border-white/10 pl-4">
-                            <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
-                              <ArrowUpDown size={14} /> 排序:
-                            </span>
-                            <div className="flex bg-black/20 rounded-lg p-1">
-                              {[
-                                { label: '最新发布', value: 'releaseDate' },
-                                { label: '浏览量', value: 'views' }
-                              ].map((item) => (
-                                <button
-                                  key={item.value}
-                                  onClick={() => setSortBy(item.value as SortOption)}
-                                  className={`px-4 py-1 rounded-md text-[11px] font-bold transition-all ${
-                                    sortBy === item.value 
-                                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' 
-                                    : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
-                                  }`}
-                                >
-                                  {item.label}
-                                </button>
-                              ))}
                             </div>
                           </div>
                         </div>
@@ -904,6 +948,31 @@ const App: React.FC = () => {
                             </button>
                           </div>
                         </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-gray-500 text-xs font-medium">平台:</span>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => setPlatformFilter(prev => ({ ...prev, pc: prev.pc === true ? null : true }))}
+                              className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                                platformFilter.pc === true
+                                ? 'bg-purple-500/10 border-purple-500/50 text-purple-400'
+                                : 'bg-black/20 border-white/10 text-gray-400'
+                              }`}
+                            >
+                              💻 PC
+                            </button>
+                            <button
+                              onClick={() => setPlatformFilter(prev => ({ ...prev, pe: prev.pe === true ? null : true }))}
+                              className={`px-3 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                                platformFilter.pe === true
+                                ? 'bg-blue-500/10 border-blue-500/50 text-blue-400'
+                                : 'bg-black/20 border-white/10 text-gray-400'
+                              }`}
+                            >
+                              📱 手机
+                            </button>
+                          </div>
+                        </div>
                       </div>
                       <div className="flex items-center gap-3 w-full border-t border-white/5 pt-4">
                         <span className="text-gray-500 text-xs font-medium flex items-center gap-1">
@@ -964,6 +1033,7 @@ const App: React.FC = () => {
                     onPlay={handleGamePlay}
                     priority={index < 4}
                     isSolved={solvedGameIds.has(game.id)}
+                      isOwner={game.submitted_by === user?.id}
                     userId={user?.id}
                     isAdmin={isAdmin}
                     onEdit={handleEditGame}
@@ -1033,6 +1103,7 @@ const App: React.FC = () => {
                 onToggleSolved={handleToggleSolved}
                 userId={user?.id}
                 isSolved={solvedGameIds.has(randomGame.id)}
+                isOwner={randomGame.submitted_by === user?.id}
               />
             </div>
 

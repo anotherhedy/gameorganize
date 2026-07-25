@@ -18,7 +18,7 @@ export interface GameData {
   title: string;
   url: string;
   releaseDate: string;
-  status: string; // "是" for active
+  status: string; // "是" = active, "审核中" = pending, "已驳回" = rejected
   description: string;
   author: LinkResource;
   platform: GamePlatform;
@@ -26,6 +26,8 @@ export interface GameData {
   duration: string;
   answer: LinkResource; // Guide
   coverImage: string;
+  submitted_by?: string; // UUID of submitter (from auth.users)
+  review_comment?: string; // 审核不通过原因
 }
 
 export interface Feedback {

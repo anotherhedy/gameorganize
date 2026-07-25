@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase/supabaseClient';
-import { X, Upload, Save, Loader2, Plus, Trash2, Settings, Image as ImageIcon } from 'lucide-react';
+import { X, Upload, Save, Loader2, Plus, Trash2, Settings, Image as ImageIcon, FileCheck, PenLine } from 'lucide-react';
+import { ReviewQueue } from './ReviewQueue';
+import { fetchPendingCount } from '../../services/supabase/api';
 
 interface AdminCMSProps {
   isOpen: boolean;
@@ -10,6 +12,8 @@ interface AdminCMSProps {
 }
 
 export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded, gameToEdit }) => {
+  const [activeTab, setActiveTab] = useState<'edit' | 'review'>('edit');
+  const [pendingCount, setPendingCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
@@ -53,6 +57,13 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
       });
     }
   }, [gameToEdit, isOpen]);
+
+  // 加载待审核数量
+  useEffect(() => {
+    if (isOpen) {
+      fetchPendingCount().then(setPendingCount).catch(() => {});
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -155,31 +166,77 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
     <div className="fixed inset-0 z-[120] flex items-center justify-center p-0 sm:p-4 bg-black/90 backdrop-blur-xl">
       <div className="bg-neutral-900 border-x border-t sm:border border-white/10 rounded-t-2xl sm:rounded-2xl w-full max-w-2xl h-[95vh] sm:h-auto sm:max-h-[90vh] overflow-y-auto no-scrollbar shadow-2xl flex flex-col">
         {/* Header */}
-        <div className="p-4 sm:p-6 border-b border-white/5 sticky top-0 bg-neutral-900/80 backdrop-blur-md z-10 flex justify-between items-center">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-              {gameToEdit ? <Settings className="text-purple-500 w-5 h-5 sm:w-6 sm:h-6" /> : <Plus className="text-purple-500 w-5 h-5 sm:w-6 sm:h-6" />} 
-              {gameToEdit ? '编辑档案' : '录入新档案'}
-            </h2>
-            <p className="text-[10px] text-gray-500 mt-0.5 uppercase tracking-widest">S.E.A. CMS Portal</p>
-          </div>
-          <div className="flex items-center gap-2">
-            {gameToEdit && (
-              <button 
-                onClick={handleDelete}
-                className="text-red-500 hover:bg-red-500/10 p-2 rounded-full transition-all"
-                title="删除档案"
-              >
-                <Trash2 className="w-5 h-5 sm:w-6 sm:h-6" />
+        <div className="p-4 sm:p-6 border-b border-white/5 sticky top-0 bg-neutral-900/80 backdrop-blur-md z-10">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+                <Settings className="text-purple-500 w-5 h-5 sm:w-6 sm:h-6" />
+                {gameToEdit ? '编辑档案' : '管理中心'}
+              </h2>
+              <p className="text-[10px] text-gray-500 mt-0.5 uppercase tracking-widest">S.E.A. CMS Portal</p>
+            </div>
+            <div className="flex items-center gap-2">
+              {gameToEdit && (
+                <button
+                  onClick={handleDelete}
+                  className="text-red-500 hover:bg-red-500/10 p-2 rounded-full transition-all"
+                  title="删除档案"
+                >
+                  <Trash2 className="w-5 h-5 sm:w-6 sm:h-6" />
+                </button>
+              )}
+              <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full">
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
-            )}
-            <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full">
-              <X className="w-5 h-5 sm:w-6 sm:h-6" />
-            </button>
+            </div>
           </div>
+
+          {/* 标签页导航 (仅非编辑模式) */}
+          {!gameToEdit && (
+            <div className="flex gap-4 mt-4">
+              <button
+                onClick={() => setActiveTab('edit')}
+                className={`flex items-center gap-2 pb-2 px-1 text-sm font-bold transition-all border-b-2 ${
+                  activeTab === 'edit'
+                    ? 'text-purple-400 border-purple-500'
+                    : 'text-gray-500 border-transparent hover:text-gray-300'
+                }`}
+              >
+                <PenLine size={14} />
+                录入档案
+              </button>
+              <button
+                onClick={() => setActiveTab('review')}
+                className={`flex items-center gap-2 pb-2 px-1 text-sm font-bold transition-all border-b-2 ${
+                  activeTab === 'review'
+                    ? 'text-purple-400 border-purple-500'
+                    : 'text-gray-500 border-transparent hover:text-gray-300'
+                }`}
+              >
+                <FileCheck size={14} />
+                审核队列
+                {pendingCount > 0 && (
+                  <span className="px-1.5 py-0.5 bg-red-500 text-white text-[10px] rounded-full font-bold min-w-[18px] text-center">
+                    {pendingCount}
+                  </span>
+                )}
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Form */}
+        {/* 审核队列 */}
+        {activeTab === 'review' && !gameToEdit && (
+          <div className="p-5 sm:p-6 flex-1 overflow-y-auto">
+            <ReviewQueue onStatusChanged={() => {
+              onGameAdded();
+              fetchPendingCount().then(setPendingCount).catch(() => {});
+            }} />
+          </div>
+        )}
+
+        {/* 录入/编辑表单 */}
+        {(activeTab === 'edit' || gameToEdit) && (
         <form onSubmit={handleSubmit} className="p-5 sm:p-8 space-y-6 sm:space-y-8 flex-1">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             {/* Left Column: Image Upload */}
@@ -300,6 +357,7 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
             </button>
           </div>
         </form>
+        )}
       </div>
     </div>
   );
