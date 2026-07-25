@@ -29,19 +29,21 @@ export async function onRequest(context) {
 
   // 原样转发 headers，supabase-js 已带 anon key
   const headers = new Headers(request.headers);
-  headers.delete('host'); // 让 Supabase 收到自己的 host
+  headers.delete('host');
 
-  const body = ['GET', 'HEAD'].includes(request.method) ? null : await request.text();
+  // 用 request.body 直接透传（兼容文本和二进制，如图片上传）
+  const body = ['GET', 'HEAD'].includes(request.method) ? null : request.body;
 
   const resp = await fetch(targetUrl, { method: request.method, headers, body });
+
+  // 透传响应头
+  const outHeaders = new Headers(resp.headers);
+  outHeaders.set('Access-Control-Allow-Origin', '*');
+  outHeaders.set('Access-Control-Allow-Headers', '*');
 
   return new Response(resp.body, {
     status: resp.status,
     statusText: resp.statusText,
-    headers: {
-      'Content-Type': resp.headers.get('Content-Type') || 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': '*',
-    },
+    headers: outHeaders,
   });
 }
