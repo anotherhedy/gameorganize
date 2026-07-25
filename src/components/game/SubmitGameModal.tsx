@@ -88,22 +88,31 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
     if (!coverFile) throw new Error('请选择封面图片');
 
     // 先压缩
+    console.log('[提交] 步骤2a: 压缩图片...');
     const compressed = await compressImage(coverFile);
+    console.log('[提交] 步骤2b: 压缩完成, 上传中...');
     const compressedFile = new File([compressed], coverFile.name.replace(/\.[^.]+$/, '.webp'), {
       type: 'image/webp'
     });
 
     const fileName = `submitted/${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
 
-    const { error: uploadError } = await supabase.storage
-      .from('game-covers')
-      .upload(fileName, compressedFile, {
-        cacheControl: '31536000',
-        contentType: 'image/webp'
-      });
+    // 上传带超时（15 秒）
+    const result = await Promise.race([
+      supabase.storage
+        .from('game-covers')
+        .upload(fileName, compressedFile, {
+          cacheControl: '31536000',
+          contentType: 'image/webp'
+        }),
+      new Promise<{ data: null; error: Error }>((_, reject) =>
+        setTimeout(() => reject(new Error('图片上传超时(15s)')), 15000)
+      )
+    ]);
 
-    if (uploadError) throw uploadError;
+    if (result.error) throw result.error;
 
+    console.log('[提交] 步骤2c: 上传成功, 获取URL...');
     const { data: urlData } = supabase.storage
       .from('game-covers')
       .getPublicUrl(fileName);
