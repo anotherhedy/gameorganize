@@ -1,17 +1,14 @@
 import { supabase } from './supabaseClient';
-import { GameData } from '../../types';
+import { GameData, GameSubmission } from '../../types';
 
-const BASE_SELECT = 'id, title, url, description, image_url, category, tags, created_at, author_name, author_url, answer_text, answer_url, status, review_comment';
-const FULL_SELECT = `${BASE_SELECT}, submitted_by`;
+const BASE_SELECT = 'id, title, url, description, image_url, category, tags, created_at, author_name, author_url, answer_text, answer_url';
 
-// 共享的字段映射逻辑
 function mapGameRow(dbGame: any): GameData {
   return {
     id: dbGame.id.toString(),
     title: dbGame.title,
     url: dbGame.url,
     releaseDate: dbGame.created_at ? dbGame.created_at.split('T')[0] : '未知',
-    status: dbGame.status || '是',
     description: dbGame.description,
     author: {
       text: dbGame.author_name || '研究员',
@@ -31,29 +28,20 @@ function mapGameRow(dbGame: any): GameData {
       url: dbGame.answer_url || ''
     },
     coverImage: dbGame.image_url,
-    submitted_by: dbGame.submitted_by || undefined,
-    review_comment: dbGame.review_comment || undefined
   };
 }
 
+// ========== Games (已通过的游戏) ==========
+
 export async function fetchAllGames(): Promise<GameData[]> {
-  // 优先查 submitted_by，列不存在则降级
-  let { data, error } = await supabase
+  const { data, error } = await supabase
     .from('games')
-    .select(FULL_SELECT)
+    .select(BASE_SELECT)
     .order('id', { ascending: true });
 
   if (error) {
-    console.warn('fetchAllGames with submitted_by failed, retrying:', error.message);
-    const retry = await supabase
-      .from('games')
-      .select(BASE_SELECT)
-      .order('id', { ascending: true });
-    if (retry.error) {
-      console.error('Error fetching games:', retry.error);
-      return [];
-    }
-    data = retry.data as any;
+    console.error('Error fetching games:', error);
+    return [];
   }
 
   return (data || []).map(mapGameRow);
@@ -70,23 +58,22 @@ export async function fetchGameStats() {
   const { data, error } = await supabase
     .from('game_stats')
     .select('game_id, views');
-    
+
   if (error) {
     console.error('Error fetching game stats:', error);
     return {};
   }
-  
+
   const stats: Record<string, number> = {};
   if (data) {
     data.forEach((row: any) => {
-      // 显式转为字符串，确保与 GameData.id 类型匹配
       stats[row.game_id.toString()] = row.views;
     });
   }
   return stats;
 }
 
-// ========== 社区投稿 + 审核 ==========
+// ========== 投稿审核（game_submissions 表） ==========
 
 export interface GameSubmitPayload {
   title: string;
@@ -103,7 +90,7 @@ export interface GameSubmitPayload {
   sound: boolean;
 }
 
-/** 给 Promise/thenable 加超时，国内网络 Supabase 可能无响应挂住 */
+/** Promise/thenable 超时包装 */
 function withTimeout<T>(thenable: PromiseLike<T>, ms: number, label: string): Promise<T> {
   return Promise.race([
     thenable,
@@ -113,132 +100,87 @@ function withTimeout<T>(thenable: PromiseLike<T>, ms: number, label: string): Pr
   ]);
 }
 
-/** 检查游戏名称是否已存在（链接可重复——同一个作者可能用同个网站发布多个游戏） */
+/** 检查游戏名是否已存在（查 games + game_submissions 两张表） */
 export async function checkDuplicateGame(title: string): Promise<{ isDuplicate: boolean; existingTitle?: string }> {
   try {
-    // 按标题查重，6 秒超时（国内网络可能很慢）
-    const { data, error } = await withTimeout(
-      supabase
-        .from('games')
-        .select('id, title')
-        .eq('title', title)
-        .limit(1),
+    // 先查已上架的 games
+    const { data: gamesData, error: gamesError } = await withTimeout(
+      supabase.from('games').select('id, title').eq('title', title).limit(1),
       6000,
-      'checkDuplicateGame'
+      'checkDuplicate-games'
     );
 
-    if (error) {
-      console.warn('checkDuplicateGame 查询失败:', error.message);
-      return { isDuplicate: false }; // 容错：查不了就不拦截
+    if (gamesError) {
+      console.warn('checkDuplicateGame games 查询失败:', gamesError.message);
+    } else if (gamesData && gamesData.length > 0) {
+      return { isDuplicate: true, existingTitle: gamesData[0].title };
     }
 
-    if (data && data.length > 0) {
-      return { isDuplicate: true, existingTitle: data[0].title };
+    // 再查投稿表（排除已驳回的，避免重复投稿卡住）
+    const { data: subData, error: subError } = await withTimeout(
+      supabase.from('game_submissions').select('id, title').eq('title', title).neq('status', '已驳回').limit(1),
+      6000,
+      'checkDuplicate-submissions'
+    );
+
+    if (subError) {
+      console.warn('checkDuplicateGame submissions 查询失败:', subError.message);
+    } else if (subData && subData.length > 0) {
+      return { isDuplicate: true, existingTitle: subData[0].title };
     }
 
     return { isDuplicate: false };
   } catch (err: any) {
     console.warn('checkDuplicateGame 异常:', err?.message);
-    return { isDuplicate: false }; // 容错：超时也放行
+    return { isDuplicate: false };
   }
 }
 
+/** 提交新游戏投稿 → game_submissions 表 */
 export async function submitGameForReview(payload: GameSubmitPayload & { submitted_by: string }) {
-  // 并发安全：最多重试 3 次，避免两人同时提交抢到同一个 ID
-  const MAX_RETRIES = 3;
+  const { error } = await withTimeout(
+    supabase.from('game_submissions').insert({
+      title: payload.title,
+      url: payload.url,
+      description: payload.description,
+      image_url: payload.image_url || null,
+      duration: payload.duration,
+      author_name: payload.author_name,
+      author_url: payload.author_url,
+      answer_url: payload.answer_url || null,
+      pc: payload.pc,
+      pe: payload.pe,
+      jumpscare: payload.jumpscare,
+      sound: payload.sound,
+      submitted_by: payload.submitted_by,
+    }),
+    10000,
+    'submitGame-insert'
+  );
 
-  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-    // 每次重试都重新取 max id（以防上一次冲突后 id 已被占用）
-    const { data: maxRow } = await withTimeout(
-      supabase
-        .from('games')
-        .select('id')
-        .order('id', { ascending: false })
-        .limit(1),
-      8000,
-      'submitGame-getMaxId'
-    );
-
-    let nextId = 1;
-    if (maxRow && maxRow.length > 0) {
-      const parsed = parseInt(String(maxRow[0].id), 10);
-      if (!isNaN(parsed)) nextId = parsed + 1;
-    }
-
-    if (attempt > 0) {
-      console.log(`[提交] 重试第${attempt}次, nextId=${nextId}`);
-    }
-
-    // 插入，10 秒超时
-    const { error } = await withTimeout(
-      supabase
-        .from('games')
-        .insert({
-        id: nextId,
-        title: payload.title,
-        url: payload.url,
-        image_url: payload.image_url,
-        description: payload.description,
-        category: [payload.duration].filter(Boolean),
-        author_name: payload.author_name,
-        author_url: payload.author_url,
-        answer_url: payload.answer_url || null,
-        tags: [
-          payload.pc ? 'PC' : null,
-          payload.pe ? 'PE' : null,
-          payload.jumpscare ? '有跳杀' : null,
-          payload.sound ? '有声音' : null
-        ].filter(Boolean),
-        status: '审核中',
-        submitted_by: payload.submitted_by
-      }),
-      10000,
-      'submitGame-insert'
-    );
-
-    // 插入成功
-    if (!error) return;
-
-    // 唯一键冲突（23505）或主键冲突 → 重试
-    if ((error as any)?.code === '23505') {
-      console.warn(`[提交] ID ${nextId} 已被占用，重试...`);
-      continue;
-    }
-
-    // 其他错误直接抛
-    throw error;
-  }
-
-  throw new Error('提交失败：ID 分配冲突，请重试');
+  if (error) throw error;
 }
 
-export async function fetchPendingGames(): Promise<GameData[]> {
-  let { data, error } = await supabase
-    .from('games')
-    .select(FULL_SELECT)
+/** 获取待审核投稿 */
+export async function fetchPendingSubmissions(): Promise<GameSubmission[]> {
+  const { data, error } = await supabase
+    .from('game_submissions')
+    .select('*')
     .eq('status', '审核中')
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.warn('fetchPendingGames with submitted_by failed, retrying:', error.message);
-    const retry = await supabase
-      .from('games')
-      .select(BASE_SELECT)
-      .eq('status', '审核中')
-      .order('created_at', { ascending: false });
-    if (retry.error) {
-      console.error('Error fetching pending games:', retry.error);
-      return [];
-    }
-    data = retry.data as any;
+    console.error('Error fetching pending submissions:', error);
+    return [];
   }
 
-  return (data || []).map(mapGameRow);
+  return (data || []) as GameSubmission[];
 }
 
+/** 待审核数量 */
 export async function fetchPendingCount(): Promise<number> {
   const { count, error } = await supabase
-    .from('games')
+    .from('game_submissions')
     .select('*', { count: 'exact', head: true })
     .eq('status', '审核中');
 
@@ -250,23 +192,23 @@ export async function fetchPendingCount(): Promise<number> {
   return count || 0;
 }
 
-export async function updateGameStatus(gameId: string, status: string, comment?: string) {
-  const payload: Record<string, any> = { status };
-  if (comment) payload.review_comment = comment;
-  else if (status === '是') payload.review_comment = null; // 通过时清掉旧原因
-
-  const { error } = await supabase
-    .from('games')
-    .update(payload)
-    .eq('id', gameId);
-
+/** 管理员通过投稿（调用 RPC，原子操作：插 games + 改 submission） */
+export async function approveSubmission(submissionId: number) {
+  const { error } = await supabase.rpc('approve_submission', { sub_id: submissionId });
   if (error) throw error;
 }
 
-export async function fetchMySubmissions(userId: string): Promise<GameData[]> {
-  let { data, error } = await supabase
-    .from('games')
-    .select(FULL_SELECT)
+/** 管理员驳回投稿 */
+export async function rejectSubmission(submissionId: number, reason: string) {
+  const { error } = await supabase.rpc('reject_submission', { sub_id: submissionId, reason });
+  if (error) throw error;
+}
+
+/** 获取我的投稿 */
+export async function fetchMySubmissions(userId: string): Promise<GameSubmission[]> {
+  const { data, error } = await supabase
+    .from('game_submissions')
+    .select('*')
     .eq('submitted_by', userId)
     .order('created_at', { ascending: false });
 
@@ -275,5 +217,5 @@ export async function fetchMySubmissions(userId: string): Promise<GameData[]> {
     return [];
   }
 
-  return (data || []).map(mapGameRow);
+  return (data || []) as GameSubmission[];
 }

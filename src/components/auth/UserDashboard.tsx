@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase/supabaseClient';
-import { GameData } from '../../types';
+import { GameData, GameSubmission } from '../../types';
 import { fetchMySubmissions } from '../../services/supabase/api';
 import {
   X, User, Mail, ShieldCheck, BadgeCheck, LogOut, Save, Loader2,
@@ -41,10 +41,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<'overview' | 'submissions' | 'settings'>('overview');
-  const [mySubmissions, setMySubmissions] = useState<GameData[]>([]);
+  const [mySubmissions, setMySubmissions] = useState<GameSubmission[]>([]);
   const [subsLoading, setSubsLoading] = useState(false);
 
-  // 初始化表单值
   useEffect(() => {
     if (isOpen && user) {
       const initialUsername = profile?.username || user.user_metadata?.username || '';
@@ -54,7 +53,6 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
     }
   }, [isOpen, user, profile]);
 
-  // 加载我的投稿
   useEffect(() => {
     if (isOpen && user) {
       setSubsLoading(true);
@@ -67,13 +65,12 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
 
   if (!isOpen || !user) return null;
 
-  // 统计数据
   const solvedCount = solvedGameIds.size;
-  const totalGames = games.filter(g => g.status === '是').length;
+  // games 表只存已通过的游戏，无需过滤 status
+  const totalGames = games.length;
   const submissionCount = mySubmissions.length;
-  const approvedCount = mySubmissions.filter(s => s.status === '是').length;
+  const approvedCount = mySubmissions.filter(s => s.status === '已通过').length;
 
-  // 已侦破的游戏
   const solvedGames = games.filter(g => solvedGameIds.has(g.id));
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
@@ -276,7 +273,6 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
           {/* ===== 概览 ===== */}
           {activeSection === 'overview' && (
             <>
-              {/* 侦破进度 */}
               <section>
                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
                   侦破进度 ({solvedCount}/{totalGames})
@@ -335,8 +331,8 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                       <div key={sub.id} className="bg-white/5 border border-white/5 rounded-lg px-3 py-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5 min-w-0">
-                            {sub.coverImage && (
-                              <img src={sub.coverImage} alt="" className="w-7 h-7 rounded object-cover shrink-0" />
+                            {sub.image_url && (
+                              <img src={sub.image_url} alt="" className="w-7 h-7 rounded object-cover shrink-0" />
                             )}
                             <span className="text-sm text-gray-200 truncate">{sub.title}</span>
                           </div>
@@ -386,19 +382,19 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                 <div className="space-y-2">
                   {mySubmissions.map(sub => (
                     <div key={sub.id} className="flex items-center gap-3 bg-white/5 border border-white/5 rounded-xl p-3 hover:bg-white/10 transition-all">
-                      {sub.coverImage && (
-                        <img src={sub.coverImage} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                      {sub.image_url && (
+                        <img src={sub.image_url} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
                       )}
                       <div className="flex-1 min-w-0">
                         <h4 className="text-white font-medium truncate text-sm">{sub.title}</h4>
                         <p className="text-[10px] text-gray-500 mt-0.5">
-                          {sub.releaseDate} · {sub.duration || '时长未知'}
+                          {sub.created_at?.split('T')[0]} · {sub.duration || '时长未知'}
                         </p>
                         <div className="flex items-center gap-1.5 mt-1">
-                          {sub.platform?.pc && <span className="text-[9px] text-gray-600 bg-white/5 px-1 py-0.5 rounded">PC</span>}
-                          {sub.platform?.pe && <span className="text-[9px] text-gray-600 bg-white/5 px-1 py-0.5 rounded">PE</span>}
-                          {sub.tags?.hasJumpScare && <span className="text-[9px] text-gray-600 bg-white/5 px-1 py-0.5 rounded">微恐</span>}
-                          {sub.tags?.hasSound && <span className="text-[9px] text-gray-600 bg-white/5 px-1 py-0.5 rounded">声音</span>}
+                          {sub.pc && <span className="text-[9px] text-gray-600 bg-white/5 px-1 py-0.5 rounded">PC</span>}
+                          {sub.pe && <span className="text-[9px] text-gray-600 bg-white/5 px-1 py-0.5 rounded">PE</span>}
+                          {sub.jumpscare && <span className="text-[9px] text-gray-600 bg-white/5 px-1 py-0.5 rounded">微恐</span>}
+                          {sub.sound && <span className="text-[9px] text-gray-600 bg-white/5 px-1 py-0.5 rounded">声音</span>}
                         </div>
                         {sub.status === '已驳回' && sub.review_comment && (
                           <p className="mt-1.5 text-[11px] text-red-400/80 bg-red-500/5 rounded px-2 py-1">
@@ -408,7 +404,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                       </div>
                       <div className="shrink-0 flex flex-col items-end gap-1.5">
                         {statusBadge(sub.status)}
-                        {sub.status === '是' && sub.url && (
+                        {sub.status === '已通过' && sub.url && (
                           <a href={sub.url} target="_blank" rel="noreferrer"
                             className="text-[10px] text-purple-400 hover:text-purple-300 flex items-center gap-0.5"
                           >

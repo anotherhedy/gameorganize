@@ -18,7 +18,6 @@ export interface GameData {
   title: string;
   url: string;
   releaseDate: string;
-  status: string; // "是" = active, "审核中" = pending, "已驳回" = rejected
   description: string;
   author: LinkResource;
   platform: GamePlatform;
@@ -26,8 +25,28 @@ export interface GameData {
   duration: string;
   answer: LinkResource; // Guide
   coverImage: string;
-  submitted_by?: string; // UUID of submitter (from auth.users)
-  review_comment?: string; // 审核不通过原因
+}
+
+/** 社区投稿记录（独立表 game_submissions） */
+export interface GameSubmission {
+  id: number;
+  title: string;
+  url: string;
+  description: string;
+  image_url: string | null;
+  duration: string;
+  author_name: string;
+  author_url: string;
+  answer_url: string | null;
+  pc: boolean;
+  pe: boolean;
+  jumpscare: boolean;
+  sound: boolean;
+  submitted_by: string;
+  status: '审核中' | '已通过' | '已驳回';
+  review_comment: string | null;
+  created_at: string;
+  reviewed_at: string | null;
 }
 
 export interface Feedback {

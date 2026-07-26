@@ -70,9 +70,7 @@ async function syncGames() {
         author_name: game.author?.text || '研究员',
         author_url: game.author?.url || '',
         answer_text: game.answer?.text || '',
-        answer_url: game.answer?.url || '',
-        status: game.status || '是',
-        submitted_by: game.submitted_by || null
+        answer_url: game.answer?.url || ''
       };
     });
 

@@ -7,31 +7,29 @@ import { CheckCircle2, Circle, Edit3 } from 'lucide-react';
 interface GameCardProps {
   game: GameData;
   onPlay?: (id: string) => void;
-  onEdit?: (game: GameData) => void; // 新增：编辑回调
-  onToggleSolved?: (id: string, isSolved: boolean) => Promise<void>; // 新增：切换进度回调
+  onEdit?: (game: GameData) => void;
+  onToggleSolved?: (id: string, isSolved: boolean) => Promise<void>;
   showNewTag?: boolean;
   views?: number;
   priority?: boolean;
-  isSolved?: boolean; // 新增：是否已玩
-  userId?: string;    // 新增：当前用户ID
-  isAdmin?: boolean;  // 新增：是否是管理员
-  isOwner?: boolean;  // 新增：是否是投稿者
+  isSolved?: boolean;
+  userId?: string;
+  isAdmin?: boolean;
 }
 
 const failedImageSrc = new Set<string>();
 
-export const GameCard: React.FC<GameCardProps> = React.memo(({ 
-  game, 
-  onPlay, 
+export const GameCard: React.FC<GameCardProps> = React.memo(({
+  game,
+  onPlay,
   onEdit,
   onToggleSolved,
-  showNewTag, 
-  views = 0, 
+  showNewTag,
+  views = 0,
   priority = false,
   isSolved: initialSolved = false,
   userId,
   isAdmin,
-  isOwner
 }) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [isSolved, setIsSolved] = useState(initialSolved);
@@ -43,7 +41,8 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({
     setIsSolved(initialSolved);
   }, [initialSolved]);
 
-  const isActive = game.status === '是';
+  // games 表只存已通过的游戏，全部有效
+  const isActive = true;
 
   // 处理“已破案”切换逻辑
   const handleToggleSolved = async (e: React.MouseEvent) => {
@@ -117,28 +116,6 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({
                 </button>
               )}
             </div>
-
-            {/* 投稿者状态徽章 (右上角) */}
-            {isOwner && game.status !== '是' && (
-              <div className="absolute top-3 right-3 z-30 flex flex-col items-end gap-1 max-w-[180px]">
-                {game.status === '审核中' ? (
-                  <span className="px-2 py-0.5 bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 text-[10px] rounded-full font-bold backdrop-blur-md">
-                    审核中
-                  </span>
-                ) : game.status === '已驳回' ? (
-                  <>
-                    <span className="px-2 py-0.5 bg-red-500/20 border border-red-500/40 text-red-400 text-[10px] rounded-full font-bold backdrop-blur-md">
-                      已驳回
-                    </span>
-                    {game.review_comment && (
-                      <span className="text-[10px] text-red-400/70 bg-black/50 backdrop-blur-md rounded px-2 py-0.5 text-right leading-tight">
-                        {game.review_comment}
-                      </span>
-                    )}
-                  </>
-                ) : null}
-              </div>
-            )}
 
             {/* Background Image with Gradient Overlay */}
             <div className="absolute inset-0 z-0 bg-[#1a1a24]">

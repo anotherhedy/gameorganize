@@ -660,7 +660,6 @@ const App: React.FC = () => {
                       onToggleSolved={handleToggleSolved}
                       userId={user?.id}
                       isSolved={solvedGameIds.has(game.id)}
-                      isOwner={game.submitted_by === user?.id}
                     />
                   ))}
                 </div>
@@ -688,7 +687,6 @@ const App: React.FC = () => {
                       onToggleSolved={handleToggleSolved}
                       userId={user?.id}
                       isSolved={solvedGameIds.has(game.id)}
-                      isOwner={game.submitted_by === user?.id}
                     />
                   ))}
                 </div>
@@ -1033,7 +1031,6 @@ const App: React.FC = () => {
                     onPlay={handleGamePlay}
                     priority={index < 4}
                     isSolved={solvedGameIds.has(game.id)}
-                      isOwner={game.submitted_by === user?.id}
                     userId={user?.id}
                     isAdmin={isAdmin}
                     onEdit={handleEditGame}
