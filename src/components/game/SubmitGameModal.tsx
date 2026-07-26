@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import { supabase } from '../../services/supabase/supabaseClient';
 import { submitGameForReview, checkDuplicateGame } from '../../services/supabase/api';
 import { X, Upload, Loader2, Monitor, Smartphone, AlertTriangle, Send, ImagePlus } from 'lucide-react';
 
@@ -91,33 +90,40 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
     console.log('[提交] 步骤2a: 压缩图片...');
     const compressed = await compressImage(coverFile);
     console.log('[提交] 步骤2b: 压缩完成, 上传中...');
-    const compressedFile = new File([compressed], coverFile.name.replace(/\.[^.]+$/, '.webp'), {
-      type: 'image/webp'
-    });
 
     const fileName = `submitted/${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
+    const anonKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || 'sb_publishable_BIU7udY_SPDalLnu3fP82w_cMsl3oMh';
 
-    // 上传带超时（15 秒）
-    const result = await Promise.race([
-      supabase.storage
-        .from('game-covers')
-        .upload(fileName, compressedFile, {
-          cacheControl: '31536000',
-          contentType: 'image/webp'
-        }),
-      new Promise<{ data: null; error: Error }>((_, reject) =>
-        setTimeout(() => reject(new Error('图片上传超时(15s)')), 15000)
-      )
-    ]);
+    // 直接用 fetch 上传（绕过 supabase-js，避免超时问题）
+    const uploadUrl = `${window.location.origin}/api/storage/v1/object/game-covers/${fileName}`;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 20000);
 
-    if (result.error) throw result.error;
+    try {
+      const resp = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'apikey': anonKey,
+          'Authorization': `Bearer ${anonKey}`,
+          'Content-Type': 'image/webp',
+          'Cache-Control': 'max-age=31536000',
+        },
+        body: compressed,
+        signal: controller.signal,
+      });
 
-    console.log('[提交] 步骤2c: 上传成功, 获取URL...');
-    const { data: urlData } = supabase.storage
-      .from('game-covers')
-      .getPublicUrl(fileName);
+      if (!resp.ok) {
+        const errText = await resp.text().catch(() => '');
+        throw new Error(`上传失败: ${resp.status} ${errText}`);
+      }
 
-    return urlData.publicUrl;
+      console.log('[提交] 步骤2c: 上传成功, 获取URL...');
+      // 构造公开 URL
+      const publicUrl = `${window.location.origin}/api/storage/v1/object/public/game-covers/${fileName}`;
+      return publicUrl;
+    } finally {
+      clearTimeout(timer);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -31,6 +31,63 @@ function mapGameRow(dbGame: any): GameData {
   };
 }
 
+// ========== 底层 fetch（绕过 supabase-js 的超时问题） ==========
+
+const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+
+function apiUrl(path: string, params?: URLSearchParams): string {
+  const base = `${window.location.origin}/api`;
+  const url = `${base}${path}`;
+  return params ? `${url}?${params}` : url;
+}
+
+function apiHeaders(): Record<string, string> {
+  return {
+    'apikey': ANON_KEY,
+    'Authorization': `Bearer ${ANON_KEY}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+}
+
+async function apiFetch<T>(
+  path: string,
+  opts: { method?: string; params?: URLSearchParams; body?: any; timeout?: number } = {}
+): Promise<T> {
+  const { method = 'GET', params, body, timeout = 15000 } = opts;
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const resp = await fetch(apiUrl(path, params), {
+      method,
+      headers: apiHeaders(),
+      body: body ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
+    });
+
+    if (!resp.ok) {
+      const errBody = await resp.text().catch(() => '');
+      throw new Error(`[${resp.status}] ${errBody || resp.statusText}`);
+    }
+
+    // 204 No Content / HEAD
+    if (resp.status === 204 || method === 'HEAD') {
+      return undefined as T;
+    }
+
+    return resp.json();
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      throw new Error(`请求超时(${timeout}ms): ${path}`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 // ========== Games (已通过的游戏) ==========
 
 export async function fetchAllGames(): Promise<GameData[]> {
@@ -90,43 +147,39 @@ export interface GameSubmitPayload {
   sound: boolean;
 }
 
-/** Promise/thenable 超时包装 */
-function withTimeout<T>(thenable: PromiseLike<T>, ms: number, label: string): Promise<T> {
-  return Promise.race([
-    thenable,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error(`[${label}] 超时(${ms}ms)`)), ms)
-    )
-  ]);
-}
-
 /** 检查游戏名是否已存在（查 games + game_submissions 两张表） */
 export async function checkDuplicateGame(title: string): Promise<{ isDuplicate: boolean; existingTitle?: string }> {
+  console.log('[api] checkDuplicateGame:', title);
   try {
-    // 先查已上架的 games
-    const { data: gamesData, error: gamesError } = await withTimeout(
-      supabase.from('games').select('id, title').eq('title', title).limit(1),
-      6000,
-      'checkDuplicate-games'
-    );
+    // 查 games 表
+    const gamesParams = new URLSearchParams({
+      select: 'id,title',
+      title: `eq.${title}`,
+      limit: '1',
+    });
+    const gamesResult = await apiFetch<any[]>('/rest/v1/games', {
+      params: gamesParams,
+      timeout: 8000,
+    });
 
-    if (gamesError) {
-      console.warn('checkDuplicateGame games 查询失败:', gamesError.message);
-    } else if (gamesData && gamesData.length > 0) {
-      return { isDuplicate: true, existingTitle: gamesData[0].title };
+    if (gamesResult && gamesResult.length > 0) {
+      return { isDuplicate: true, existingTitle: gamesResult[0].title };
     }
 
-    // 再查投稿表（排除已驳回的，避免重复投稿卡住）
-    const { data: subData, error: subError } = await withTimeout(
-      supabase.from('game_submissions').select('id, title').eq('title', title).neq('status', '已驳回').limit(1),
-      6000,
-      'checkDuplicate-submissions'
-    );
+    // 查 game_submissions（排除已驳回）
+    const subParams = new URLSearchParams({
+      select: 'id,title',
+      title: `eq.${title}`,
+      status: 'neq.已驳回',
+      limit: '1',
+    });
+    const subResult = await apiFetch<any[]>('/rest/v1/game_submissions', {
+      params: subParams,
+      timeout: 8000,
+    });
 
-    if (subError) {
-      console.warn('checkDuplicateGame submissions 查询失败:', subError.message);
-    } else if (subData && subData.length > 0) {
-      return { isDuplicate: true, existingTitle: subData[0].title };
+    if (subResult && subResult.length > 0) {
+      return { isDuplicate: true, existingTitle: subResult[0].title };
     }
 
     return { isDuplicate: false };
@@ -138,8 +191,10 @@ export async function checkDuplicateGame(title: string): Promise<{ isDuplicate: 
 
 /** 提交新游戏投稿 → game_submissions 表 */
 export async function submitGameForReview(payload: GameSubmitPayload & { submitted_by: string }) {
-  const { error } = await withTimeout(
-    supabase.from('game_submissions').insert({
+  console.log('[api] submitGameForReview');
+  await apiFetch('/rest/v1/game_submissions', {
+    method: 'POST',
+    body: {
       title: payload.title,
       url: payload.url,
       description: payload.description,
@@ -153,32 +208,31 @@ export async function submitGameForReview(payload: GameSubmitPayload & { submitt
       jumpscare: payload.jumpscare,
       sound: payload.sound,
       submitted_by: payload.submitted_by,
-    }),
-    10000,
-    'submitGame-insert'
-  );
-
-  if (error) throw error;
+    },
+    timeout: 15000,
+  });
 }
 
 /** 获取待审核投稿 */
 export async function fetchPendingSubmissions(): Promise<GameSubmission[]> {
-  const { data, error } = await supabase
-    .from('game_submissions')
-    .select('*')
-    .eq('status', '审核中')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching pending submissions:', error);
-    return [];
-  }
-
+  const params = new URLSearchParams({
+    select: '*',
+    status: 'eq.审核中',
+    order: 'created_at.desc',
+  });
+  const data = await apiFetch<any[]>('/rest/v1/game_submissions', { params, timeout: 10000 });
   return (data || []) as GameSubmission[];
 }
 
 /** 待审核数量 */
 export async function fetchPendingCount(): Promise<number> {
+  const params = new URLSearchParams({
+    select: 'id',
+    status: 'eq.审核中',
+    limit: '0',
+  });
+
+  // 需要 count header，用 supabase 方式
   const { count, error } = await supabase
     .from('game_submissions')
     .select('*', { count: 'exact', head: true })
@@ -206,16 +260,11 @@ export async function rejectSubmission(submissionId: number, reason: string) {
 
 /** 获取我的投稿 */
 export async function fetchMySubmissions(userId: string): Promise<GameSubmission[]> {
-  const { data, error } = await supabase
-    .from('game_submissions')
-    .select('*')
-    .eq('submitted_by', userId)
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.warn('fetchMySubmissions failed:', error.message);
-    return [];
-  }
-
+  const params = new URLSearchParams({
+    select: '*',
+    submitted_by: `eq.${userId}`,
+    order: 'created_at.desc',
+  });
+  const data = await apiFetch<any[]>('/rest/v1/game_submissions', { params, timeout: 10000 });
   return (data || []) as GameSubmission[];
 }
