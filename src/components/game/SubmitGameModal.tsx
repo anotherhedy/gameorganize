@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { supabase } from '../../services/supabase/supabaseClient';
 import { submitGameForReview, checkDuplicateGame } from '../../services/supabase/api';
 import { X, Upload, Loader2, Monitor, Smartphone, AlertTriangle, Send, ImagePlus } from 'lucide-react';
 
@@ -94,6 +95,10 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
     const fileName = `submitted/${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
     const anonKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || 'sb_publishable_BIU7udY_SPDalLnu3fP82w_cMsl3oMh';
 
+    // 获取用户 JWT（RLS 需要确认 auth.role() = 'authenticated'）
+    const { data: { session } } = await supabase.auth.getSession();
+    const accessToken = session?.access_token || '';
+
     // 直接用 fetch 上传（绕过 supabase-js，避免超时问题）
     const uploadUrl = `${window.location.origin}/api/storage/v1/object/game-covers/${fileName}`;
     const controller = new AbortController();
@@ -104,7 +109,7 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
         method: 'POST',
         headers: {
           'apikey': anonKey,
-          'Authorization': `Bearer ${anonKey}`,
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'image/webp',
           'Cache-Control': 'max-age=31536000',
         },

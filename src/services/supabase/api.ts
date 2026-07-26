@@ -35,16 +35,30 @@ function mapGameRow(dbGame: any): GameData {
 
 const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
+let cachedToken: string | null = null;
+
+async function getAccessToken(): Promise<string> {
+  if (cachedToken) return cachedToken;
+  const { data } = await supabase.auth.getSession();
+  cachedToken = data.session?.access_token || '';
+  // 监听 token 刷新
+  supabase.auth.onAuthStateChange((event, session) => {
+    cachedToken = session?.access_token || '';
+  });
+  return cachedToken;
+}
+
 function apiUrl(path: string, params?: URLSearchParams): string {
   const base = `${window.location.origin}/api`;
   const url = `${base}${path}`;
   return params ? `${url}?${params}` : url;
 }
 
-function apiHeaders(): Record<string, string> {
+async function apiHeaders(): Promise<Record<string, string>> {
+  const token = await getAccessToken();
   return {
     'apikey': ANON_KEY,
-    'Authorization': `Bearer ${ANON_KEY}`,
+    'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   };
@@ -62,7 +76,7 @@ async function apiFetch<T>(
   try {
     const resp = await fetch(apiUrl(path, params), {
       method,
-      headers: apiHeaders(),
+      headers: await apiHeaders(),
       body: body ? JSON.stringify(body) : undefined,
       signal: controller.signal,
     });
