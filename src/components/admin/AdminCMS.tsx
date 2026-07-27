@@ -22,6 +22,9 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
     image_url: '',
     description: '',
     duration: '',
+    author_name: '',
+    author_url: '',
+    answer_url: '',
     pc: false,
     pe: false,
     jumpscare: false,
@@ -37,10 +40,13 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
         image_url: gameToEdit.coverImage || '',
         description: gameToEdit.description || '',
         duration: gameToEdit.duration || '',
-        pc: gameToEdit.platform.pc,
-        pe: gameToEdit.platform.pe,
-        jumpscare: gameToEdit.tags.hasJumpScare,
-        sound: gameToEdit.tags.hasSound
+        author_name: gameToEdit.author?.text || '',
+        author_url: gameToEdit.author?.url || '',
+        answer_url: gameToEdit.answer?.url || '',
+        pc: gameToEdit.platform?.pc || false,
+        pe: gameToEdit.platform?.pe || false,
+        jumpscare: gameToEdit.tags?.hasJumpScare || false,
+        sound: gameToEdit.tags?.hasSound || false
       });
     } else {
       // 重置表单
@@ -50,6 +56,9 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
         image_url: '',
         description: '',
         duration: '',
+        author_name: '',
+        author_url: '',
+        answer_url: '',
         pc: false,
         pe: false,
         jumpscare: false,
@@ -127,6 +136,9 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
       image_url: formData.image_url,
       description: formData.description,
       category: [formData.duration].filter(Boolean),
+      author_name: formData.author_name || '研究员',
+      author_url: formData.author_url || '',
+      answer_url: formData.answer_url || null,
       tags: [
         formData.pc ? 'PC' : null,
         formData.pe ? 'PE' : null,
@@ -302,7 +314,7 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">游戏时长</label>
-                <input 
+                <input
                   type="text"
                   value={formData.duration}
                   onChange={e => setFormData(prev => ({ ...prev, duration: e.target.value }))}
@@ -310,6 +322,45 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
                   className="w-full bg-white/5 border border-white/10 rounded-xl py-2 sm:py-2.5 px-4 text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
                 />
               </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">作者名称</label>
+                <input
+                  type="text"
+                  value={formData.author_name}
+                  onChange={e => setFormData(prev => ({ ...prev, author_name: e.target.value }))}
+                  placeholder="作者名 / 小红书昵称"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl py-2 sm:py-2.5 px-4 text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">作者链接</label>
+                <input
+                  type="url"
+                  value={formData.author_url}
+                  onChange={e => setFormData(prev => ({ ...prev, author_url: e.target.value }))}
+                  placeholder="小红书/微博/B站 主页链接"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl py-2 sm:py-2.5 px-4 text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">攻略链接 <span className="text-gray-600 font-normal">(选填)</span></label>
+                <input
+                  type="url"
+                  value={formData.answer_url}
+                  onChange={e => setFormData(prev => ({ ...prev, answer_url: e.target.value }))}
+                  placeholder="通关攻略 / 答案链接"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl py-2 sm:py-2.5 px-4 text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div></div>
 
               <div className="space-y-2">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">属性标签</label>

@@ -102,19 +102,34 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onStatusChanged }) => 
               </div>
 
               {sub.description && (
-                <p className="text-xs text-gray-500 mt-1 line-clamp-2">{sub.description}</p>
+                <p className="text-xs text-gray-500 mt-1 line-clamp-3">{sub.description}</p>
               )}
 
               <div className="flex items-center gap-3 mt-2 flex-wrap">
                 {sub.url && (
                   <a href={sub.url} target="_blank" rel="noreferrer"
                     className="text-[10px] text-purple-400 hover:text-purple-300 flex items-center gap-1">
-                    <ExternalLink size={10} /> 链接
+                    <ExternalLink size={10} /> 游戏链接
                   </a>
                 )}
                 <span className="text-[10px] text-gray-600">{sub.created_at?.split('T')[0]}</span>
                 <span className="text-[10px] text-gray-600">⏱ {sub.duration}</span>
-                <span className="text-[10px] text-gray-600">👤 {sub.author_name}</span>
+              </div>
+
+              <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                <span className="text-[10px] text-gray-500">
+                  👤 {sub.author_name}
+                  {sub.author_url && (
+                    <a href={sub.author_url} target="_blank" rel="noreferrer"
+                      className="text-purple-400 hover:text-purple-300 ml-1">[主页]</a>
+                  )}
+                </span>
+                {sub.answer_url && (
+                  <a href={sub.answer_url} target="_blank" rel="noreferrer"
+                    className="text-[10px] text-green-400 hover:text-green-300 flex items-center gap-0.5">
+                    📖 攻略
+                  </a>
+                )}
                 <div className="flex gap-1.5">
                   {sub.pc && <span className="text-[10px] text-gray-500 bg-white/5 px-1.5 py-0.5 rounded">PC</span>}
                   {sub.pe && <span className="text-[10px] text-gray-500 bg-white/5 px-1.5 py-0.5 rounded">PE</span>}
