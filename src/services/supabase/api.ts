@@ -86,9 +86,12 @@ async function apiFetch<T>(
       throw new Error(`[${resp.status}] ${errBody || resp.statusText}`);
     }
 
-    // 204 No Content / HEAD
-    if (resp.status === 204 || method === 'HEAD') {
-      return undefined as T;
+    // 204 No Content / HEAD / 201 空响应
+    if (resp.status === 204 || resp.status === 201 || method === 'HEAD') {
+      const text = await resp.text().catch(() => '');
+      if (!text) return undefined as T;
+      // 有内容就尝试解析
+      return JSON.parse(text) as T;
     }
 
     return resp.json();
