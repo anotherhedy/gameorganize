@@ -99,12 +99,16 @@ async function getAccessToken(): Promise<string> {
 
 async function apiHeaders(): Promise<Record<string, string>> {
   const token = await getAccessToken();
-  return {
+  const headers: Record<string, string> = {
     apikey: ANON_KEY,
-    Authorization: `Bearer ${token}`,
     'Content-Type': 'application/json',
     Accept: 'application/json',
   };
+  // 有 token 才带 Authorization，空 token 发出去会被 PostgREST 拒绝（PGRST301）
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  return headers;
 }
 
 async function apiFetch<T>(
