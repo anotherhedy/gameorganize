@@ -14,7 +14,7 @@ export const Header: React.FC = () => {
           style={{ animation: 'bounce 1s ease-in-out 3' }}
         >
           <Sparkles size={14} className="text-yellow-400" />
-          <span>系统更新：新增登录功能</span>
+          <span>系统更新：新增提交档案功能</span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 mb-6 sm:mb-8 tracking-tight drop-shadow-sm leading-tight">
