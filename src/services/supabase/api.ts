@@ -226,8 +226,8 @@ export interface CheckDuplicateResult {
   checkFailed: boolean;
 }
 
-/** 检查游戏名是否已存在 */
-export async function checkDuplicateGame(title: string): Promise<CheckDuplicateResult> {
+/** 检查游戏名是否已存在。excludeSubId: 编辑时排除自己的投稿 ID */
+export async function checkDuplicateGame(title: string, excludeSubId?: number): Promise<CheckDuplicateResult> {
   try {
     const gamesResult = await apiFetch<any[]>('/rest/v1/games', {
       params: new URLSearchParams({ select: 'id,title', title: `eq.${title}`, limit: '1' }),
@@ -235,11 +235,11 @@ export async function checkDuplicateGame(title: string): Promise<CheckDuplicateR
     });
     if (gamesResult?.length > 0) return { isDuplicate: true, existingTitle: gamesResult[0].title, checkFailed: false };
 
-    const subResult = await apiFetch<any[]>('/rest/v1/game_submissions', {
-      params: new URLSearchParams({ select: 'id,title', title: `eq.${title}`, status: 'neq.已驳回', limit: '1' }),
-      timeout: 8000,
-    });
-    if (subResult?.length > 0) return { isDuplicate: true, existingTitle: subResult[0].title, checkFailed: false };
+    const params = new URLSearchParams({ select: 'id,title', title: `eq.${title}`, status: 'neq.已驳回', limit: '5' });
+    const subResult = await apiFetch<any[]>('/rest/v1/game_submissions', { params, timeout: 8000 });
+    // 排除自己（编辑时标题未改的情况）
+    const filtered = excludeSubId ? (subResult || []).filter((s: any) => s.id !== excludeSubId) : (subResult || []);
+    if (filtered.length > 0) return { isDuplicate: true, existingTitle: filtered[0].title, checkFailed: false };
 
     return { isDuplicate: false, checkFailed: false };
   } catch (err: any) {
@@ -344,7 +344,6 @@ export async function resubmitSubmission(subId: number, payload: GameSubmitPaylo
       status: '审核中', review_comment: null,
     },
     timeout: 15000,
-    extraHeaders: { Prefer: 'return=minimal' },
   });
 }
 

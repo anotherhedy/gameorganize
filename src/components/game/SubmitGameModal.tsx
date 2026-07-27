@@ -182,9 +182,12 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
     setError(null);
 
     try {
-      // 1. 先按标题查重（链接可重复——同作者可能用同网站发多个游戏）
-      console.log('[提交] 步骤1: 检查重复...');
-      const { isDuplicate, existingTitle, checkFailed } = await checkDuplicateGame(title.trim());
+      // 1. 先按标题查重（编辑时排除自己的投稿 ID）
+      console.log('[提交] 步骤1: 检查重复...', isEdit ? `(排除投稿 #${editSubmission?.id})` : '');
+      const { isDuplicate, existingTitle, checkFailed } = await checkDuplicateGame(
+        title.trim(),
+        isEdit ? editSubmission?.id : undefined,
+      );
       if (isDuplicate) {
         if (checkFailed) {
           setError('网络检查失败，请稍后重试');
