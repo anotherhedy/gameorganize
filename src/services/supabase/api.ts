@@ -7,6 +7,7 @@ export const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 // ========== 智能选路 ==========
 
 let _apiBase: string | null = null;
+let _probePromise: Promise<string> | null = null;  // 防并发重复探测
 
 /** 探测直连 Supabase 是否可达，返回最优 base URL */
 export async function detectApiBase(): Promise<string> {
@@ -25,30 +26,41 @@ export async function detectApiBase(): Promise<string> {
     } catch { /* ignore */ }
   }
 
-  // 快速探测直连（3 秒超时）
-  console.log('[选路] 探测直连...');
-  try {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 3000);
-    const resp = await fetch(`${SUPABASE_DIRECT}/rest/v1/games?select=id&limit=1`, {
-      headers: { apikey: ANON_KEY },
-      signal: ctrl.signal,
-    });
-    clearTimeout(timer);
-    if (resp.ok) {
-      _apiBase = SUPABASE_DIRECT;
-      localStorage.setItem('sea_api_mode', JSON.stringify({ mode: 'direct', ts: Date.now() }));
-      console.log('[选路] 直连可达 → 直连 Supabase');
-      return _apiBase;
-    }
-  } catch {
-    // 超时或失败 → 走代理
-  }
+  // 已有探测进行中，复用结果
+  if (_probePromise) return _probePromise;
 
-  _apiBase = '/api';
-  localStorage.setItem('sea_api_mode', JSON.stringify({ mode: 'proxy', ts: Date.now() }));
-  console.log('[选路] 直连不可达 → CF 代理');
-  return _apiBase;
+  // 快速探测直连（1.5 秒超时）
+  console.log('[选路] 探测直连...');
+  _probePromise = (async () => {
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 1500);
+      const resp = await fetch(`${SUPABASE_DIRECT}/rest/v1/games?select=id&limit=1`, {
+        headers: { apikey: ANON_KEY },
+        signal: ctrl.signal,
+      });
+      clearTimeout(timer);
+      if (resp.ok) {
+        _apiBase = SUPABASE_DIRECT;
+        localStorage.setItem('sea_api_mode', JSON.stringify({ mode: 'direct', ts: Date.now() }));
+        console.log('[选路] 直连可达 → 直连 Supabase');
+        return _apiBase;
+      }
+    } catch {
+      // 超时或失败 → 走代理
+    }
+
+    _apiBase = '/api';
+    localStorage.setItem('sea_api_mode', JSON.stringify({ mode: 'proxy', ts: Date.now() }));
+    console.log('[选路] 直连不可达 → CF 代理');
+    return _apiBase;
+  })();
+
+  try {
+    return await _probePromise;
+  } finally {
+    _probePromise = null;
+  }
 }
 
 /** 清除选路缓存（网络环境变化时调用） */
