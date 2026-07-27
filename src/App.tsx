@@ -3,7 +3,7 @@ import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
 import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, Database, CheckCircle2, Circle, Activity } from 'lucide-react';
 import { fetchGameStats, incrementGameViews, fetchAllGames, fetchPendingCount, detectApiBase, fetchProfile, updateSolvedGames } from './services/supabase/api';
-import { GameData } from './types';
+import { GameData, GameSubmission } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
 import { FloatingEntry } from './components/intel/FloatingEntry';
 import { VirtuosoGrid } from 'react-virtuoso';
@@ -39,6 +39,7 @@ const App: React.FC = () => {
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
   const [gameToEdit, setGameToEdit] = useState<GameData | null>(null); // 新增：待编辑的游戏
+  const [editingSubmission, setEditingSubmission] = useState<GameSubmission | null>(null); // 编辑已有投稿
   const [searchTerm, setSearchTerm] = useState('');
   const [gameStats, setGameStats] = useState<Record<string, number>>({});
   const [sortBy, setSortBy] = useState<SortOption>('releaseDate');
@@ -560,16 +561,18 @@ const App: React.FC = () => {
         games={games}
         isAdmin={isAdmin}
         pendingCount={pendingCount}
-        onOpenSubmit={() => setIsSubmitModalOpen(true)}
+        onOpenSubmit={() => { setEditingSubmission(null); setIsSubmitModalOpen(true); }}
+        onEditSubmission={(sub) => { setEditingSubmission(sub); setIsSubmitModalOpen(true); }}
         onOpenCMS={() => setIsAdminCMSOpen(true)}
       />
 
       <SubmitGameModal
         isOpen={isSubmitModalOpen}
-        onClose={() => setIsSubmitModalOpen(false)}
+        onClose={() => { setIsSubmitModalOpen(false); setEditingSubmission(null); }}
         userId={user?.id}
         isAdmin={isAdmin}
         onSubmitted={handleGameAdded}
+        editSubmission={editingSubmission}
       />
 
       <AdminCMS

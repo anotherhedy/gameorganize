@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase/supabaseClient';
-import { submitGameForReview, adminDirectSubmit, checkDuplicateGame, detectApiBase, ANON_KEY } from '../../services/supabase/api';
-import { X, Upload, Loader2, Monitor, Smartphone, AlertTriangle, Send, ImagePlus } from 'lucide-react';
+import { submitGameForReview, adminDirectSubmit, checkDuplicateGame, detectApiBase, ANON_KEY, resubmitSubmission } from '../../services/supabase/api';
+import { GameSubmission } from '../../types';
+import { X, Upload, Loader2, Monitor, Smartphone, AlertTriangle, Send, ImagePlus, Pencil, Eye } from 'lucide-react';
 
 /** Canvas 压缩图片 — 最大宽度 400px，WebP 格式，质量 0.7 */
 async function compressImage(file: File): Promise<Blob> {
@@ -43,6 +44,8 @@ interface SubmitGameModalProps {
   userId: string;
   isAdmin?: boolean;
   onSubmitted: () => void;
+  /** 编辑已有投稿（非新增） */
+  editSubmission?: GameSubmission | null;
 }
 
 export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
@@ -50,8 +53,13 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
   onClose,
   userId,
   isAdmin = false,
-  onSubmitted
+  onSubmitted,
+  editSubmission,
 }) => {
+  const isEdit = !!editSubmission;
+  const isApproved = editSubmission?.status === '已通过';
+  const isRejected = editSubmission?.status === '已驳回';
+
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
@@ -68,7 +76,36 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // 编辑模式：回填表单
+  useEffect(() => {
+    if (editSubmission) {
+      setTitle(editSubmission.title || '');
+      setUrl(editSubmission.url || '');
+      setDescription(editSubmission.description || '');
+      setDuration(editSubmission.duration || '');
+      setAuthorName(editSubmission.author_name || '');
+      setAuthorUrl(editSubmission.author_url || '');
+      setAnswerUrl(editSubmission.answer_url || '');
+      setPc(editSubmission.pc ?? true);
+      setPe(editSubmission.pe ?? false);
+      setJumpscare(editSubmission.jumpscare ?? false);
+      setSound(editSubmission.sound ?? false);
+      setCoverFile(null);
+      setCoverPreview(editSubmission.image_url || null);
+      setError(null);
+    } else {
+      // 新增模式：清空
+      setTitle(''); setUrl(''); setDescription(''); setDuration('');
+      setAuthorName(''); setAuthorUrl(''); setAnswerUrl('');
+      setPc(true); setPe(false); setJumpscare(false); setSound(false);
+      setCoverFile(null); setCoverPreview(null);
+      setError(null);
+    }
+  }, [editSubmission, isOpen]);
+
   if (!isOpen) return null;
+
+  const canEdit = !isApproved; // 已通过不可编辑
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -160,23 +197,37 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
       console.log('[提交] 步骤1: 无重复');
 
       // 2. 上传封面图（自动压缩为 WebP）
-      let imageUrl = '';
+      let imageUrl = isEdit ? (editSubmission?.image_url || '') : '';
       if (coverFile) {
         console.log('[提交] 步骤2: 压缩并上传图片...');
         imageUrl = await uploadCover();
         console.log('[提交] 步骤2: 图片上传完成', imageUrl);
       }
 
-      // 3. 提交（管理员直入 games，用户走审核）
-      console.log('[提交] 步骤3: 写入数据库...', isAdmin ? '(管理员直投)' : '(用户投稿)');
-      if (isAdmin) {
+      // 3. 提交
+      if (isEdit && editSubmission) {
+        // 编辑模式 → 重新提交审核
+        console.log('[提交] 步骤3: 重新提交投稿...', editSubmission.id);
+        await resubmitSubmission(editSubmission.id, {
+          title: title.trim(), url: url.trim(), image_url: imageUrl,
+          description: description.trim(), duration: duration.trim(),
+          author_name: authorName.trim(), author_url: authorUrl.trim(),
+          answer_url: answerUrl.trim(), pc, pe, jumpscare, sound,
+        });
+        console.log('[提交] 步骤3: 重新提交成功');
+      } else if (isAdmin) {
+        // 管理员直入 games
+        console.log('[提交] 步骤3: 写入数据库... (管理员直投)');
         await adminDirectSubmit({
           title: title.trim(), url: url.trim(), image_url: imageUrl,
           description: description.trim(), duration: duration.trim(),
           author_name: authorName.trim(), author_url: authorUrl.trim(),
           answer_url: answerUrl.trim(), pc, pe, jumpscare, sound,
         });
+        console.log('[提交] 步骤3: 写入成功');
       } else {
+        // 用户投稿
+        console.log('[提交] 步骤3: 写入数据库... (用户投稿)');
         await submitGameForReview({
           title: title.trim(), url: url.trim(), image_url: imageUrl,
           description: description.trim(), duration: duration.trim(),
@@ -184,8 +235,8 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
           answer_url: answerUrl.trim(), pc, pe, jumpscare, sound,
           submitted_by: userId,
         });
+        console.log('[提交] 步骤3: 写入成功');
       }
-      console.log('[提交] 步骤3: 写入成功');
 
       // 清空表单
       setTitle(''); setUrl(''); setDescription(''); setDuration('');
@@ -214,8 +265,12 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
         {/* Header */}
         <div className="sticky top-0 z-10 bg-[#0a0a10] p-5 border-b border-white/5 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-white">提交新档案</h2>
-            <p className="text-[10px] text-gray-500 mt-0.5 uppercase tracking-wider">Submit Game Record</p>
+            <h2 className="text-lg font-bold text-white">
+              {isEdit ? (isApproved ? '查看档案' : '编辑投稿') : '提交新档案'}
+            </h2>
+            <p className="text-[10px] text-gray-500 mt-0.5 uppercase tracking-wider">
+              {isEdit ? 'Edit Submission Record' : 'Submit Game Record'}
+            </p>
           </div>
           <button
             onClick={onClose}
@@ -226,8 +281,40 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          {/* 审核提示 */}
-          {isAdmin ? (
+          {/* 审核提示 / 编辑状态 */}
+          {isEdit && isApproved ? (
+            <div className="flex items-start gap-3 p-3 bg-green-500/5 border border-green-500/20 rounded-xl">
+              <Eye size={16} className="text-green-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-medium text-green-300">该档案已审核通过</p>
+                <p className="text-[10px] text-gray-500 mt-0.5">已收录的档案不可修改，仅供查看</p>
+              </div>
+            </div>
+          ) : isEdit && isRejected ? (
+            <div className="space-y-3">
+              <div className="flex items-start gap-3 p-3 bg-red-500/5 border border-red-500/20 rounded-xl">
+                <AlertTriangle size={16} className="text-red-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-medium text-red-300">该投稿已被驳回</p>
+                  <p className="text-[10px] text-gray-500 mt-0.5">修改后可重新提交审核</p>
+                </div>
+              </div>
+              {editSubmission?.review_comment && (
+                <div className="p-3 bg-red-500/5 border border-red-500/10 rounded-lg">
+                  <p className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-1">驳回理由</p>
+                  <p className="text-xs text-red-300/80">{editSubmission.review_comment}</p>
+                </div>
+              )}
+            </div>
+          ) : isEdit ? (
+            <div className="flex items-start gap-3 p-3 bg-yellow-500/5 border border-yellow-500/20 rounded-xl">
+              <Pencil size={16} className="text-yellow-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-medium text-yellow-300">编辑投稿</p>
+                <p className="text-[10px] text-gray-500 mt-0.5">修改内容后将重新提交审核</p>
+              </div>
+            </div>
+          ) : isAdmin ? (
             <div className="flex items-start gap-3 p-3 bg-purple-500/5 border border-purple-500/20 rounded-xl">
               <AlertTriangle size={16} className="text-purple-400 shrink-0 mt-0.5" />
               <div>
@@ -255,14 +342,18 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
             {coverPreview ? (
               <div className="relative inline-block">
                 <img src={coverPreview} alt="预览" className="w-32 h-20 object-cover rounded-lg border border-white/10" />
-                <button
-                  type="button"
-                  onClick={() => { setCoverFile(null); setCoverPreview(null); }}
-                  className="absolute -top-2 -right-2 p-1 bg-red-500 rounded-full text-white"
-                >
-                  <X size={12} />
-                </button>
+                {!isApproved && (
+                  <button
+                    type="button"
+                    onClick={() => { setCoverFile(null); setCoverPreview(null); }}
+                    className="absolute -top-2 -right-2 p-1 bg-red-500 rounded-full text-white"
+                  >
+                    <X size={12} />
+                  </button>
+                )}
               </div>
+            ) : isApproved ? (
+              <p className="text-xs text-gray-600">无封面</p>
             ) : (
               <label className="flex flex-col items-center justify-center gap-2 h-20 border-2 border-dashed border-white/10 rounded-xl cursor-pointer hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all">
                 <ImagePlus size={24} className="text-gray-500" />
@@ -282,8 +373,9 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="例如：青楼"
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
+              disabled={isApproved}
+                placeholder="例如：青楼"
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -297,8 +389,9 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
               required
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://..."
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
+              disabled={isApproved}
+                placeholder="https://..."
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -310,9 +403,10 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              disabled={isApproved}
               required
               rows={3}
-              placeholder="简单描述这个游戏的背景、玩法..."
+                placeholder="简单描述这个游戏的背景、玩法..."
               className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all resize-none"
             />
           </div>
@@ -327,8 +421,9 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
               required
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
-              placeholder="例如：1-2小时 或 30分钟"
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
+              disabled={isApproved}
+                placeholder="例如：1-2小时 或 30分钟"
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -344,8 +439,9 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
                 required
                 value={authorName}
                 onChange={(e) => setAuthorName(e.target.value)}
+                disabled={isApproved}
                 placeholder="作者名 / 小红书昵称"
-                className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
+                className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
             <div>
@@ -357,8 +453,9 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
                 required
                 value={authorUrl}
                 onChange={(e) => setAuthorUrl(e.target.value)}
+                disabled={isApproved}
                 placeholder="小红书/微博/B站 主页链接"
-                className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
+                className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
           </div>
@@ -372,8 +469,9 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
               type="url"
               value={answerUrl}
               onChange={(e) => setAnswerUrl(e.target.value)}
-              placeholder="通关攻略 / 答案链接"
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
+              disabled={isApproved}
+                placeholder="通关攻略 / 答案链接"
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -386,7 +484,7 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
               <div className="flex gap-2">
                 <button
                   type="button"
-                  onClick={() => togglePlatform('pc')}
+                  onClick={() => !isApproved && togglePlatform('pc')}
                   className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all border ${
                     pc ? 'bg-purple-600 border-purple-500 text-white' : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'
                   }`}
@@ -395,7 +493,7 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
                 </button>
                 <button
                   type="button"
-                  onClick={() => togglePlatform('pe')}
+                  onClick={() => !isApproved && togglePlatform('pe')}
                   className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all border ${
                     pe ? 'bg-purple-600 border-purple-500 text-white' : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'
                   }`}
@@ -410,7 +508,7 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
               <div className="flex gap-2">
                 <button
                   type="button"
-                  onClick={() => setJumpscare(!jumpscare)}
+                  onClick={() => !isApproved && setJumpscare(!jumpscare)}
                   className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all border ${
                     jumpscare ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'
                   }`}
@@ -419,7 +517,7 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
                 </button>
                 <button
                   type="button"
-                  onClick={() => setSound(!sound)}
+                  onClick={() => !isApproved && setSound(!sound)}
                   className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all border ${
                     sound ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'
                   }`}
@@ -433,11 +531,27 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
           {/* 提交 */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || isApproved}
             className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-cyan-500/20 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {loading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-            {loading ? '提交中...' : '提交审核'}
+            {loading ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : isApproved ? (
+              <Eye size={18} />
+            ) : isEdit ? (
+              <Send size={18} />
+            ) : (
+              <Send size={18} />
+            )}
+            {loading
+              ? '提交中...'
+              : isApproved
+              ? '已通过，无法修改'
+              : isEdit
+              ? '重新提交审核'
+              : isAdmin
+              ? '直接发布'
+              : '提交审核'}
           </button>
         </form>
       </div>

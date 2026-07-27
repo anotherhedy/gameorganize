@@ -331,6 +331,23 @@ export async function fetchMySubmissions(userId: string): Promise<GameSubmission
   return (await apiFetch<any[]>('/rest/v1/game_submissions', { params, timeout: 10000 })) || [];
 }
 
+/** 重新提交投稿：更新内容 + 重置状态为审核中 */
+export async function resubmitSubmission(subId: number, payload: GameSubmitPayload) {
+  await apiFetch(`/rest/v1/game_submissions?id=eq.${subId}`, {
+    method: 'PATCH',
+    body: {
+      title: payload.title, url: payload.url, description: payload.description,
+      image_url: payload.image_url || null, duration: payload.duration,
+      author_name: payload.author_name, author_url: payload.author_url,
+      answer_url: payload.answer_url || null, pc: payload.pc, pe: payload.pe,
+      jumpscare: payload.jumpscare, sound: payload.sound,
+      status: '审核中', review_comment: null,
+    },
+    timeout: 15000,
+    extraHeaders: { Prefer: 'return=minimal' },
+  });
+}
+
 // ========== Profiles ==========
 
 export async function fetchProfile(userId: string): Promise<any | null> {

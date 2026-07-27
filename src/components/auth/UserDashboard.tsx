@@ -20,6 +20,7 @@ interface UserDashboardProps {
   isAdmin: boolean;
   pendingCount: number;
   onOpenSubmit: () => void;
+  onEditSubmission: (sub: GameSubmission) => void;
   onOpenCMS: () => void;
 }
 
@@ -34,6 +35,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   isAdmin,
   pendingCount,
   onOpenSubmit,
+  onEditSubmission,
   onOpenCMS
 }) => {
   const [username, setUsername] = useState('');
@@ -323,7 +325,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                   </button>
                   <div className="space-y-2">
                     {mySubmissions.slice(0, 3).map(sub => (
-                      <div key={sub.id} className="bg-white/5 border border-white/5 rounded-lg px-3 py-2">
+                      <div key={sub.id}
+                        onClick={() => { onEditSubmission(sub); onClose(); }}
+                        className="bg-white/5 border border-white/5 rounded-lg px-3 py-2 cursor-pointer hover:bg-white/10 transition-all">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5 min-w-0">
                             {sub.image_url && (
@@ -376,7 +380,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
               ) : (
                 <div className="space-y-2">
                   {mySubmissions.map(sub => (
-                    <div key={sub.id} className="flex items-center gap-3 bg-white/5 border border-white/5 rounded-xl p-3 hover:bg-white/10 transition-all">
+                    <div key={sub.id}
+                      onClick={() => { onEditSubmission(sub); onClose(); }}
+                      className="flex items-center gap-3 bg-white/5 border border-white/5 rounded-xl p-3 hover:bg-white/10 transition-all cursor-pointer">
                       {sub.image_url && (
                         <img src={sub.image_url} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
                       )}
