@@ -235,7 +235,7 @@ export async function checkDuplicateGame(title: string, excludeSubId?: number): 
     });
     if (gamesResult?.length > 0) return { isDuplicate: true, existingTitle: gamesResult[0].title, checkFailed: false };
 
-    const params = new URLSearchParams({ select: 'id,title', title: `eq.${title}`, status: 'neq.已驳回', limit: '5' });
+    const params = new URLSearchParams({ select: 'id,title', title: `eq.${title}`, status: 'eq.审核中', limit: '5' });
     const subResult = await apiFetch<any[]>('/rest/v1/game_submissions', { params, timeout: 8000 });
     // 排除自己（编辑时标题未改的情况）
     const filtered = excludeSubId ? (subResult || []).filter((s: any) => s.id !== excludeSubId) : (subResult || []);
@@ -344,6 +344,14 @@ export async function resubmitSubmission(subId: number, payload: GameSubmitPaylo
       status: '审核中', review_comment: null,
     },
     timeout: 15000,
+  });
+}
+
+/** 删除投稿（仅审核中/已驳回） */
+export async function deleteSubmission(subId: number): Promise<void> {
+  await apiFetch(`/rest/v1/game_submissions?id=eq.${subId}`, {
+    method: 'DELETE',
+    timeout: 10000,
   });
 }
 

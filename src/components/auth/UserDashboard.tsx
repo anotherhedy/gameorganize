@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase/supabaseClient';
 import { GameData, GameSubmission } from '../../types';
-import { fetchMySubmissions, upsertProfile } from '../../services/supabase/api';
+import { fetchMySubmissions, upsertProfile, deleteSubmission } from '../../services/supabase/api';
 import {
   X, User, Mail, ShieldCheck, BadgeCheck, LogOut, Save, Loader2,
   FilePlus, Dices, Edit3, Clock, CheckCircle2, Circle, ExternalLink,
   Trophy, Send, AlertCircle, ChevronRight, Star, Flame, Target,
-  Settings, Inbox
+  Settings, Inbox, Trash2
 } from 'lucide-react';
 
 interface UserDashboardProps {
@@ -98,6 +98,18 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
       console.error('更新档案失败:', err);
       setError(err.message || '更新失败');
       setLoading(false);
+    }
+  };
+
+  const handleDeleteSubmission = async (subId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!window.confirm('确定要删除这条投稿吗？此操作不可撤销。')) return;
+    try {
+      await deleteSubmission(subId);
+      setMySubmissions(prev => prev.filter(s => s.id !== subId));
+    } catch (err: any) {
+      console.error('删除投稿失败:', err);
+      alert('删除失败，请重试');
     }
   };
 
@@ -335,7 +347,18 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                             )}
                             <span className="text-sm text-gray-200 truncate">{sub.title}</span>
                           </div>
-                          {statusBadge(sub.status)}
+                          <div className="flex items-center gap-1.5">
+                            {statusBadge(sub.status)}
+                            {sub.status !== '已通过' && (
+                              <button
+                                onClick={(e) => handleDeleteSubmission(sub.id, e)}
+                                className="p-1 text-gray-600 hover:text-red-400 hover:bg-red-500/10 rounded transition-all"
+                                title="删除投稿"
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            )}
+                          </div>
                         </div>
                         {sub.status === '已驳回' && sub.review_comment && (
                           <p className="mt-1.5 ml-9 text-[11px] text-red-400/80 bg-red-500/5 rounded px-2 py-1">
@@ -405,6 +428,15 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                       </div>
                       <div className="shrink-0 flex flex-col items-end gap-1.5">
                         {statusBadge(sub.status)}
+                        {sub.status !== '已通过' && (
+                          <button
+                            onClick={(e) => handleDeleteSubmission(sub.id, e)}
+                            className="p-1 text-gray-600 hover:text-red-400 hover:bg-red-500/10 rounded transition-all"
+                            title="删除投稿"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
                         {sub.status === '已通过' && sub.url && (
                           <a href={sub.url} target="_blank" rel="noreferrer"
                             className="text-[10px] text-purple-400 hover:text-purple-300 flex items-center gap-0.5"
