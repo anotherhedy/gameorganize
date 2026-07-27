@@ -26,12 +26,9 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, curr
 
   const isAdmin = userProfile?.role === 'admin';
 
-  const fetchFeedbacks = useCallback(async (pageNumber: number) => {
+  const loadFeedbacks = useCallback(async (pageNumber: number) => {
     setLoading(true);
     try {
-      const from = (pageNumber - 1) * PAGE_SIZE;
-      const to = from + PAGE_SIZE - 1;
-
       const { data, count } = await fetchFeedbacks(pageNumber, PAGE_SIZE);
       setFeedbacks(data as Feedback[] || []);
       setTotal(count);
@@ -43,8 +40,8 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, curr
   }, []);
 
   useEffect(() => {
-    fetchFeedbacks(page);
-  }, [page, fetchFeedbacks]);
+    loadFeedbacks(page);
+  }, [page, loadFeedbacks]);
 
   const handlePostIntel = async (data: { detective_name: string; intel_content: string }) => {
     try {
@@ -67,7 +64,7 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, curr
       setIntelToEdit(null);
       // Refresh current page or go to page 1
       if (page === 1) {
-        await fetchFeedbacks(1);
+        loadFeedbacks(1);
       } else {
         setPage(1);
       }
@@ -83,7 +80,7 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, curr
     try {
       await deleteFeedback(id);
       alert('情报已销毁');
-      fetchFeedbacks(page);
+      loadFeedbacks(page);
     } catch (error) {
       console.error('Error deleting feedback:', error);
       alert('删除失败，仅限特殊研究员操作');
@@ -104,7 +101,7 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, curr
     try {
       await updateFeedback(id, { reply_content: content });
       alert('回应已发布');
-      fetchFeedbacks(page);
+      loadFeedbacks(page);
     } catch (error) {
       console.error('Error replying to feedback:', error);
       alert('发布失败，请检查权限');
