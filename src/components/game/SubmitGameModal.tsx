@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { supabase } from '../../services/supabase/supabaseClient';
-import { submitGameForReview, checkDuplicateGame } from '../../services/supabase/api';
+import { submitGameForReview, adminDirectSubmit, checkDuplicateGame, detectApiBase, ANON_KEY } from '../../services/supabase/api';
 import { X, Upload, Loader2, Monitor, Smartphone, AlertTriangle, Send, ImagePlus } from 'lucide-react';
 
 /** Canvas 压缩图片 — 最大宽度 400px，WebP 格式，质量 0.7 */
@@ -41,6 +41,7 @@ interface SubmitGameModalProps {
   isOpen: boolean;
   onClose: () => void;
   userId: string;
+  isAdmin?: boolean;
   onSubmitted: () => void;
 }
 
@@ -48,6 +49,7 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
   isOpen,
   onClose,
   userId,
+  isAdmin = false,
   onSubmitted
 }) => {
   const [title, setTitle] = useState('');
@@ -93,14 +95,15 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
     console.log('[提交] 步骤2b: 压缩完成, 上传中...');
 
     const fileName = `submitted/${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
-    const anonKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || 'sb_publishable_BIU7udY_SPDalLnu3fP82w_cMsl3oMh';
+    const anonKey = ANON_KEY;
 
     // 获取用户 JWT（RLS 需要确认 auth.role() = 'authenticated'）
     const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token || '';
 
-    // 直接用 fetch 上传（绕过 supabase-js，避免超时问题）
-    const uploadUrl = `${window.location.origin}/api/storage/v1/object/game-covers/${fileName}`;
+    // 智能选路：海外/VPN 直连，国内走代理
+    const base = await detectApiBase();
+    const uploadUrl = `${base}/storage/v1/object/game-covers/${fileName}`;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 20000);
 
@@ -122,9 +125,9 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
         throw new Error(`上传失败: ${resp.status} ${errText}`);
       }
 
-      console.log('[提交] 步骤2c: 上传成功, 获取URL...');
+      console.log('[提交] 步骤2c: 上传成功');
       // 构造公开 URL
-      const publicUrl = `${window.location.origin}/api/storage/v1/object/public/game-covers/${fileName}`;
+      const publicUrl = `${base}/storage/v1/object/public/game-covers/${fileName}`;
       return publicUrl;
     } finally {
       clearTimeout(timer);
@@ -144,9 +147,13 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
     try {
       // 1. 先按标题查重（链接可重复——同作者可能用同网站发多个游戏）
       console.log('[提交] 步骤1: 检查重复...');
-      const { isDuplicate, existingTitle } = await checkDuplicateGame(title.trim());
+      const { isDuplicate, existingTitle, checkFailed } = await checkDuplicateGame(title.trim());
       if (isDuplicate) {
-        setError(`已收录该游戏：${existingTitle || ''}`);
+        if (checkFailed) {
+          setError('网络检查失败，请稍后重试');
+        } else {
+          setError(`已收录该游戏：${existingTitle || ''}`);
+        }
         setLoading(false);
         return;
       }
@@ -160,23 +167,24 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
         console.log('[提交] 步骤2: 图片上传完成', imageUrl);
       }
 
-      // 3. 提交审核
-      console.log('[提交] 步骤3: 写入数据库...');
-      await submitGameForReview({
-        title: title.trim(),
-        url: url.trim(),
-        image_url: imageUrl,
-        description: description.trim(),
-        duration: duration.trim(),
-        author_name: authorName.trim(),
-        author_url: authorUrl.trim(),
-        answer_url: answerUrl.trim(),
-        pc,
-        pe,
-        jumpscare,
-        sound,
-        submitted_by: userId
-      });
+      // 3. 提交（管理员直入 games，用户走审核）
+      console.log('[提交] 步骤3: 写入数据库...', isAdmin ? '(管理员直投)' : '(用户投稿)');
+      if (isAdmin) {
+        await adminDirectSubmit({
+          title: title.trim(), url: url.trim(), image_url: imageUrl,
+          description: description.trim(), duration: duration.trim(),
+          author_name: authorName.trim(), author_url: authorUrl.trim(),
+          answer_url: answerUrl.trim(), pc, pe, jumpscare, sound,
+        });
+      } else {
+        await submitGameForReview({
+          title: title.trim(), url: url.trim(), image_url: imageUrl,
+          description: description.trim(), duration: duration.trim(),
+          author_name: authorName.trim(), author_url: authorUrl.trim(),
+          answer_url: answerUrl.trim(), pc, pe, jumpscare, sound,
+          submitted_by: userId,
+        });
+      }
       console.log('[提交] 步骤3: 写入成功');
 
       // 清空表单
@@ -219,13 +227,23 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
 
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           {/* 审核提示 */}
-          <div className="flex items-start gap-3 p-3 bg-cyan-500/5 border border-cyan-500/20 rounded-xl">
-            <AlertTriangle size={16} className="text-cyan-400 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-xs font-medium text-cyan-300">提交后将进入审核队列</p>
-              <p className="text-[10px] text-gray-500 mt-0.5">管理员审核通过后才会公开展示，请确保信息准确</p>
+          {isAdmin ? (
+            <div className="flex items-start gap-3 p-3 bg-purple-500/5 border border-purple-500/20 rounded-xl">
+              <AlertTriangle size={16} className="text-purple-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-medium text-purple-300">管理员模式：档案将直接发布</p>
+                <p className="text-[10px] text-gray-500 mt-0.5">以管理员身份提交，档案将跳过审核直接收录</p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex items-start gap-3 p-3 bg-cyan-500/5 border border-cyan-500/20 rounded-xl">
+              <AlertTriangle size={16} className="text-cyan-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-medium text-cyan-300">提交后将进入审核队列</p>
+                <p className="text-[10px] text-gray-500 mt-0.5">管理员审核通过后才会公开展示，请确保信息准确</p>
+              </div>
+            </div>
+          )}
 
           {error && (
             <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-400 text-sm">{error}</div>

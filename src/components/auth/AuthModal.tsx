@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase/supabaseClient';
+import { upsertProfile } from '../../services/supabase/api';
 import { X, Mail, Lock, Loader2, AlertCircle, User, Smartphone } from 'lucide-react';
 
 interface AuthModalProps {
@@ -44,18 +45,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         
         // 注册成功后，立即在 profiles 表创建记录 (使用 upsert 防止冲突)
         if (signUpData.user) {
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .upsert({
+          try {
+            await upsertProfile({
               id: signUpData.user.id,
               username: username,
               xhs_id: xhsId || null,
               role: 'user', // 明确设置初始角色
               updated_at: new Date().toISOString()
             });
-          
-          if (profileError) {
-            console.error('手动创建 Profile 失败:', profileError.message);
+          } catch (profileError: any) {
+            console.error('手动创建 Profile 失败:', profileError?.message);
             // 这里不抛出错误，因为账号其实已经创建成功了
           }
         }

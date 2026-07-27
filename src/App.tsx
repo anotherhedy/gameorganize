@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
 import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, Database, CheckCircle2, Circle, Activity } from 'lucide-react';
-import { fetchGameStats, incrementGameViews, fetchAllGames, fetchPendingCount } from './services/supabase/api';
+import { fetchGameStats, incrementGameViews, fetchAllGames, fetchPendingCount, detectApiBase, fetchProfile, updateSolvedGames } from './services/supabase/api';
 import { GameData } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
 import { FloatingEntry } from './components/intel/FloatingEntry';
@@ -32,7 +32,7 @@ const App: React.FC = () => {
   const [games, setGames] = useState<GameData[]>([]);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null); // 新增：存放数据库里的用户信息
-  const [solvedGameIds, setSolvedGameIds] = useState<Set<string>>(new Set());
+  const [solvedGameIds, setSolvedGameIds] = useState<Set<string>>(new Set<string>());
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isAdminCMSOpen, setIsAdminCMSOpen] = useState(false);
@@ -109,6 +109,9 @@ const App: React.FC = () => {
   useEffect(() => {
     const initApp = async () => {
       try {
+        // 0. 提前探测最优路线（海外直连 vs 国内代理），后续所有请求复用结果
+        detectApiBase().catch(() => {});
+
         // 1. First fetch critical game data from Supabase (formerly from JSON)
         const gamesData = await fetchAllGames();
         setGames(gamesData);
@@ -142,16 +145,12 @@ const App: React.FC = () => {
 
       if (currentUser) {
         // 同时拉取 Profile 信息
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', currentUser.id)
-          .single();
+        const profileData = await fetchProfile(currentUser.id);
         if (profileData) {
           setProfile(profileData);
           // 从 profile 恢复已侦破进度
           if (profileData.solved_game_ids) {
-            setSolvedGameIds(new Set(profileData.solved_game_ids));
+            setSolvedGameIds(new Set<string>(profileData.solved_game_ids));
           }
         }
       }
@@ -163,19 +162,15 @@ const App: React.FC = () => {
         setUser(updatedUser);
         
         if (updatedUser) {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', updatedUser.id)
-            .single();
+          const profileData = await fetchProfile(updatedUser.id);
           if (profileData) {
             setProfile(profileData);
             if (profileData.solved_game_ids) {
-              setSolvedGameIds(new Set(profileData.solved_game_ids));
+              setSolvedGameIds(new Set<string>(profileData.solved_game_ids));
             }
           }
         } else {
-          setSolvedGameIds(new Set());
+          setSolvedGameIds(new Set<string>());
           setProfile(null);
         }
 
@@ -211,9 +206,9 @@ const App: React.FC = () => {
     setIsPicking(true);
     // Add a small delay for "thinking" animation effect
     setTimeout(() => {
-      const activeGames = games.filter(g => g.status === '是');
-      const randomIndex = Math.floor(Math.random() * activeGames.length);
-      setRandomGame(activeGames[randomIndex]);
+      // games 表全部是已通过的游戏，无需过滤
+      const randomIndex = Math.floor(Math.random() * games.length);
+      setRandomGame(games[randomIndex]);
       setIsPicking(false);
     }, 600);
   };
@@ -385,21 +380,16 @@ const App: React.FC = () => {
   const handleToggleSolved = async (gameId: string, isSolving: boolean) => {
     if (!user || !profile) return;
 
-    const currentSolved = Array.from(solvedGameIds);
-    const newSolvedIds = isSolving 
+    const currentSolved: string[] = [...solvedGameIds];
+    const newSolvedIds = isSolving
       ? [...currentSolved, gameId]
       : currentSolved.filter(id => id !== gameId);
 
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ solved_game_ids: newSolvedIds })
-        .eq('id', user.id);
-
-      if (error) throw error;
+      await updateSolvedGames(user.id, newSolvedIds);
 
       // 同步本地状态
-      setSolvedGameIds(new Set(newSolvedIds));
+      setSolvedGameIds(new Set<string>(newSolvedIds));
       setProfile({ ...profile, solved_game_ids: newSolvedIds });
     } catch (error) {
       console.error('Failed to sync progress:', error);
@@ -411,7 +401,7 @@ const App: React.FC = () => {
   const handleProfileUpdate = (updatedProfile: any) => {
     setProfile(updatedProfile);
     if (updatedProfile.solved_game_ids) {
-      setSolvedGameIds(new Set(updatedProfile.solved_game_ids));
+      setSolvedGameIds(new Set<string>(updatedProfile.solved_game_ids));
     }
   };
 
@@ -578,6 +568,7 @@ const App: React.FC = () => {
         isOpen={isSubmitModalOpen}
         onClose={() => setIsSubmitModalOpen(false)}
         userId={user?.id}
+        isAdmin={isAdmin}
         onSubmitted={handleGameAdded}
       />
 
@@ -1100,7 +1091,6 @@ const App: React.FC = () => {
                 onToggleSolved={handleToggleSolved}
                 userId={user?.id}
                 isSolved={solvedGameIds.has(randomGame.id)}
-                isOwner={randomGame.submitted_by === user?.id}
               />
             </div>
 

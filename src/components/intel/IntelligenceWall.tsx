@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { supabase } from '../../services/supabase/supabaseClient';
+import { fetchFeedbacks, insertFeedback, updateFeedback, deleteFeedback } from '../../services/supabase/api';
 import { Feedback } from '../../types';
 import { IntelCard } from './IntelCard';
 import { IntelModal } from './IntelModal';
@@ -32,16 +32,9 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, curr
       const from = (pageNumber - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
 
-      const { data, count, error } = await supabase
-        .from('feedback')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
-        .range(from, to);
-
-      if (error) throw error;
-
+      const { data, count } = await fetchFeedbacks(pageNumber, PAGE_SIZE);
       setFeedbacks(data as Feedback[] || []);
-      if (count !== null) setTotal(count);
+      setTotal(count);
     } catch (error) {
       console.error('Error fetching feedbacks:', error);
     } finally {
@@ -57,25 +50,18 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, curr
     try {
       if (intelToEdit) {
         // 更新现有情报
-        const { error } = await supabase
-          .from('feedback')
-          .update({
-            detective_name: data.detective_name,
-            intel_content: data.intel_content,
-          })
-          .eq('id', intelToEdit.id);
-        if (error) throw error;
+        await updateFeedback(intelToEdit.id, {
+          detective_name: data.detective_name,
+          intel_content: data.intel_content,
+        });
         alert('情报已更新');
       } else {
         // 发送新情报
-        const { error } = await supabase.from('feedback').insert([
-          {
-            detective_name: data.detective_name,
-            intel_content: data.intel_content,
-            user_id: currentUser?.id || null,
-          },
-        ]);
-        if (error) throw error;
+        await insertFeedback({
+          detective_name: data.detective_name,
+          intel_content: data.intel_content,
+          user_id: currentUser?.id || null,
+        });
       }
 
       setIntelToEdit(null);
@@ -95,13 +81,7 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, curr
     if (!window.confirm('确定要永久销毁这份情报吗？')) return;
     
     try {
-      const { error } = await supabase
-        .from('feedback')
-        .delete()
-        .eq('id', id);
-      
-      if (error) throw error;
-      
+      await deleteFeedback(id);
       alert('情报已销毁');
       fetchFeedbacks(page);
     } catch (error) {
@@ -122,13 +102,7 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, curr
 
   const handlePostReply = async (id: number, content: string) => {
     try {
-      const { error } = await supabase
-        .from('feedback')
-        .update({ reply_content: content })
-        .eq('id', id);
-      
-      if (error) throw error;
-      
+      await updateFeedback(id, { reply_content: content });
       alert('回应已发布');
       fetchFeedbacks(page);
     } catch (error) {

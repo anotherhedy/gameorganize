@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!supabaseAnonKey) {
-  throw new Error('Missing VITE_SUPABASE_ANON_KEY environment variable')
+  console.error('[Supabase] Missing VITE_SUPABASE_ANON_KEY environment variable. Auth will not work.')
 }
 
 // 开发：Vite proxy 转发 /api → Supabase（vite.config.ts）

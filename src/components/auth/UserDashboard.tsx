@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase/supabaseClient';
 import { GameData, GameSubmission } from '../../types';
-import { fetchMySubmissions } from '../../services/supabase/api';
+import { fetchMySubmissions, upsertProfile } from '../../services/supabase/api';
 import {
   X, User, Mail, ShieldCheck, BadgeCheck, LogOut, Save, Loader2,
   FilePlus, Dices, Edit3, Clock, CheckCircle2, Circle, ExternalLink,
@@ -79,20 +79,15 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
     setError(null);
 
     try {
-      const { data: updatedRows, error: profileError } = await supabase
-        .from('profiles')
-        .upsert({
-          id: user.id,
-          username,
-          xhs_id: xhsId || null,
-          updated_at: new Date().toISOString()
-        })
-        .select();
+      const updatedRow = await upsertProfile({
+        id: user.id,
+        username,
+        xhs_id: xhsId || null,
+        updated_at: new Date().toISOString()
+      });
 
-      if (profileError) throw profileError;
-
-      if (onProfileUpdate && updatedRows?.[0]) {
-        onProfileUpdate(updatedRows[0]);
+      if (onProfileUpdate && updatedRow) {
+        onProfileUpdate(updatedRow);
       }
 
       setLoading(false);

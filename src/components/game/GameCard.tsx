@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { GameData } from '../../types';
 import { Icons } from './Icon';
-import { supabase } from '../../services/supabase/supabaseClient';
 import { CheckCircle2, Circle, Edit3 } from 'lucide-react';
 
 interface GameCardProps {
