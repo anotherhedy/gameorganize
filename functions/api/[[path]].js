@@ -123,6 +123,73 @@ export async function onRequest(context) {
     }
   }
 
+  // 👤 用户管理端点（需要 service_role key，管理员功能）
+  if (pathname === '/admin/users') {
+    const serviceKey = request.headers.get('x-service-key') || '';
+    if (!serviceKey) {
+      return new Response(JSON.stringify({ error: '未授权：缺少 service key' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+
+    try {
+      if (request.method === 'GET') {
+        // 根据邮箱查找用户：GET /auth/v1/admin/users?filter=...
+        const email = url.searchParams.get('email');
+        if (!email) {
+          return new Response(JSON.stringify({ error: '缺少 email 参数' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+          });
+        }
+        const resp = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?filter=email+eq+%22${encodeURIComponent(email)}%22`, {
+          headers: { Authorization: `Bearer ${serviceKey}` },
+        });
+        const data = await resp.json();
+        return new Response(JSON.stringify(data), {
+          status: resp.status,
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        });
+      }
+
+      if (request.method === 'PUT') {
+        // 更新用户：PUT /auth/v1/admin/users/{userId}
+        const userId = url.searchParams.get('id');
+        if (!userId) {
+          return new Response(JSON.stringify({ error: '缺少 id 参数' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+          });
+        }
+        const body = await request.json();
+        const resp = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${serviceKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        });
+        const data = await resp.json();
+        return new Response(JSON.stringify(data), {
+          status: resp.status,
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        });
+      }
+
+      return new Response(JSON.stringify({ error: '不支持的方法' }), {
+        status: 405,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    } catch (err) {
+      return new Response(JSON.stringify({ error: err.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+  }
+
   // 原样转发 headers，supabase-js 已带 anon key
   const headers = new Headers(request.headers);
   headers.delete('host');

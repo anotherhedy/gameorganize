@@ -6,7 +6,7 @@ import {
   X, User, Mail, ShieldCheck, BadgeCheck, LogOut, Save, Loader2,
   FilePlus, Dices, Edit3, Clock, CheckCircle2, Circle, ExternalLink,
   Trophy, Send, AlertCircle, ChevronRight, Star, Flame, Target,
-  Settings, Inbox, Trash2
+  Settings, Inbox, Trash2, Key
 } from 'lucide-react';
 
 interface UserDashboardProps {
@@ -45,6 +45,12 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   const [activeSection, setActiveSection] = useState<'overview' | 'submissions' | 'settings'>('overview');
   const [mySubmissions, setMySubmissions] = useState<GameSubmission[]>([]);
   const [subsLoading, setSubsLoading] = useState(false);
+
+  // 修改密码状态
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [pwdLoading, setPwdLoading] = useState(false);
+  const [pwdMsg, setPwdMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
 
   useEffect(() => {
     if (isOpen && user) {
@@ -98,6 +104,36 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
       console.error('更新档案失败:', err);
       setError(err.message || '更新失败');
       setLoading(false);
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwdMsg(null);
+
+    if (newPassword.length < 6) {
+      setPwdMsg({ type: 'err', text: '新密码至少需要 6 位字符' });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPwdMsg({ type: 'err', text: '两次输入的密码不一致' });
+      return;
+    }
+
+    setPwdLoading(true);
+    try {
+      // 已登录用户可直接修改密码，无需邮件验证（国内收不到 Supabase 邮件）
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw new Error(error.message);
+
+      setPwdMsg({ type: 'ok', text: '✅ 密码修改成功！下次登录请使用新密码。' });
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err: any) {
+      console.error('修改密码失败:', err);
+      setPwdMsg({ type: 'err', text: '修改失败: ' + (err.message || '请稍后重试') });
+    } finally {
+      setPwdLoading(false);
     }
   };
 
@@ -492,6 +528,50 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                   className="w-full bg-white/5 border border-white/5 rounded-xl py-2.5 px-4 text-gray-500 cursor-not-allowed text-sm"
                 />
                 <p className="text-[10px] text-gray-600">邮箱作为唯一身份凭证不可修改</p>
+              </div>
+
+              {/* 修改密码 */}
+              <div className="border-t border-white/5 pt-4 space-y-4">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                  <Key size={12} /> 修改密码
+                </div>
+
+                <form onSubmit={handleChangePassword} className="space-y-3">
+                  <div className="space-y-2">
+                    <input
+                      type="password" value={newPassword}
+                      onChange={e => setNewPassword(e.target.value)}
+                      placeholder="新密码（至少 6 位）"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all text-sm"
+                    />
+                    <input
+                      type="password" value={confirmPassword}
+                      onChange={e => setConfirmPassword(e.target.value)}
+                      placeholder="确认新密码"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all text-sm"
+                    />
+                  </div>
+
+                  {pwdMsg && (
+                    <p className={`text-xs p-2.5 rounded-lg ${
+                      pwdMsg.type === 'ok'
+                        ? 'bg-green-500/10 border border-green-500/20 text-green-400'
+                        : 'bg-red-500/10 border border-red-500/20 text-red-400'
+                    }`}>
+                      {pwdMsg.text}
+                    </p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={pwdLoading}
+                    className="w-full py-2.5 bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 rounded-xl transition-all flex items-center justify-center gap-2 font-medium text-sm disabled:opacity-50"
+                  >
+                    {pwdLoading ? <Loader2 size={14} className="animate-spin" /> : <Key size={14} />}
+                    修改密码
+                  </button>
+                  <p className="text-[10px] text-gray-600">修改后需重新登录。忘记密码时可联系管理员重置。</p>
+                </form>
               </div>
 
               <div className="flex flex-col gap-2 pt-2">

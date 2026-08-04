@@ -85,6 +85,65 @@ export default defineConfig(({ mode }) => {
                 }));
               }
             });
+
+            // 拦截 /api/admin/users — 用户管理（需要 service key）
+            server.middlewares.use('/api/admin/users', async (req, res) => {
+              const url = new URL(req.url!, `http://${req.headers.host}`);
+              const serviceKey = (req.headers['x-service-key'] as string) || '';
+
+              if (!serviceKey) {
+                res.writeHead(401, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                res.end(JSON.stringify({ error: '未授权：缺少 service key' }));
+                return;
+              }
+
+              try {
+                if (req.method === 'GET') {
+                  const email = url.searchParams.get('email');
+                  if (!email) {
+                    res.writeHead(400, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                    res.end(JSON.stringify({ error: '缺少 email 参数' }));
+                    return;
+                  }
+                  const resp = await fetch(
+                    `https://dbgekqlyliksvipakmpg.supabase.co/auth/v1/admin/users?filter=email+eq+%22${encodeURIComponent(email)}%22`,
+                    { headers: { Authorization: `Bearer ${serviceKey}` } }
+                  );
+                  const data = await resp.json();
+                  res.writeHead(resp.status, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                  res.end(JSON.stringify(data));
+                } else if (req.method === 'PUT') {
+                  const userId = url.searchParams.get('id');
+                  if (!userId) {
+                    res.writeHead(400, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                    res.end(JSON.stringify({ error: '缺少 id 参数' }));
+                    return;
+                  }
+                  const body = await new Promise<string>((resolve) => {
+                    let data = '';
+                    req.on('data', chunk => data += chunk);
+                    req.on('end', () => resolve(data));
+                  });
+                  const resp = await fetch(
+                    `https://dbgekqlyliksvipakmpg.supabase.co/auth/v1/admin/users/${userId}`,
+                    {
+                      method: 'PUT',
+                      headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+                      body,
+                    }
+                  );
+                  const data = await resp.json();
+                  res.writeHead(resp.status, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                  res.end(JSON.stringify(data));
+                } else {
+                  res.writeHead(405, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                  res.end(JSON.stringify({ error: '不支持的方法' }));
+                }
+              } catch (err) {
+                res.writeHead(500, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                res.end(JSON.stringify({ error: err.message }));
+              }
+            });
           },
         },
       ],

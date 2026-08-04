@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase/supabaseClient';
-import { X, Save, Loader2, Trash2, Settings, Image as ImageIcon, PenLine, Activity, Wifi, CheckCircle, AlertTriangle } from 'lucide-react';
+import { X, Save, Loader2, Trash2, Settings, Image as ImageIcon, PenLine, Activity, Wifi, CheckCircle, AlertTriangle, Users, Key, Search } from 'lucide-react';
 import { ReviewQueue } from './ReviewQueue';
 import { fetchPendingCount, detectApiBase, deleteGame, updateGame, fetchAllGames, updateGameLinkStatus } from '../../services/supabase/api';
 
@@ -25,6 +25,16 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
   // 内部编辑状态（从检测结果点击进入时使用，不依赖父组件 gameToEdit）
   const [editingGame, setEditingGame] = useState<any>(null);
   const activeEdit = editingGame || gameToEdit;
+
+  // 视图切换: 'review' = 审核队列, 'users' = 用户管理
+  const [view, setView] = useState<'review' | 'users'>('review');
+
+  // 用户管理状态
+  const [userSearchEmail, setUserSearchEmail] = useState('');
+  const [userSearchResult, setUserSearchResult] = useState<any>(null);
+  const [userSearching, setUserSearching] = useState(false);
+  const [userResetMsg, setUserResetMsg] = useState('');
+  const SERVICE_KEY = (import.meta as any).env?.VITE_SERVICE_KEY || '';
 
   // 链接检测状态
   const [isCheckingLinks, setIsCheckingLinks] = useState(false);
@@ -62,6 +72,57 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  const handleSearchUser = async () => {
+    if (!userSearchEmail.trim()) return;
+    setUserSearching(true);
+    setUserSearchResult(null);
+    setUserResetMsg('');
+    try {
+      const resp = await fetch(`/api/admin/users?email=${encodeURIComponent(userSearchEmail.trim())}`, {
+        headers: { 'x-service-key': SERVICE_KEY },
+      });
+      const data = await resp.json();
+      if (Array.isArray(data) && data.length > 0) {
+        setUserSearchResult(data[0]);
+      } else {
+        setUserSearchResult({ notFound: true });
+      }
+    } catch (err: any) {
+      setUserResetMsg(`查找失败: ${err.message}`);
+    } finally {
+      setUserSearching(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!userSearchResult?.id) return;
+    const newPwd = window.prompt('请输入新密码（至少 6 位）：');
+    if (!newPwd || newPwd.length < 6) {
+      alert('密码至少需要 6 位字符');
+      return;
+    }
+    setUserResetMsg('');
+    try {
+      const resp = await fetch(`/api/admin/users?id=${userSearchResult.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-service-key': SERVICE_KEY,
+        },
+        body: JSON.stringify({ password: newPwd }),
+      });
+      if (resp.ok) {
+        setUserResetMsg(`✅ 密码已重置！请将新密码「${newPwd}」告知用户 "${userSearchResult.email}"`);
+        setUserSearchResult(null);
+      } else {
+        const err = await resp.json();
+        setUserResetMsg(`❌ 重置失败: ${err.error || err.msg || '未知错误'}`);
+      }
+    } catch (err: any) {
+      setUserResetMsg(`❌ 请求失败: ${err.message}`);
+    }
+  };
 
   const handleCheckLinks = async () => {
     setIsCheckingLinks(true);
@@ -344,8 +405,30 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
             </div>
           </form>
         ) : (
-          /* 审核队列（默认视图） */
+          /* 管理工具（默认视图） */
           <div className="p-5 sm:p-6 flex-1 overflow-y-auto">
+            {/* Tab 切换 */}
+            <div className="flex gap-1 mb-5 p-0.5 bg-white/5 rounded-lg">
+              <button
+                onClick={() => setView('review')}
+                className={`flex-1 py-2 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  view === 'review' ? 'bg-purple-600/30 text-purple-300' : 'text-gray-500 hover:text-gray-300'
+                }`}
+              >
+                <Settings size={13} /> 审核队列
+              </button>
+              <button
+                onClick={() => setView('users')}
+                className={`flex-1 py-2 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  view === 'users' ? 'bg-purple-600/30 text-purple-300' : 'text-gray-500 hover:text-gray-300'
+                }`}
+              >
+                <Users size={13} /> 用户管理
+              </button>
+            </div>
+
+            {view === 'review' ? (
+            <>
             {/* 链接有效性检测 */}
             <div className="mb-6 p-4 bg-white/[0.02] border border-white/5 rounded-xl">
               <div className="flex items-center justify-between mb-3">
@@ -423,6 +506,72 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
               onGameAdded();
               fetchPendingCount().then(setPendingCount).catch(() => {});
             }} />
+            </>
+            ) : (
+            <>
+            {/* 用户管理面板 */}
+            <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Users size={16} className="text-purple-400" />
+                <h3 className="text-sm font-bold text-white">用户管理 · 重置密码</h3>
+              </div>
+
+              {/* 搜索用户 */}
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  value={userSearchEmail}
+                  onChange={e => setUserSearchEmail(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleSearchUser()}
+                  placeholder="输入用户邮箱..."
+                  className="flex-1 bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                />
+                <button
+                  onClick={handleSearchUser}
+                  disabled={userSearching}
+                  className="px-3 py-2 bg-purple-600/20 border border-purple-500/30 text-purple-300 rounded-lg text-xs font-bold hover:bg-purple-600/30 transition-all disabled:opacity-50 flex items-center gap-1"
+                >
+                  {userSearching ? <Loader2 size={14} className="animate-spin" /> : <Search size={14} />}
+                  查找
+                </button>
+              </div>
+
+              {/* 搜索结果 */}
+              {userSearchResult && !userSearchResult.notFound && (
+                <div className="p-3 bg-white/5 rounded-lg space-y-2">
+                  <div className="text-xs text-gray-400 space-y-1">
+                    <div>📧 <span className="text-white">{userSearchResult.email}</span></div>
+                    <div>🆔 <span className="text-gray-500 text-[10px]">{userSearchResult.id}</span></div>
+                    <div>📅 <span className="text-gray-500">{userSearchResult.created_at?.split('T')[0] || '未知'}</span></div>
+                    {userSearchResult.last_sign_in_at && (
+                      <div>🔑 上次登录: <span className="text-gray-500">{new Date(userSearchResult.last_sign_in_at).toLocaleString('zh-CN')}</span></div>
+                    )}
+                  </div>
+                  <button
+                    onClick={handleResetPassword}
+                    className="w-full py-2 bg-red-600/20 border border-red-500/30 text-red-300 rounded-lg text-xs font-bold hover:bg-red-600/30 transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <Key size={13} /> 重置密码
+                  </button>
+                </div>
+              )}
+
+              {userSearchResult?.notFound && (
+                <p className="text-xs text-gray-500">未找到该邮箱对应的用户</p>
+              )}
+
+              {userResetMsg && (
+                <p className={`text-xs p-2 rounded-lg ${userResetMsg.startsWith('✅') ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
+                  {userResetMsg}
+                </p>
+              )}
+
+              <p className="text-[10px] text-gray-600 leading-relaxed">
+                Supabase 海外邮件国内可能收不到。通过此功能管理员可帮用户设置新密码，然后通过微信/QQ 等渠道告知用户。用户登录后可在个人中心自行修改密码。
+              </p>
+            </div>
+            </>
+            )}
           </div>
         )}
       </div>
