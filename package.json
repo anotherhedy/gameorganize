@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "optimize-images": "node scripts/convert-images.js",
-    "sync-db": "node sync-to-supabase.js"
+    "sync-db": "node sync-to-supabase.js",
+    "check-links": "node scripts/check-links.mjs",
+    "check-links:csv": "node scripts/check-links.mjs --csv"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.95.3",

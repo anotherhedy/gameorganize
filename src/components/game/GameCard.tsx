@@ -40,8 +40,8 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({
     setIsSolved(initialSolved);
   }, [initialSolved]);
 
-  // games 表只存已通过的游戏，全部有效
-  const isActive = true;
+  // 链接状态：仅当明确标记为 broken 时视为失效
+  const isActive = game.linkStatus !== 'broken';
 
   // 处理“已破案”切换逻辑
   const handleToggleSolved = async (e: React.MouseEvent) => {
@@ -151,7 +151,15 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({
 
       {/* Content Container */}
       <div className="relative z-10 p-4 sm:p-6 flex flex-col h-full min-h-[380px] sm:min-h-0">
-        
+
+        {/* Link Status Indicator — 失效链接右上角标记 */}
+        {!isActive && (
+          <div className="absolute top-10 right-3 sm:top-12 sm:right-4 z-30 flex items-center gap-1.5 px-2 py-1 rounded-full bg-red-500/15 border border-red-500/30 backdrop-blur-md">
+            <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
+            <span className="text-[10px] text-red-400 font-medium">链接失效</span>
+          </div>
+        )}
+
         {/* Top Right Tags */}
         <div className="flex justify-end gap-1.5 sm:gap-2 mb-2">
             {game.tags.hasJumpScare ? (
@@ -242,7 +250,7 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({
                     : 'text-gray-600 cursor-not-allowed'
                 }`}
             >
-                <span>{isActive ? '启动研究' : '维护中'}</span>
+                <span>{isActive ? '启动研究' : '链接失效'}</span>
                 {isActive && <Icons.ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover/link:translate-x-1" />}
             </a>
 

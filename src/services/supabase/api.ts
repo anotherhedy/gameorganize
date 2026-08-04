@@ -71,7 +71,7 @@ export function clearApiBaseCache() {
 
 // ========== 共享 ==========
 
-const BASE_SELECT = 'id, title, url, description, image_url, category, tags, created_at, author_name, author_url, answer_text, answer_url';
+const BASE_SELECT = 'id, title, url, description, image_url, category, tags, created_at, author_name, author_url, answer_text, answer_url, link_status, link_checked_at';
 
 function mapGameRow(dbGame: any): GameData {
   return {
@@ -92,6 +92,8 @@ function mapGameRow(dbGame: any): GameData {
     duration: dbGame.category?.[0] || '',
     answer: { text: dbGame.answer_text || '', url: dbGame.answer_url || '' },
     coverImage: dbGame.image_url,
+    linkStatus: dbGame.link_status || 'unknown',
+    linkCheckedAt: dbGame.link_checked_at || undefined,
   };
 }
 
@@ -405,6 +407,22 @@ export async function updateGame(gameId: string, payload: Record<string, any>): 
   await apiFetch(`/rest/v1/games?id=eq.${gameId}`, {
     method: 'PATCH',
     body: payload,
+    timeout: 10000,
+    extraHeaders: { Prefer: 'return=minimal' },
+  });
+}
+
+/** 更新单个游戏的链接状态 */
+export async function updateGameLinkStatus(
+  gameId: string,
+  status: 'ok' | 'broken' | 'unknown'
+): Promise<void> {
+  await apiFetch(`/rest/v1/games?id=eq.${gameId}`, {
+    method: 'PATCH',
+    body: {
+      link_status: status,
+      link_checked_at: new Date().toISOString(),
+    },
     timeout: 10000,
     extraHeaders: { Prefer: 'return=minimal' },
   });

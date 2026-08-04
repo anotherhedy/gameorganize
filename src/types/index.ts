@@ -25,6 +25,10 @@ export interface GameData {
   duration: string;
   answer: LinkResource; // Guide
   coverImage: string;
+  /** 链接有效性: 'ok' | 'broken' | 'unknown'（默认） */
+  linkStatus?: 'ok' | 'broken' | 'unknown';
+  /** 上次检查时间（ISO 字符串） */
+  linkCheckedAt?: string;
 }
 
 /** 社区投稿记录（独立表 game_submissions） */

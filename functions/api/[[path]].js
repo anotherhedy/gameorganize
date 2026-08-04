@@ -55,6 +55,74 @@ export async function onRequest(context) {
     }
   }
 
+  // 🔍 链接检测端点：服务端代理检查目标 URL 是否可达
+  if (pathname === '/check-url') {
+    const target = url.searchParams.get('target');
+    if (!target) {
+      return new Response(JSON.stringify({ error: 'missing target parameter' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+
+    const start = Date.now();
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 12000);
+
+    try {
+      // 先试 HEAD（快），失败则 GET 回退
+      let resp;
+      try {
+        resp = await fetch(target, {
+          method: 'HEAD',
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'text/html,application/xhtml+xml,*/*',
+            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+          },
+          signal: ctrl.signal,
+          redirect: 'follow',
+        });
+      } catch {
+        resp = await fetch(target, {
+          method: 'GET',
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'text/html,application/xhtml+xml,*/*',
+            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+          },
+          signal: ctrl.signal,
+          redirect: 'follow',
+        });
+      }
+
+      clearTimeout(timer);
+      const latencyMs = Date.now() - start;
+
+      return new Response(JSON.stringify({
+        ok: resp.status < 400,
+        status: resp.status,
+        link_status: resp.status >= 400 ? 'broken' : 'ok',
+        reason: resp.status >= 400 ? `HTTP ${resp.status}` : undefined,
+        latency_ms: latencyMs,
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    } catch (err) {
+      clearTimeout(timer);
+      return new Response(JSON.stringify({
+        ok: false,
+        link_status: 'broken',
+        reason: err.name === 'AbortError' ? '连接超时' : (err.message?.slice(0, 200) || '网络错误'),
+        latency_ms: Date.now() - start,
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+  }
+
   // 原样转发 headers，supabase-js 已带 anon key
   const headers = new Headers(request.headers);
   headers.delete('host');
