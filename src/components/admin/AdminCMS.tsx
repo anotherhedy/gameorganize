@@ -34,6 +34,7 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
   const [userSearchResult, setUserSearchResult] = useState<any>(null);
   const [userSearching, setUserSearching] = useState(false);
   const [userResetMsg, setUserResetMsg] = useState('');
+  const SERVICE_KEY = (import.meta as any).env?.VITE_SERVICE_KEY || '';
 
   // 链接检测状态
   const [isCheckingLinks, setIsCheckingLinks] = useState(false);
@@ -72,27 +73,16 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
 
   if (!isOpen) return null;
 
-  // 从当前登录会话取用户 token（service key 只在服务端，前端不接触）
-  const getUserToken = async (): Promise<string> => {
-    const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token || '';
-  };
-
   const handleSearchUser = async () => {
     if (!userSearchEmail.trim()) return;
     setUserSearching(true);
     setUserSearchResult(null);
     setUserResetMsg('');
     try {
-      const token = await getUserToken();
       const resp = await fetch(`/api/admin/users?email=${encodeURIComponent(userSearchEmail.trim())}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 'x-service-key': SERVICE_KEY },
       });
       const data = await resp.json();
-      if (!resp.ok) {
-        setUserResetMsg(`查找失败: ${data.error || data.msg || `HTTP ${resp.status}`}`);
-        return;
-      }
       if (Array.isArray(data) && data.length > 0) {
         setUserSearchResult(data[0]);
       } else {
@@ -114,12 +104,11 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
     }
     setUserResetMsg('');
     try {
-      const token = await getUserToken();
       const resp = await fetch(`/api/admin/users?id=${userSearchResult.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          'x-service-key': SERVICE_KEY,
         },
         body: JSON.stringify({ password: newPwd }),
       });
