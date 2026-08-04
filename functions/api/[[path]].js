@@ -189,7 +189,8 @@ export async function onRequest(context) {
             headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
           });
         }
-        const resp = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?filter=email+eq+%22${encodeURIComponent(email)}%22`, {
+        // GoTrue /admin/users filter 直接传值，不是 PostgREST 语法
+        const resp = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?filter=${encodeURIComponent(email)}`, {
           headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
         });
         const data = await resp.json();
