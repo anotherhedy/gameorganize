@@ -107,10 +107,10 @@ export default defineConfig(({ mode }) => {
               }
               const userToken = authHeader.slice(7);
 
-              // 解析 uid
+              // 解析 uid（GoTrue 需要 apikey + Authorization 两个头）
               const userResp = await fetch(
                 'https://dbgekqlyliksvipakmpg.supabase.co/auth/v1/user',
-                { headers: { Authorization: `Bearer ${userToken}` } }
+                { headers: { apikey: serviceKey, Authorization: `Bearer ${userToken}` } }
               );
               if (!userResp.ok) {
                 res.writeHead(401, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });

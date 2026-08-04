@@ -145,9 +145,12 @@ export async function onRequest(context) {
     }
     const userToken = authHeader.slice(7);
 
-    // 2. 用用户 token 解析 uid
+    // 2. 用用户 token 解析 uid（GoTrue 需要 apikey + Authorization 两个头）
     const userResp = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-      headers: { Authorization: `Bearer ${userToken}` },
+      headers: {
+        apikey: serviceKey,
+        Authorization: `Bearer ${userToken}`,
+      },
     });
     if (!userResp.ok) {
       return new Response(JSON.stringify({ error: '登录状态无效，请重新登录' }), {
