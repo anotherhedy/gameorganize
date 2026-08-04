@@ -123,12 +123,55 @@ export async function onRequest(context) {
     }
   }
 
-  // 👤 用户管理端点（需要 service_role key，管理员功能）
+  // 👤 用户管理端点（管理员功能）
+  // 安全设计：service_role key 只在服务端 context.env，绝不发给前端。
+  // 前端只传用户自己的登录 token，服务端验证其角色为 admin 后才执行。
   if (pathname === '/admin/users') {
-    const serviceKey = request.headers.get('x-service-key') || '';
+    const serviceKey = context.env.SUPABASE_SERVICE_KEY || '';
     if (!serviceKey) {
-      return new Response(JSON.stringify({ error: '未授权：缺少 service key' }), {
+      return new Response(JSON.stringify({ error: '服务端未配置 SUPABASE_SERVICE_KEY 环境变量' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+
+    // 1. 校验调用者身份：Authorization: Bearer <用户 token>
+    const authHeader = request.headers.get('authorization') || '';
+    if (!authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: '未登录' }), {
         status: 401,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+    const userToken = authHeader.slice(7);
+
+    // 2. 用用户 token 解析 uid
+    const userResp = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: { Authorization: `Bearer ${userToken}` },
+    });
+    if (!userResp.ok) {
+      return new Response(JSON.stringify({ error: '登录状态无效，请重新登录' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+    const authUser = await userResp.json();
+    const uid = authUser.id;
+    if (!uid) {
+      return new Response(JSON.stringify({ error: '无法识别用户身份' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+
+    // 3. 查 profiles 确认调用者是管理员
+    const profileResp = await fetch(`${SUPABASE_URL}/rest/v1/profiles?select=role&id=eq.${uid}`, {
+      headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
+    });
+    const profiles = await profileResp.json().catch(() => []);
+    if (!Array.isArray(profiles) || profiles[0]?.role !== 'admin') {
+      return new Response(JSON.stringify({ error: '无权限：仅管理员可操作' }), {
+        status: 403,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }

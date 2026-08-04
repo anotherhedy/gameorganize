@@ -86,14 +86,54 @@ export default defineConfig(({ mode }) => {
               }
             });
 
-            // 拦截 /api/admin/users — 用户管理（需要 service key）
+            // 拦截 /api/admin/users — 用户管理（管理员功能）
+            // service key 从服务端 env 读取，绝不发给前端；前端传用户 token，服务端验证 admin
             server.middlewares.use('/api/admin/users', async (req, res) => {
               const url = new URL(req.url!, `http://${req.headers.host}`);
-              const serviceKey = (req.headers['x-service-key'] as string) || '';
+              const serviceKey = (env as any).VITE_SERVICE_KEY || (process.env.VITE_SERVICE_KEY as string) || '';
 
               if (!serviceKey) {
+                res.writeHead(500, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                res.end(JSON.stringify({ error: '服务端未配置 VITE_SERVICE_KEY 环境变量' }));
+                return;
+              }
+
+              // 校验调用者身份：Authorization: Bearer <用户 token>
+              const authHeader = (req.headers['authorization'] as string) || '';
+              if (!authHeader.startsWith('Bearer ')) {
                 res.writeHead(401, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
-                res.end(JSON.stringify({ error: '未授权：缺少 service key' }));
+                res.end(JSON.stringify({ error: '未登录' }));
+                return;
+              }
+              const userToken = authHeader.slice(7);
+
+              // 解析 uid
+              const userResp = await fetch(
+                'https://dbgekqlyliksvipakmpg.supabase.co/auth/v1/user',
+                { headers: { Authorization: `Bearer ${userToken}` } }
+              );
+              if (!userResp.ok) {
+                res.writeHead(401, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                res.end(JSON.stringify({ error: '登录状态无效，请重新登录' }));
+                return;
+              }
+              const authUser = await userResp.json();
+              const uid = authUser.id;
+              if (!uid) {
+                res.writeHead(401, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                res.end(JSON.stringify({ error: '无法识别用户身份' }));
+                return;
+              }
+
+              // 查 profiles 确认管理员
+              const profileResp = await fetch(
+                `https://dbgekqlyliksvipakmpg.supabase.co/rest/v1/profiles?select=role&id=eq.${uid}`,
+                { headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` } }
+              );
+              const profiles = await profileResp.json().catch(() => []);
+              if (!Array.isArray(profiles) || profiles[0]?.role !== 'admin') {
+                res.writeHead(403, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                res.end(JSON.stringify({ error: '无权限：仅管理员可操作' }));
                 return;
               }
 
