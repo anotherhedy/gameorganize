@@ -190,7 +190,7 @@ export async function onRequest(context) {
           });
         }
         const resp = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?filter=email+eq+%22${encodeURIComponent(email)}%22`, {
-          headers: { Authorization: `Bearer ${serviceKey}` },
+          headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
         });
         const data = await resp.json();
         return new Response(JSON.stringify(data), {
@@ -212,6 +212,7 @@ export async function onRequest(context) {
         const resp = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
           method: 'PUT',
           headers: {
+            'apikey': serviceKey,
             'Authorization': `Bearer ${serviceKey}`,
             'Content-Type': 'application/json',
           },

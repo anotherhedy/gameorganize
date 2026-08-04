@@ -147,7 +147,7 @@ export default defineConfig(({ mode }) => {
                   }
                   const resp = await fetch(
                     `https://dbgekqlyliksvipakmpg.supabase.co/auth/v1/admin/users?filter=email+eq+%22${encodeURIComponent(email)}%22`,
-                    { headers: { Authorization: `Bearer ${serviceKey}` } }
+                    { headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` } }
                   );
                   const data = await resp.json();
                   res.writeHead(resp.status, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
@@ -168,7 +168,7 @@ export default defineConfig(({ mode }) => {
                     `https://dbgekqlyliksvipakmpg.supabase.co/auth/v1/admin/users/${userId}`,
                     {
                       method: 'PUT',
-                      headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+                      headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
                       body,
                     }
                   );
