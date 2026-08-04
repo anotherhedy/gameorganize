@@ -85,10 +85,20 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
     setUserResetMsg('');
     try {
       const token = await getUserToken();
+      console.log('[Admin] searchUser token length:', token?.length || 0);
       const resp = await fetch(`/api/admin/users?email=${encodeURIComponent(userSearchEmail.trim())}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log('[Admin] searchUser status:', resp.status, 'content-type:', resp.headers.get('content-type'));
+      const ct = resp.headers.get('content-type') || '';
+      if (ct.includes('text/html')) {
+        const htmlSnippet = (await resp.text()).slice(0, 200);
+        console.error('[Admin] Got HTML instead of JSON:', htmlSnippet);
+        setUserResetMsg(`查找失败: 服务端返回 HTML (${resp.status})，admin/users 函数可能未部署`);
+        return;
+      }
       const data = await resp.json();
+      console.log('[Admin] searchUser data type:', Array.isArray(data) ? 'array' : typeof data, 'keys:', Object.keys(data || {}));
       if (!resp.ok) {
         setUserResetMsg(`查找失败: ${data.error || data.msg || `HTTP ${resp.status}`}`);
         return;
@@ -99,6 +109,7 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
         setUserSearchResult({ notFound: true });
       }
     } catch (err: any) {
+      console.error('[Admin] searchUser error:', err);
       setUserResetMsg(`查找失败: ${err.message}`);
     } finally {
       setUserSearching(false);

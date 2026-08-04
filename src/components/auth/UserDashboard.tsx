@@ -107,8 +107,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
     }
   };
 
-  const handleChangePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleChangePassword = async () => {
     setPwdMsg(null);
 
     if (newPassword.length < 6) {
@@ -536,7 +535,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                   <Key size={12} /> 修改密码
                 </div>
 
-                <form onSubmit={handleChangePassword} className="space-y-3">
+                <div className="space-y-3">
                   <div className="space-y-2">
                     <input
                       type="password" value={newPassword}
@@ -563,15 +562,16 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                   )}
 
                   <button
-                    type="submit"
+                    type="button"
                     disabled={pwdLoading}
+                    onClick={handleChangePassword}
                     className="w-full py-2.5 bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 rounded-xl transition-all flex items-center justify-center gap-2 font-medium text-sm disabled:opacity-50"
                   >
                     {pwdLoading ? <Loader2 size={14} className="animate-spin" /> : <Key size={14} />}
                     修改密码
                   </button>
                   <p className="text-[10px] text-gray-600">修改后需重新登录。忘记密码时可联系管理员重置。</p>
-                </form>
+                </div>
               </div>
 
               <div className="flex flex-col gap-2 pt-2">
