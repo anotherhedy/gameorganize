@@ -98,13 +98,15 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
         return;
       }
       const data = await resp.json();
-      console.log('[Admin] searchUser data type:', Array.isArray(data) ? 'array' : typeof data, 'keys:', Object.keys(data || {}));
+      console.log('[Admin] searchUser data:', data);
       if (!resp.ok) {
         setUserResetMsg(`查找失败: ${data.error || data.msg || `HTTP ${resp.status}`}`);
         return;
       }
-      if (Array.isArray(data) && data.length > 0) {
-        setUserSearchResult(data[0]);
+      // GoTrue /auth/v1/admin/users 返回 { users: [...], aud: "..." }
+      const users = Array.isArray(data?.users) ? data.users : (Array.isArray(data) ? data : []);
+      if (users.length > 0) {
+        setUserSearchResult(users[0]);
       } else {
         setUserSearchResult({ notFound: true });
       }
