@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
 import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, Database, CheckCircle2, Circle, Activity, AlertTriangle, RefreshCw } from 'lucide-react';
