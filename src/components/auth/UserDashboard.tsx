@@ -23,6 +23,7 @@ interface UserDashboardProps {
   onOpenSubmit: () => void;
   onEditSubmission: (sub: GameSubmission) => void;
   onOpenCMS: () => void;
+  onRandomPick?: () => void;
 }
 
 export const UserDashboard: React.FC<UserDashboardProps> = ({
@@ -38,7 +39,8 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   pendingCount,
   onOpenSubmit,
   onEditSubmission,
-  onOpenCMS
+  onOpenCMS,
+  onRandomPick
 }) => {
   const [username, setUsername] = useState('');
   const [xhsId, setXhsId] = useState('');
@@ -47,6 +49,10 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   const [activeSection, setActiveSection] = useState<'overview' | 'submissions' | 'settings'>('overview');
   const [mySubmissions, setMySubmissions] = useState<GameSubmission[]>([]);
   const [subsLoading, setSubsLoading] = useState(false);
+
+  // 列表展开状态
+  const [showAllSolved, setShowAllSolved] = useState(false);
+  const [showAllSubmissions, setShowAllSubmissions] = useState(false);
 
   // 修改密码状态
   const [newPassword, setNewPassword] = useState('');
@@ -254,7 +260,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
             </button>
 
             <button
-              onClick={onClose}
+              onClick={() => { onClose(); onRandomPick?.(); }}
               className="flex items-center justify-center gap-2 py-3 bg-purple-500/10 border border-purple-500/20 rounded-xl hover:bg-purple-500/20 hover:border-purple-500/40 transition-all group"
             >
               <Dices size={16} className="text-purple-400 group-hover:scale-110 transition-transform" />
@@ -333,7 +339,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                     </div>
                     {solvedGames.length > 0 ? (
                       <div className="flex flex-wrap gap-1.5">
-                        {solvedGames.slice(0, 8).map(game => (
+                        {(showAllSolved ? solvedGames : solvedGames.slice(0, 8)).map(game => (
                           <a
                             key={game.id}
                             href={game.url}
@@ -345,10 +351,13 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                             <span className="truncate max-w-[100px]">{game.title}</span>
                           </a>
                         ))}
-                        {solvedGames.length > 8 && (
-                          <span className="inline-flex items-center px-2.5 py-1 bg-white/5 rounded-full text-[11px] text-gray-500">
-                            +{solvedGames.length - 8}
-                          </span>
+                        {solvedGames.length > 8 && !showAllSolved && (
+                          <button
+                            onClick={() => setShowAllSolved(true)}
+                            className="inline-flex items-center px-2.5 py-1 bg-white/5 rounded-full text-[11px] text-purple-400 hover:bg-white/10 transition-all cursor-pointer"
+                          >
+                            +{solvedGames.length - 8} 展开全部
+                          </button>
                         )}
                       </div>
                     ) : (
@@ -439,7 +448,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {mySubmissions.map(sub => (
+                  {(showAllSubmissions ? mySubmissions : mySubmissions.slice(0, 5)).map(sub => (
                     <div key={sub.id}
                       onClick={() => { onEditSubmission(sub); onClose(); }}
                       className="flex items-center gap-3 bg-white/5 border border-white/5 rounded-xl p-3 hover:bg-white/10 transition-all cursor-pointer">
@@ -484,6 +493,14 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                       </div>
                     </div>
                   ))}
+                  {submissionCount > 5 && !showAllSubmissions && (
+                    <button
+                      onClick={() => setShowAllSubmissions(true)}
+                      className="w-full py-2 mt-1 text-xs text-purple-400 hover:text-purple-300 hover:bg-white/5 rounded-lg transition-all"
+                    >
+                      展开全部 {submissionCount} 条投稿 ↓
+                    </button>
+                  )}
                 </div>
               )}
             </section>

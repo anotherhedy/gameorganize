@@ -237,22 +237,22 @@ export const GameCard: React.FC<GameCardProps> = React.memo(({
 
         {/* Footer Actions */}
         <div className="mt-auto flex items-center justify-between gap-2">
-            <a 
-                href={isActive ? game.url : '#'}
-                target={isActive ? "_blank" : undefined}
+            {isActive ? (
+              <a
+                href={game.url}
+                target="_blank"
                 rel="noreferrer"
-                onClick={() => {
-                    if (isActive && onPlay) onPlay(game.id);
-                }}
-                className={`flex items-center gap-1.5 sm:gap-2 text-sm sm:text-lg font-bold transition-all group/link ${
-                    isActive 
-                    ? 'text-white hover:text-cyan-400 cursor-pointer' 
-                    : 'text-gray-600 cursor-not-allowed'
-                }`}
-            >
-                <span>{isActive ? '启动研究' : '链接失效'}</span>
-                {isActive && <Icons.ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover/link:translate-x-1" />}
-            </a>
+                onClick={() => { if (onPlay) onPlay(game.id); }}
+                className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-lg font-bold transition-all group/link text-white hover:text-cyan-400 cursor-pointer"
+              >
+                <span>启动研究</span>
+                <Icons.ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover/link:translate-x-1" />
+              </a>
+            ) : (
+              <span className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-lg font-bold text-gray-600 cursor-not-allowed">
+                <span>链接失效</span>
+              </span>
+            )}
 
             {game.answer && game.answer.url && (
                 <a 

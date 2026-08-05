@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
-import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, Database, CheckCircle2, Circle, Activity } from 'lucide-react';
+import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, Database, CheckCircle2, Circle, Activity, AlertTriangle, RefreshCw } from 'lucide-react';
 import { fetchGameStats, incrementGameViews, fetchAllGames, fetchPendingCount, detectApiBase, fetchProfile, updateSolvedGames } from './services/supabase/api';
 import { GameData, GameSubmission, AdminRole } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
@@ -56,6 +56,8 @@ const App: React.FC = () => {
   const [randomGame, setRandomGame] = useState<GameData | null>(null);
   const [isPicking, setIsPicking] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [initError, setInitError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showIntelWall, setShowIntelWall] = useState(false);
@@ -135,6 +137,7 @@ const App: React.FC = () => {
         }).catch(() => {});
       } catch (error) {
         console.error('Failed to initialize app:', error);
+        setInitError('数据加载失败，请检查网络连接后重试');
         setIsLoading(false);
       }
     };
@@ -200,23 +203,28 @@ const App: React.FC = () => {
       window.removeEventListener('scroll', handleScroll);
       authSubscriptionPromise.then(sub => sub.unsubscribe());
     };
-  }, []);
+  }, [retryKey]);
+
+  const handleRetryInit = () => {
+    setInitError(null);
+    setIsLoading(true);
+    setRetryKey(k => k + 1);
+  };
 
   // Scroll to top with passive listener support and optimization
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleRandomPick = () => {
+  const handleRandomPick = useCallback(() => {
+    if (!games.length) return;
     setIsPicking(true);
-    // Add a small delay for "thinking" animation effect
     setTimeout(() => {
-      // games 表全部是已通过的游戏，无需过滤
       const randomIndex = Math.floor(Math.random() * games.length);
       setRandomGame(games[randomIndex]);
       setIsPicking(false);
     }, 600);
-  };
+  }, [games]);
 
   // Popular games: sort by views desc, take top 4
   const popularGames = useMemo(() => {
@@ -355,6 +363,24 @@ const App: React.FC = () => {
     );
   }
 
+  // 加载失败状态：错误提示 + 重试按钮
+  if (initError) {
+    return (
+      <div className="min-h-screen bg-archive-dark flex flex-col items-center justify-center gap-6 p-4">
+        <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+          <AlertTriangle size={32} className="text-red-400" />
+        </div>
+        <p className="text-red-300/80 text-sm text-center max-w-xs">{initError}</p>
+        <button
+          onClick={handleRetryInit}
+          className="px-6 py-2.5 bg-purple-600/20 border border-purple-500/30 text-purple-300 rounded-xl text-sm font-bold hover:bg-purple-600/30 transition-all flex items-center gap-2"
+        >
+          <RefreshCw size={14} /> 重新连接
+        </button>
+      </div>
+    );
+  }
+
   if (showIntelWall) {
     return (
       <React.Suspense fallback={
@@ -377,10 +403,10 @@ const App: React.FC = () => {
     setGameToEdit(null);
   };
 
-  const handleEditGame = (game: GameData) => {
+  const handleEditGame = useCallback((game: GameData) => {
     setGameToEdit(game);
     setIsAdminCMSOpen(true);
-  };
+  }, []);
 
   const handleToggleSolved = async (gameId: string, isSolving: boolean) => {
     if (!user || !profile) return;
@@ -569,6 +595,7 @@ const App: React.FC = () => {
         onOpenSubmit={() => { setEditingSubmission(null); setIsSubmitModalOpen(true); }}
         onEditSubmission={(sub) => { setEditingSubmission(sub); setIsSubmitModalOpen(true); }}
         onOpenCMS={() => setIsAdminCMSOpen(true)}
+        onRandomPick={handleRandomPick}
       />
 
       <SubmitGameModal

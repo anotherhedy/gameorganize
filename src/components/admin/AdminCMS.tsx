@@ -144,7 +144,7 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
         body: JSON.stringify({ password: newPwd }),
       });
       if (resp.ok) {
-        setUserResetMsg(`✅ 密码已重置！请将新密码「${newPwd}」告知用户 "${userSearchResult.email}"`);
+        setUserResetMsg(`✅ 密码已重置！用户 ${userSearchResult.email} 下次登录需使用新密码。`);
         setUserSearchResult(null);
       } else {
         const err = await resp.json();
