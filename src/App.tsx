@@ -340,63 +340,6 @@ const App: React.FC = () => {
     });
   }, [searchTerm, searchableGames, tagsFilter, platformFilter, durationFilter, sortBy, gameStats, solvedFilter, solvedGameIds]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-archive-dark flex flex-col items-center justify-center gap-6 relative overflow-hidden">
-        {/* 背景氛围光晕 - 增加视觉深度 */}
-        <div className="absolute w-[500px] h-[500px] bg-purple-600/10 blur-[120px] rounded-full -z-10 animate-pulse" />
-        
-        {/* Loader 容器：利用 drop-shadow 让线条发光 */}
-        <div className="relative filter drop-shadow-[0_0_15px_rgba(168,85,247,0.6)]">
-          <RingLoader 
-            color="#c084fc" // 稍微调亮一点颜色
-            loading={isLoading} 
-            size={120} 
-            speedMultiplier={1} 
-          />
-        </div>
-
-        <p className="text-purple-400/90 text-sm tracking-[0.3em] animate-pulse drop-shadow-[0_0_8px_rgba(168,85,247,0.8)] font-light">
-          正在接入档案库...
-        </p>
-      </div>
-    );
-  }
-
-  // 加载失败状态：错误提示 + 重试按钮
-  if (initError) {
-    return (
-      <div className="min-h-screen bg-archive-dark flex flex-col items-center justify-center gap-6 p-4">
-        <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-          <AlertTriangle size={32} className="text-red-400" />
-        </div>
-        <p className="text-red-300/80 text-sm text-center max-w-xs">{initError}</p>
-        <button
-          onClick={handleRetryInit}
-          className="px-6 py-2.5 bg-purple-600/20 border border-purple-500/30 text-purple-300 rounded-xl text-sm font-bold hover:bg-purple-600/30 transition-all flex items-center gap-2"
-        >
-          <RefreshCw size={14} /> 重新连接
-        </button>
-      </div>
-    );
-  }
-
-  if (showIntelWall) {
-    return (
-      <React.Suspense fallback={
-        <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
-          <Loader2 className="w-12 h-12 animate-spin text-yellow-500" />
-        </div>
-      }>
-        <IntelligenceWall 
-          onBack={() => setShowIntelWall(false)} 
-          currentUser={user}
-          userProfile={profile}
-        />
-      </React.Suspense>
-    );
-  }
-
   const handleGameAdded = () => {
     fetchAllGames().then(data => setGames(data));
     fetchPendingCount().then(count => setPendingCount(count)).catch(() => {});
@@ -436,9 +379,64 @@ const App: React.FC = () => {
     }
   };
 
+  // --- 提前返回区：所有 hooks 已定义完毕，以下是纯 JSX 分支 ---
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-archive-dark flex flex-col items-center justify-center gap-6 relative overflow-hidden">
+        <div className="absolute w-[500px] h-[500px] bg-purple-600/10 blur-[120px] rounded-full -z-10 animate-pulse" />
+        <div className="relative filter drop-shadow-[0_0_15px_rgba(168,85,247,0.6)]">
+          <RingLoader
+            color="#c084fc"
+            loading={isLoading}
+            size={120}
+            speedMultiplier={1}
+          />
+        </div>
+        <p className="text-purple-400/90 text-sm tracking-[0.3em] animate-pulse drop-shadow-[0_0_8px_rgba(168,85,247,0.8)] font-light">
+          正在接入档案库...
+        </p>
+      </div>
+    );
+  }
+
+  if (showIntelWall) {
+    return (
+      <React.Suspense fallback={
+        <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+          <Loader2 className="w-12 h-12 animate-spin text-yellow-500" />
+        </div>
+      }>
+        <IntelligenceWall
+          onBack={() => setShowIntelWall(false)}
+          currentUser={user}
+          userProfile={profile}
+        />
+      </React.Suspense>
+    );
+  }
+
+  // 加载失败状态：错误提示 + 重试按钮（条件渲染，不提前 return 以避免 hooks 顺序错乱）
+  if (initError) {
+    return (
+      <div className="min-h-screen bg-archive-dark flex flex-col items-center justify-center gap-6 p-4">
+        <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+          <AlertTriangle size={32} className="text-red-400" />
+        </div>
+        <p className="text-red-300/80 text-sm text-center max-w-xs">{initError}</p>
+        <button
+          onClick={handleRetryInit}
+          className="px-6 py-2.5 bg-purple-600/20 border border-purple-500/30 text-purple-300 rounded-xl text-sm font-bold hover:bg-purple-600/30 transition-all flex items-center gap-2"
+        >
+          <RefreshCw size={14} /> 重新连接
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-archive-dark selection:bg-purple-500/30 selection:text-white pb-20">
-      
+
       {/* Picking Loader Overlay */}
       {isPicking && (
         <div className="fixed inset-0 z-[110] flex flex-col items-center justify-center bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
