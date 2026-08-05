@@ -13,6 +13,9 @@ export interface LinkResource {
   url: string;
 }
 
+/** 管理员角色：admin=超管, normal_admin=内容编辑 */
+export type AdminRole = 'admin' | 'normal_admin';
+
 export interface GameData {
   id: string;
   title: string;

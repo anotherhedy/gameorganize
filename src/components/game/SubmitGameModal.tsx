@@ -43,6 +43,7 @@ interface SubmitGameModalProps {
   onClose: () => void;
   userId: string;
   isAdmin?: boolean;
+  isSuperAdmin?: boolean;
   onSubmitted: () => void;
   /** 编辑已有投稿（非新增） */
   editSubmission?: GameSubmission | null;
@@ -53,6 +54,7 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
   onClose,
   userId,
   isAdmin = false,
+  isSuperAdmin = false,
   onSubmitted,
   editSubmission,
 }) => {
@@ -218,8 +220,8 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
           answer_url: answerUrl.trim(), pc, pe, jumpscare, sound,
         });
         console.log('[提交] 步骤3: 重新提交成功');
-      } else if (isAdmin) {
-        // 管理员直入 games
+      } else if (isSuperAdmin) {
+        // 超级管理员直入 games
         console.log('[提交] 步骤3: 写入数据库... (管理员直投)');
         await adminDirectSubmit({
           title: title.trim(), url: url.trim(), image_url: imageUrl,
@@ -317,7 +319,7 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
                 <p className="text-[10px] text-gray-500 mt-0.5">修改内容后将重新提交审核</p>
               </div>
             </div>
-          ) : isAdmin ? (
+          ) : isSuperAdmin ? (
             <div className="flex items-start gap-3 p-3 bg-purple-500/5 border border-purple-500/20 rounded-xl">
               <AlertTriangle size={16} className="text-purple-400 shrink-0 mt-0.5" />
               <div>
@@ -552,7 +554,7 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
               ? '已通过，无法修改'
               : isEdit
               ? '重新提交审核'
-              : isAdmin
+              : isSuperAdmin
               ? '直接发布'
               : '提交审核'}
           </button>

@@ -160,22 +160,51 @@ export default defineConfig(({ mode }) => {
                     res.end(JSON.stringify({ error: '缺少 id 参数' }));
                     return;
                   }
-                  const body = await new Promise<string>((resolve) => {
+                  const body = JSON.parse(await new Promise<string>((resolve) => {
                     let data = '';
                     req.on('data', chunk => data += chunk);
                     req.on('end', () => resolve(data));
-                  });
-                  const resp = await fetch(
-                    `https://dbgekqlyliksvipakmpg.supabase.co/auth/v1/admin/users/${userId}`,
-                    {
-                      method: 'PUT',
-                      headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
-                      body,
-                    }
-                  );
-                  const data = await resp.json();
-                  res.writeHead(resp.status, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
-                  res.end(JSON.stringify(data));
+                  }));
+
+                  // 角色变更：更新 profiles 表
+                  if (body.role) {
+                    const profileResp = await fetch(
+                      `https://dbgekqlyliksvipakmpg.supabase.co/rest/v1/profiles?id=eq.${userId}`,
+                      {
+                        method: 'PATCH',
+                        headers: {
+                          apikey: serviceKey,
+                          Authorization: `Bearer ${serviceKey}`,
+                          'Content-Type': 'application/json',
+                          Prefer: 'return=representation',
+                        },
+                        body: JSON.stringify({ role: body.role }),
+                      }
+                    );
+                    const profileData = await profileResp.json();
+                    res.writeHead(profileResp.status, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                    res.end(JSON.stringify(profileData));
+                    return;
+                  }
+
+                  // 密码重置：通过 GoTrue admin API
+                  if (body.password) {
+                    const resp = await fetch(
+                      `https://dbgekqlyliksvipakmpg.supabase.co/auth/v1/admin/users/${userId}`,
+                      {
+                        method: 'PUT',
+                        headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ password: body.password }),
+                      }
+                    );
+                    const data = await resp.json();
+                    res.writeHead(resp.status, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                    res.end(JSON.stringify(data));
+                    return;
+                  }
+
+                  res.writeHead(400, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                  res.end(JSON.stringify({ error: '缺少 role 或 password 参数' }));
                 } else {
                   res.writeHead(405, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
                   res.end(JSON.stringify({ error: '不支持的方法' }));

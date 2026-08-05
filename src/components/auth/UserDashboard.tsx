@@ -18,6 +18,7 @@ interface UserDashboardProps {
   solvedGameIds: Set<string>;
   games: GameData[];
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   pendingCount: number;
   onOpenSubmit: () => void;
   onEditSubmission: (sub: GameSubmission) => void;
@@ -33,6 +34,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   solvedGameIds,
   games,
   isAdmin,
+  isSuperAdmin,
   pendingCount,
   onOpenSubmit,
   onEditSubmission,

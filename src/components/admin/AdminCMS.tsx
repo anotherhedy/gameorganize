@@ -2,16 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase/supabaseClient';
 import { X, Save, Loader2, Trash2, Settings, Image as ImageIcon, PenLine, Activity, Wifi, CheckCircle, AlertTriangle, Users, Key, Search } from 'lucide-react';
 import { ReviewQueue } from './ReviewQueue';
-import { fetchPendingCount, detectApiBase, deleteGame, updateGame, fetchAllGames, updateGameLinkStatus } from '../../services/supabase/api';
+import { fetchPendingCount, detectApiBase, deleteGame, updateGame, fetchAllGames, updateGameLinkStatus, fetchProfile } from '../../services/supabase/api';
 
 interface AdminCMSProps {
   isOpen: boolean;
   onClose: () => void;
   onGameAdded: () => void;
   gameToEdit?: any;
+  isSuperAdmin?: boolean;
 }
 
-export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded, gameToEdit }) => {
+export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded, gameToEdit, isSuperAdmin = false }) => {
   const [pendingCount, setPendingCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -106,7 +107,13 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
       // GoTrue /auth/v1/admin/users 返回 { users: [...], aud: "..." }
       const users = Array.isArray(data?.users) ? data.users : (Array.isArray(data) ? data : []);
       if (users.length > 0) {
-        setUserSearchResult(users[0]);
+        const foundUser = users[0];
+        // 同时拉取 profiles 表里的角色
+        try {
+          const prof = await fetchProfile(foundUser.id);
+          foundUser._profileRole = prof?.role || null;
+        } catch { foundUser._profileRole = null; }
+        setUserSearchResult(foundUser);
       } else {
         setUserSearchResult({ notFound: true });
       }
@@ -142,6 +149,34 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
       } else {
         const err = await resp.json();
         setUserResetMsg(`❌ 重置失败: ${err.error || err.msg || '未知错误'}`);
+      }
+    } catch (err: any) {
+      setUserResetMsg(`❌ 请求失败: ${err.message}`);
+    }
+  };
+
+  const handleSetRole = async (newRole: string) => {
+    if (!userSearchResult?.id) return;
+    const label = newRole === 'normal_admin' ? '内容编辑' : '普通用户';
+    if (!window.confirm(`确定将该用户${newRole === 'normal_admin' ? '任命为内容编辑' : '降级为普通用户'}吗？`)) return;
+    setUserResetMsg('');
+    try {
+      const token = await getUserToken();
+      const resp = await fetch(`/api/admin/users?id=${userSearchResult.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ role: newRole }),
+      });
+      if (resp.ok) {
+        setUserResetMsg(`✅ 已将 ${userSearchResult.email} 设为「${label}」`);
+        // 刷新搜索结果中的角色
+        setUserSearchResult({ ...userSearchResult, _profileRole: newRole });
+      } else {
+        const err = await resp.json();
+        setUserResetMsg(`❌ 操作失败: ${err.error || err.msg || '未知错误'}`);
       }
     } catch (err: any) {
       setUserResetMsg(`❌ 请求失败: ${err.message}`);
@@ -291,7 +326,7 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
               <p className="text-[10px] text-gray-500 mt-0.5 uppercase tracking-widest">S.E.A. CMS Portal</p>
             </div>
             <div className="flex items-center gap-2">
-              {activeEdit && (
+              {activeEdit && isSuperAdmin && (
                 <button onClick={handleDelete}
                   className="text-red-500 hover:bg-red-500/10 p-2 rounded-full transition-all" title="删除档案">
                   <Trash2 className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -441,14 +476,16 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
               >
                 <Settings size={13} /> 审核队列
               </button>
-              <button
-                onClick={() => setView('users')}
-                className={`flex-1 py-2 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                  view === 'users' ? 'bg-purple-600/30 text-purple-300' : 'text-gray-500 hover:text-gray-300'
-                }`}
-              >
-                <Users size={13} /> 用户管理
-              </button>
+              {isSuperAdmin && (
+                <button
+                  onClick={() => setView('users')}
+                  className={`flex-1 py-2 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                    view === 'users' ? 'bg-purple-600/30 text-purple-300' : 'text-gray-500 hover:text-gray-300'
+                  }`}
+                >
+                  <Users size={13} /> 用户管理
+                </button>
+              )}
             </div>
 
             {view === 'review' ? (
@@ -566,11 +603,34 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
                   <div className="text-xs text-gray-400 space-y-1">
                     <div>📧 <span className="text-white">{userSearchResult.email}</span></div>
                     <div>🆔 <span className="text-gray-500 text-[10px]">{userSearchResult.id}</span></div>
+                    <div>🛡️ 角色: <span className={userSearchResult._profileRole === 'admin' ? 'text-purple-400 font-bold' : userSearchResult._profileRole === 'normal_admin' ? 'text-blue-400' : 'text-gray-500'}>
+                      {userSearchResult._profileRole === 'admin' ? '👑 超级管理员' : userSearchResult._profileRole === 'normal_admin' ? '🔧 内容编辑' : '👤 普通用户'}
+                    </span></div>
                     <div>📅 <span className="text-gray-500">{userSearchResult.created_at?.split('T')[0] || '未知'}</span></div>
                     {userSearchResult.last_sign_in_at && (
                       <div>🔑 上次登录: <span className="text-gray-500">{new Date(userSearchResult.last_sign_in_at).toLocaleString('zh-CN')}</span></div>
                     )}
                   </div>
+                  {/* 角色管理按钮（仅超管可见，且不能改自己） */}
+                  {userSearchResult._profileRole !== 'admin' && (
+                    <div className="flex gap-2">
+                      {userSearchResult._profileRole !== 'normal_admin' ? (
+                        <button
+                          onClick={() => handleSetRole('normal_admin')}
+                          className="flex-1 py-1.5 bg-blue-600/20 border border-blue-500/30 text-blue-300 rounded-lg text-xs font-bold hover:bg-blue-600/30 transition-all flex items-center justify-center gap-1"
+                        >
+                          🔧 任命为内容编辑
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleSetRole('user')}
+                          className="flex-1 py-1.5 bg-gray-600/20 border border-gray-500/30 text-gray-300 rounded-lg text-xs font-bold hover:bg-gray-600/30 transition-all flex items-center justify-center gap-1"
+                        >
+                          ⬇️ 降级为普通用户
+                        </button>
+                      )}
+                    </div>
+                  )}
                   <button
                     onClick={handleResetPassword}
                     className="w-full py-2 bg-red-600/20 border border-red-500/30 text-red-300 rounded-lg text-xs font-bold hover:bg-red-600/30 transition-all flex items-center justify-center gap-1.5"

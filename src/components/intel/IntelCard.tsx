@@ -10,6 +10,7 @@ interface IntelCardProps {
   onReply?: (feedback: Feedback) => void; // 新增：回复回调
   currentUserId?: string;
   isAdmin?: boolean;
+  isSuperAdmin?: boolean;
 }
 
 const ROTATIONS = [
@@ -31,14 +32,15 @@ const BG_COLORS = [
   'bg-orange-100'
 ];
 
-export const IntelCard: React.FC<IntelCardProps> = ({ 
-  feedback, 
-  index, 
-  onDelete, 
+export const IntelCard: React.FC<IntelCardProps> = ({
+  feedback,
+  index,
+  onDelete,
   onEdit,
   onReply,
   currentUserId,
-  isAdmin
+  isAdmin,
+  isSuperAdmin
 }) => {
   // Use index to deterministically assign rotation and color so it doesn't change on re-render
   const rotation = ROTATIONS[index % ROTATIONS.length];
@@ -81,7 +83,7 @@ export const IntelCard: React.FC<IntelCardProps> = ({
             <Edit2 size={14} />
           </button>
         )}
-        {isAdmin && onDelete && (
+        {isSuperAdmin && onDelete && (
           <button 
             onClick={() => onDelete(feedback.id)}
             className="p-1.5 bg-red-500/10 hover:bg-red-500 text-red-700 hover:text-white rounded transition-colors"

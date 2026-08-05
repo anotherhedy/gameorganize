@@ -24,7 +24,8 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, curr
   const [intelToReply, setIntelToReply] = useState<Feedback | null>(null);
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
 
-  const isAdmin = userProfile?.role === 'admin';
+  const isAdmin = userProfile?.role === 'admin' || userProfile?.role === 'normal_admin';
+  const isSuperAdmin = userProfile?.role === 'admin';
 
   const loadFeedbacks = useCallback(async (pageNumber: number) => {
     setLoading(true);
@@ -163,11 +164,12 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, curr
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 p-4">
                 {feedbacks.map((feedback, index) => (
                   <div key={feedback.id} className="transform hover:z-20 transition-all duration-300">
-                     <IntelCard 
-                        feedback={feedback} 
-                        index={index} 
+                     <IntelCard
+                        feedback={feedback}
+                        index={index}
                         currentUserId={currentUser?.id}
                         isAdmin={isAdmin}
+                        isSuperAdmin={isSuperAdmin}
                         onDelete={handleDeleteIntel}
                         onEdit={handleEditClick}
                         onReply={handleReplyClick}

@@ -3,7 +3,7 @@ import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
 import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, Database, CheckCircle2, Circle, Activity } from 'lucide-react';
 import { fetchGameStats, incrementGameViews, fetchAllGames, fetchPendingCount, detectApiBase, fetchProfile, updateSolvedGames } from './services/supabase/api';
-import { GameData, GameSubmission } from './types';
+import { GameData, GameSubmission, AdminRole } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
 import { FloatingEntry } from './components/intel/FloatingEntry';
 import { VirtuosoGrid } from 'react-virtuoso';
@@ -63,10 +63,14 @@ const App: React.FC = () => {
   const resultsRef = useRef<HTMLDivElement>(null);
   const prevSearchTermRef = useRef('');
 
-  // 计算是否为管理员 (支持 metadata 和 profile 两种方式)
-  const isAdmin = useMemo(() => {
-    return user?.user_metadata?.role === 'admin' || profile?.role === 'admin';
+  // 计算管理员角色
+  const adminRole = useMemo((): AdminRole | null => {
+    const role = profile?.role || user?.user_metadata?.role;
+    if (role === 'admin' || role === 'normal_admin') return role;
+    return null;
   }, [user, profile]);
+  const isAdmin = adminRole !== null;
+  const isSuperAdmin = adminRole === 'admin';
 
   // Use useCallback to prevent unnecessary re-renders of GameCard components
   const handleGamePlay = React.useCallback((id: string) => {
@@ -560,6 +564,7 @@ const App: React.FC = () => {
         solvedGameIds={solvedGameIds}
         games={games}
         isAdmin={isAdmin}
+        isSuperAdmin={isSuperAdmin}
         pendingCount={pendingCount}
         onOpenSubmit={() => { setEditingSubmission(null); setIsSubmitModalOpen(true); }}
         onEditSubmission={(sub) => { setEditingSubmission(sub); setIsSubmitModalOpen(true); }}
@@ -571,18 +576,20 @@ const App: React.FC = () => {
         onClose={() => { setIsSubmitModalOpen(false); setEditingSubmission(null); }}
         userId={user?.id}
         isAdmin={isAdmin}
+        isSuperAdmin={isSuperAdmin}
         onSubmitted={handleGameAdded}
         editSubmission={editingSubmission}
       />
 
       <AdminCMS
-        isOpen={isAdminCMSOpen} 
+        isOpen={isAdminCMSOpen}
         onClose={() => {
           setIsAdminCMSOpen(false);
           setGameToEdit(null);
-        }} 
+        }}
         onGameAdded={handleGameAdded}
         gameToEdit={gameToEdit}
+        isSuperAdmin={isSuperAdmin}
       />
 
       {/* Hero Header */}

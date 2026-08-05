@@ -201,7 +201,6 @@ export async function onRequest(context) {
       }
 
       if (request.method === 'PUT') {
-        // 更新用户：PUT /auth/v1/admin/users/{userId}
         const userId = url.searchParams.get('id');
         if (!userId) {
           return new Response(JSON.stringify({ error: '缺少 id 参数' }), {
@@ -210,18 +209,49 @@ export async function onRequest(context) {
           });
         }
         const body = await request.json();
-        const resp = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
-          method: 'PUT',
-          headers: {
-            'apikey': serviceKey,
-            'Authorization': `Bearer ${serviceKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
-        });
-        const data = await resp.json();
-        return new Response(JSON.stringify(data), {
-          status: resp.status,
+
+        // 角色变更：更新 profiles 表
+        if (body.role) {
+          const profileResp = await fetch(
+            `${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}`,
+            {
+              method: 'PATCH',
+              headers: {
+                apikey: serviceKey,
+                Authorization: `Bearer ${serviceKey}`,
+                'Content-Type': 'application/json',
+                Prefer: 'return=representation',
+              },
+              body: JSON.stringify({ role: body.role }),
+            }
+          );
+          const profileData = await profileResp.json();
+          return new Response(JSON.stringify(profileData), {
+            status: profileResp.status,
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+          });
+        }
+
+        // 密码重置：通过 GoTrue admin API
+        if (body.password) {
+          const resp = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+              'apikey': serviceKey,
+              'Authorization': `Bearer ${serviceKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ password: body.password }),
+          });
+          const data = await resp.json();
+          return new Response(JSON.stringify(data), {
+            status: resp.status,
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+          });
+        }
+
+        return new Response(JSON.stringify({ error: '缺少 role 或 password 参数' }), {
+          status: 400,
           headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
         });
       }
