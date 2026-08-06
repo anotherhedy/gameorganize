@@ -42,7 +42,6 @@ interface SubmitGameModalProps {
   isOpen: boolean;
   onClose: () => void;
   userId: string;
-  isAdmin?: boolean;
   isSuperAdmin?: boolean;
   onSubmitted: () => void;
   /** 编辑已有投稿（非新增） */
@@ -53,7 +52,6 @@ export const SubmitGameModal: React.FC<SubmitGameModalProps> = ({
   isOpen,
   onClose,
   userId,
-  isAdmin = false,
   isSuperAdmin = false,
   onSubmitted,
   editSubmission,

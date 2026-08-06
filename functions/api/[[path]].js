@@ -194,6 +194,21 @@ export async function onRequest(context) {
           headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
         });
         const data = await resp.json();
+        // 服务端用 service key 补齐每个用户的 profiles.role
+        // （客户端跨用户读 profile 会被 RLS 拦住，角色信息必须由服务端带出）
+        const users = Array.isArray(data?.users) ? data.users : (Array.isArray(data) ? data : []);
+        if (users.length > 0) {
+          try {
+            const ids = users.map(u => u.id);
+            const profResp = await fetch(`${SUPABASE_URL}/rest/v1/profiles?select=id,role&id=in.(${ids.join(',')})`, {
+              headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
+            });
+            const profiles = await profResp.json().catch(() => []);
+            const roleMap = {};
+            if (Array.isArray(profiles)) profiles.forEach(p => { roleMap[p.id] = p.role; });
+            users.forEach(u => { u._profileRole = roleMap[u.id] || null; });
+          } catch { /* 角色补齐失败不阻塞搜索 */ }
+        }
         return new Response(JSON.stringify(data), {
           status: resp.status,
           headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
@@ -209,9 +224,21 @@ export async function onRequest(context) {
           });
         }
         const body = await request.json();
+        const hasRole = typeof body.role === 'string' && body.role !== '';
+        const hasPassword = typeof body.password === 'string' && body.password !== '';
+        if (!hasRole && !hasPassword) {
+          return new Response(JSON.stringify({ error: '缺少 role 或 password 参数' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+          });
+        }
 
-        // 角色变更：更新 profiles 表
-        if (body.role) {
+        // role 与 password 可同时携带，两者都执行（不静默丢弃任一项）
+        const outcomes = [];
+        let anyFailed = false;
+
+        // 角色变更：更新 profiles 表（service key 绕过列级 RLS，管理员改角色不受影响）
+        if (hasRole) {
           const profileResp = await fetch(
             `${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}`,
             {
@@ -226,14 +253,12 @@ export async function onRequest(context) {
             }
           );
           const profileData = await profileResp.json();
-          return new Response(JSON.stringify(profileData), {
-            status: profileResp.status,
-            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-          });
+          outcomes.push({ action: 'role', ok: profileResp.ok, status: profileResp.status, data: profileData });
+          if (!profileResp.ok) anyFailed = true;
         }
 
         // 密码重置：通过 GoTrue admin API
-        if (body.password) {
+        if (hasPassword) {
           const resp = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
             method: 'PUT',
             headers: {
@@ -244,14 +269,22 @@ export async function onRequest(context) {
             body: JSON.stringify({ password: body.password }),
           });
           const data = await resp.json();
-          return new Response(JSON.stringify(data), {
-            status: resp.status,
+          outcomes.push({ action: 'password', ok: resp.ok, status: resp.status, data });
+          if (!resp.ok) anyFailed = true;
+        }
+
+        if (anyFailed) {
+          // 把第一个失败的具体原因带上，前端能显示真实错误
+          const firstFail = outcomes.find(o => !o.ok);
+          const innerMsg = firstFail?.data?.message || firstFail?.data?.msg || firstFail?.data?.error || '部分操作失败';
+          return new Response(JSON.stringify({ ok: false, error: innerMsg, outcomes }), {
+            status: 500,
             headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
           });
         }
 
-        return new Response(JSON.stringify({ error: '缺少 role 或 password 参数' }), {
-          status: 400,
+        return new Response(JSON.stringify({ ok: true, outcomes }), {
+          status: 200,
           headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
         });
       }

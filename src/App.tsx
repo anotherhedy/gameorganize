@@ -64,13 +64,16 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabOption>('all');
   const resultsRef = useRef<HTMLDivElement>(null);
   const prevSearchTermRef = useRef('');
+  // 随机抽取防连点：ref 同步标记，阻止多个入口（面板/弹窗重抽）在同帧内堆叠多个定时器
+  const isPickingRef = useRef(false);
 
-  // 计算管理员角色
+  // 计算管理员角色：以 profiles.role 为唯一权威（该列已对用户只读，见 002_role_security.sql）
+  // 不再回退 user_metadata.role（那是用户可自写的字段，且旧 metadata-only 管理员已由迁移搬到 profiles.role）
   const adminRole = useMemo((): AdminRole | null => {
-    const role = profile?.role || user?.user_metadata?.role;
+    const role = profile?.role;
     if (role === 'admin' || role === 'normal_admin') return role;
     return null;
-  }, [user, profile]);
+  }, [profile]);
   const isAdmin = adminRole !== null;
   const isSuperAdmin = adminRole === 'admin';
 
@@ -217,12 +220,14 @@ const App: React.FC = () => {
   };
 
   const handleRandomPick = useCallback(() => {
-    if (!games.length) return;
+    if (!games.length || isPickingRef.current) return;
+    isPickingRef.current = true;
     setIsPicking(true);
     setTimeout(() => {
       const randomIndex = Math.floor(Math.random() * games.length);
       setRandomGame(games[randomIndex]);
       setIsPicking(false);
+      isPickingRef.current = false;
     }, 600);
   }, [games]);
 
@@ -411,6 +416,8 @@ const App: React.FC = () => {
           onBack={() => setShowIntelWall(false)}
           currentUser={user}
           userProfile={profile}
+          isAdmin={isAdmin}
+          isSuperAdmin={isSuperAdmin}
         />
       </React.Suspense>
     );
@@ -600,7 +607,6 @@ const App: React.FC = () => {
         isOpen={isSubmitModalOpen}
         onClose={() => { setIsSubmitModalOpen(false); setEditingSubmission(null); }}
         userId={user?.id}
-        isAdmin={isAdmin}
         isSuperAdmin={isSuperAdmin}
         onSubmitted={handleGameAdded}
         editSubmission={editingSubmission}
@@ -1139,7 +1145,8 @@ const App: React.FC = () => {
                 <div className="flex gap-2 sm:gap-3">
                   <button
                     onClick={handleRandomPick}
-                    className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 bg-white/10 hover:bg-white/20 text-white py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-bold transition-all border border-white/10"
+                    disabled={isPicking}
+                    className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 bg-white/10 hover:bg-white/20 text-white py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-bold transition-all border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Dices size={16} sm:size={18} />
                     <span>重抽</span>

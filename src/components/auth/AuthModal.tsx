@@ -50,7 +50,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               id: signUpData.user.id,
               username: username,
               xhs_id: xhsId || null,
-              role: 'user', // 明确设置初始角色
+              // 注意：不传 role。角色由数据库默认值 'user' 兜底（见 002_role_security.sql），
+              // 防止用户用自己的 token 自写 role 提权
               updated_at: new Date().toISOString()
             });
           } catch (profileError: any) {

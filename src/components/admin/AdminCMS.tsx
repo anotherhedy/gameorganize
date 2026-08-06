@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase/supabaseClient';
 import { X, Save, Loader2, Trash2, Settings, Image as ImageIcon, PenLine, Activity, Wifi, CheckCircle, AlertTriangle, Users, Key, Search } from 'lucide-react';
 import { ReviewQueue } from './ReviewQueue';
-import { fetchPendingCount, detectApiBase, deleteGame, updateGame, fetchAllGames, updateGameLinkStatus, fetchProfile } from '../../services/supabase/api';
+import { fetchPendingCount, detectApiBase, deleteGame, updateGame, fetchAllGames, updateGameLinkStatus, getAccessToken } from '../../services/supabase/api';
 
 interface AdminCMSProps {
   isOpen: boolean;
@@ -32,7 +32,8 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
 
   // 用户管理状态
   const [userSearchEmail, setUserSearchEmail] = useState('');
-  const [userSearchResult, setUserSearchResult] = useState<any>(null);
+  const [userSearchResult, setUserSearchResult] = useState<any>(null); // 当前选中的目标用户
+  const [userMatches, setUserMatches] = useState<any[]>([]); // 模糊搜索命中多人时的候选列表
   const [userSearching, setUserSearching] = useState(false);
   const [userResetMsg, setUserResetMsg] = useState('');
 
@@ -71,58 +72,76 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
     }
   }, [isOpen]);
 
+  // 用户管理面板仅超管可见：若角色降级/切换后仍停留在该视图，强制回到审核队列
+  useEffect(() => {
+    if (!isSuperAdmin && view === 'users') setView('review');
+  }, [isSuperAdmin, view]);
+
   if (!isOpen) return null;
 
-  // 从当前登录会话取用户 token（service key 只在服务端，前端不接触）
-  const getUserToken = async (): Promise<string> => {
-    const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token || '';
+  // 统一的 /api/admin/users 请求封装：
+  //  - 复用 api.ts 的 getAccessToken（同一缓存，不重复手写 getSession）
+  //  - 自动带 Authorization；PUT 时带 Content-Type
+  //  - 按 content-type 区分 JSON/文本，避免非 JSON 错误体被误解析（CF 404/网关页是 HTML）
+  const adminUsersFetch = async (path: string, method: string, body?: any) => {
+    const token = await getAccessToken();
+    const headers: Record<string, string> = { Authorization: `Bearer ${token}` };
+    let payload: string | undefined;
+    if (body !== undefined) {
+      headers['Content-Type'] = 'application/json';
+      payload = JSON.stringify(body);
+    }
+    const resp = await fetch(path, { method, headers, body: payload });
+    const ct = resp.headers.get('content-type') || '';
+    const data = ct.includes('application/json')
+      ? await resp.json().catch(() => null)
+      : await resp.text();
+    return { resp, data };
+  };
+
+  // 兼容各种错误格式：GoTrue {code,msg}、PostgREST {message,details}、自研 {error}
+  const extractErr = (err: any, fallback: string): string => {
+    if (!err || typeof err !== 'object') return fallback;
+    return err.error || err.msg || err.message || err.details || fallback;
   };
 
   const handleSearchUser = async () => {
     if (!userSearchEmail.trim()) return;
     setUserSearching(true);
     setUserSearchResult(null);
+    setUserMatches([]);
     setUserResetMsg('');
     try {
-      const token = await getUserToken();
-      console.log('[Admin] searchUser token length:', token?.length || 0);
-      const resp = await fetch(`/api/admin/users?email=${encodeURIComponent(userSearchEmail.trim())}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log('[Admin] searchUser status:', resp.status, 'content-type:', resp.headers.get('content-type'));
-      const ct = resp.headers.get('content-type') || '';
-      if (ct.includes('text/html')) {
-        const htmlSnippet = (await resp.text()).slice(0, 200);
-        console.error('[Admin] Got HTML instead of JSON:', htmlSnippet);
-        setUserResetMsg(`查找失败: 服务端返回 HTML (${resp.status})，admin/users 函数可能未部署`);
-        return;
-      }
-      const data = await resp.json();
-      console.log('[Admin] searchUser data:', data);
+      const { resp, data } = await adminUsersFetch(
+        `/api/admin/users?email=${encodeURIComponent(userSearchEmail.trim())}`,
+        'GET'
+      );
       if (!resp.ok) {
-        setUserResetMsg(`查找失败: ${data.error || data.msg || `HTTP ${resp.status}`}`);
+        setUserResetMsg(`查找失败: ${extractErr(data, `HTTP ${resp.status}`)}`);
         return;
       }
-      // GoTrue /auth/v1/admin/users 返回 { users: [...], aud: "..." }
+      // GoTrue /auth/v1/admin/users 返回 { users: [...], aud: "..." }，角色由服务端补齐在 _profileRole
       const users = Array.isArray(data?.users) ? data.users : (Array.isArray(data) ? data : []);
-      if (users.length > 0) {
-        const foundUser = users[0];
-        // 同时拉取 profiles 表里的角色
-        try {
-          const prof = await fetchProfile(foundUser.id);
-          foundUser._profileRole = prof?.role || null;
-        } catch { foundUser._profileRole = null; }
-        setUserSearchResult(foundUser);
-      } else {
+      if (users.length === 0) {
         setUserSearchResult({ notFound: true });
+        return;
+      }
+      if (users.length === 1) {
+        setUserSearchResult(users[0]);
+      } else {
+        // GoTrue filter 是子串匹配，可能命中多人：先展示候选列表，让管理员明确选择，避免误操作
+        setUserMatches(users);
       }
     } catch (err: any) {
-      console.error('[Admin] searchUser error:', err);
       setUserResetMsg(`查找失败: ${err.message}`);
     } finally {
       setUserSearching(false);
     }
+  };
+
+  const handleSelectMatch = (user: any) => {
+    setUserSearchResult(user);
+    setUserMatches([]);
   };
 
   const handleResetPassword = async () => {
@@ -134,21 +153,16 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
     }
     setUserResetMsg('');
     try {
-      const token = await getUserToken();
-      const resp = await fetch(`/api/admin/users?id=${userSearchResult.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ password: newPwd }),
-      });
+      const { resp, data } = await adminUsersFetch(
+        `/api/admin/users?id=${userSearchResult.id}`,
+        'PUT',
+        { password: newPwd }
+      );
       if (resp.ok) {
         setUserResetMsg(`✅ 密码已重置！用户 ${userSearchResult.email} 下次登录需使用新密码。`);
         setUserSearchResult(null);
       } else {
-        const err = await resp.json();
-        setUserResetMsg(`❌ 重置失败: ${err.error || err.msg || '未知错误'}`);
+        setUserResetMsg(`❌ 重置失败: ${extractErr(data, '未知错误')}`);
       }
     } catch (err: any) {
       setUserResetMsg(`❌ 请求失败: ${err.message}`);
@@ -161,22 +175,17 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
     if (!window.confirm(`确定将该用户${newRole === 'normal_admin' ? '任命为内容编辑' : '降级为普通用户'}吗？`)) return;
     setUserResetMsg('');
     try {
-      const token = await getUserToken();
-      const resp = await fetch(`/api/admin/users?id=${userSearchResult.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ role: newRole }),
-      });
+      const { resp, data } = await adminUsersFetch(
+        `/api/admin/users?id=${userSearchResult.id}`,
+        'PUT',
+        { role: newRole }
+      );
       if (resp.ok) {
         setUserResetMsg(`✅ 已将 ${userSearchResult.email} 设为「${label}」`);
-        // 刷新搜索结果中的角色
+        // 刷新搜索结果中的角色（服务端已更新成功）
         setUserSearchResult({ ...userSearchResult, _profileRole: newRole });
       } else {
-        const err = await resp.json();
-        setUserResetMsg(`❌ 操作失败: ${err.error || err.msg || '未知错误'}`);
+        setUserResetMsg(`❌ 操作失败: ${extractErr(data, '未知错误')}`);
       }
     } catch (err: any) {
       setUserResetMsg(`❌ 请求失败: ${err.message}`);
@@ -194,7 +203,7 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
 
       const CONCURRENCY = 3;
       let okCount = 0, brokenCount = 0, errorCount = 0;
-      const details: Array<{ id: string; title: string; url: string; status: string }> = [];
+      const details: Array<{ id: string; title: string; url: string; status: string; game: any }> = [];
 
       const queue = [...allGames];
       const workers: Promise<void>[] = [];
@@ -321,7 +330,7 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
                 <Settings className="text-purple-500 w-5 h-5 sm:w-6 sm:h-6" />
-                {activeEdit ? '编辑档案' : '审核队列'}
+                {activeEdit ? '编辑档案' : view === 'users' ? '用户管理' : '审核队列'}
               </h2>
               <p className="text-[10px] text-gray-500 mt-0.5 uppercase tracking-widest">S.E.A. CMS Portal</p>
             </div>
@@ -596,6 +605,25 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({ isOpen, onClose, onGameAdded
                   查找
                 </button>
               </div>
+
+              {/* 模糊搜索命中多人：先选择具体用户，避免对错误账号执行重置/改角色 */}
+              {userMatches.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-xs text-gray-400">
+                    找到 {userMatches.length} 个匹配用户（模糊匹配），请选择：
+                  </p>
+                  {userMatches.map(u => (
+                    <button
+                      key={u.id}
+                      onClick={() => handleSelectMatch(u)}
+                      className="w-full text-left flex items-center justify-between px-3 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-gray-300 transition-colors"
+                    >
+                      <span>📧 {u.email}</span>
+                      <span className="text-gray-500 text-[10px]">{u.created_at?.split('T')[0] || ''}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* 搜索结果 */}
               {userSearchResult && !userSearchResult.notFound && (

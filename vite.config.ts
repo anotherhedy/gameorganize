@@ -90,11 +90,12 @@ export default defineConfig(({ mode }) => {
             // service key 从服务端 env 读取，绝不发给前端；前端传用户 token，服务端验证 admin
             server.middlewares.use('/api/admin/users', async (req, res) => {
               const url = new URL(req.url!, `http://${req.headers.host}`);
-              const serviceKey = (env as any).VITE_SERVICE_KEY || (process.env.VITE_SERVICE_KEY as string) || '';
+              // 与生产 CF Function 保持一致：统一读 SUPABASE_SERVICE_KEY（非 VITE_ 前缀，避免被打进前端包）
+              const serviceKey = (env as any).SUPABASE_SERVICE_KEY || (process.env.SUPABASE_SERVICE_KEY as string) || '';
 
               if (!serviceKey) {
                 res.writeHead(500, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
-                res.end(JSON.stringify({ error: '服务端未配置 VITE_SERVICE_KEY 环境变量' }));
+                res.end(JSON.stringify({ error: '服务端未配置 SUPABASE_SERVICE_KEY 环境变量' }));
                 return;
               }
 
@@ -151,6 +152,21 @@ export default defineConfig(({ mode }) => {
                     { headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` } }
                   );
                   const data = await resp.json();
+                  // 服务端补齐每个用户的 profiles.role（客户端跨用户读会被 RLS 拦）
+                  const users = Array.isArray(data?.users) ? data.users : (Array.isArray(data) ? data : []);
+                  if (users.length > 0) {
+                    try {
+                      const ids = users.map(u => u.id);
+                      const profResp = await fetch(
+                        `https://dbgekqlyliksvipakmpg.supabase.co/rest/v1/profiles?select=id,role&id=in.(${ids.join(',')})`,
+                        { headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` } }
+                      );
+                      const profiles = await profResp.json().catch(() => []);
+                      const roleMap = {};
+                      if (Array.isArray(profiles)) profiles.forEach(p => { roleMap[p.id] = p.role; });
+                      users.forEach(u => { u._profileRole = roleMap[u.id] || null; });
+                    } catch { /* 角色补齐失败不阻塞搜索 */ }
+                  }
                   res.writeHead(resp.status, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
                   res.end(JSON.stringify(data));
                 } else if (req.method === 'PUT') {
@@ -165,9 +181,19 @@ export default defineConfig(({ mode }) => {
                     req.on('data', chunk => data += chunk);
                     req.on('end', () => resolve(data));
                   }));
+                  const hasRole = typeof body.role === 'string' && body.role !== '';
+                  const hasPassword = typeof body.password === 'string' && body.password !== '';
+                  if (!hasRole && !hasPassword) {
+                    res.writeHead(400, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                    res.end(JSON.stringify({ error: '缺少 role 或 password 参数' }));
+                    return;
+                  }
 
-                  // 角色变更：更新 profiles 表
-                  if (body.role) {
+                  // role 与 password 可同时携带，两者都执行（不静默丢弃任一项）
+                  const outcomes = [];
+                  let anyFailed = false;
+
+                  if (hasRole) {
                     const profileResp = await fetch(
                       `https://dbgekqlyliksvipakmpg.supabase.co/rest/v1/profiles?id=eq.${userId}`,
                       {
@@ -182,13 +208,11 @@ export default defineConfig(({ mode }) => {
                       }
                     );
                     const profileData = await profileResp.json();
-                    res.writeHead(profileResp.status, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
-                    res.end(JSON.stringify(profileData));
-                    return;
+                    outcomes.push({ action: 'role', ok: profileResp.ok, status: profileResp.status, data: profileData });
+                    if (!profileResp.ok) anyFailed = true;
                   }
 
-                  // 密码重置：通过 GoTrue admin API
-                  if (body.password) {
+                  if (hasPassword) {
                     const resp = await fetch(
                       `https://dbgekqlyliksvipakmpg.supabase.co/auth/v1/admin/users/${userId}`,
                       {
@@ -198,13 +222,20 @@ export default defineConfig(({ mode }) => {
                       }
                     );
                     const data = await resp.json();
-                    res.writeHead(resp.status, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
-                    res.end(JSON.stringify(data));
+                    outcomes.push({ action: 'password', ok: resp.ok, status: resp.status, data });
+                    if (!resp.ok) anyFailed = true;
+                  }
+
+                  if (anyFailed) {
+                    const firstFail = outcomes.find(o => !o.ok);
+                    const innerMsg = firstFail?.data?.message || firstFail?.data?.msg || firstFail?.data?.error || '部分操作失败';
+                    res.writeHead(500, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                    res.end(JSON.stringify({ ok: false, error: innerMsg, outcomes }));
                     return;
                   }
 
-                  res.writeHead(400, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
-                  res.end(JSON.stringify({ error: '缺少 role 或 password 参数' }));
+                  res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+                  res.end(JSON.stringify({ ok: true, outcomes }));
                 } else {
                   res.writeHead(405, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
                   res.end(JSON.stringify({ error: '不支持的方法' }));

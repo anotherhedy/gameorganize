@@ -101,7 +101,7 @@ function mapGameRow(dbGame: any): GameData {
 
 let cachedToken: string | null = null;
 
-async function getAccessToken(): Promise<string> {
+export async function getAccessToken(): Promise<string> {
   if (cachedToken) return cachedToken;
   const { data } = await supabase.auth.getSession();
   cachedToken = data.session?.access_token || '';
@@ -378,7 +378,8 @@ export interface ProfileUpsert {
   id: string;
   username: string;
   xhs_id?: string | null;
-  role?: string;
+  // 不含 role：角色列已对 authenticated 只读（002_role_security.sql），
+  // 前端一律不许写，防止自提权
   updated_at?: string;
 }
 

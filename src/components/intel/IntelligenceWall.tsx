@@ -12,9 +12,14 @@ interface IntelligenceWallProps {
   onBack: () => void;
   currentUser?: any;
   userProfile?: any;
+  // 权限由 App.tsx 统一计算后传入（单一数据源，避免与父级推导不一致）
+  isAdmin?: boolean;
+  isSuperAdmin?: boolean;
 }
 
-export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, currentUser, userProfile }) => {
+export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({
+  onBack, currentUser, userProfile, isAdmin = false, isSuperAdmin = false,
+}) => {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -23,9 +28,6 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({ onBack, curr
   const [intelToEdit, setIntelToEdit] = useState<Feedback | null>(null);
   const [intelToReply, setIntelToReply] = useState<Feedback | null>(null);
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
-
-  const isAdmin = userProfile?.role === 'admin' || userProfile?.role === 'normal_admin';
-  const isSuperAdmin = userProfile?.role === 'admin';
 
   const loadFeedbacks = useCallback(async (pageNumber: number) => {
     setLoading(true);
