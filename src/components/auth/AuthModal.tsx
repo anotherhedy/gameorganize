@@ -196,11 +196,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               {isLogin ? '初次来到？提交入职申请' : '已有档案？点击同步登录'}
             </button>
 
-            {/* 忘记密码引导（国内收不到 Supabase 自动邮件，只能联系管理员重置） */}
+            {/* 忘记密码引导：联系小红书 @常棣 管理员重置 */}
             {isLogin && (
               <div className="text-[11px] text-gray-500 leading-relaxed px-2">
                 <p className="mb-1">🔑 <span className="font-bold text-gray-400">忘记密码？</span></p>
-                <p>请通过微信/QQ 联系管理员，提供你的<strong>注册邮箱</strong>即可帮你重置密码。</p>
+                <p>
+                  请联系小红书{' '}
+                  <a
+                    href="https://www.xiaohongshu.com/user/profile/611a5c6a00000000010089fd?xsec_token=ABtisdX26OBvjHmTB1jDlLwsnvefm_DYfWBHryb1kzGG0%3D&xsec_source=pc_note"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-pink-400 font-bold hover:underline"
+                  >
+                    @常棣
+                  </a>
+                  {' '}并提供你的<strong>注册邮箱</strong>，管理员会帮你重置密码。
+                </p>
                 <p className="mt-1 text-gray-600">重置后用新密码登录，可在个人中心自行修改。</p>
               </div>
             )}
