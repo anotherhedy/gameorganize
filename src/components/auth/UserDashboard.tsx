@@ -96,10 +96,8 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
 
     try {
       const updatedRow = await upsertProfile({
-        id: user.id,
         username,
         xhs_id: xhsId || null,
-        updated_at: new Date().toISOString()
       });
 
       if (onProfileUpdate && updatedRow) {

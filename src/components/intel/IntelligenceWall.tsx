@@ -49,28 +49,36 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({
   const handlePostIntel = async (data: { detective_name: string; intel_content: string }) => {
     try {
       if (intelToEdit) {
-        // 更新现有情报
+        // 编辑现有情报 → 就地更新 state，不整页重拉
         await updateFeedback(intelToEdit.id, {
           detective_name: data.detective_name,
           intel_content: data.intel_content,
         });
+        setFeedbacks(prev => prev.map(f =>
+          f.id === intelToEdit.id
+            ? { ...f, detective_name: data.detective_name, intel_content: data.intel_content }
+            : f
+        ));
         alert('情报已更新');
       } else {
-        // 发送新情报
-        await insertFeedback({
+        // 发送新情报 → 返回插入行，直接插到列表最前（省一次整页重拉）
+        const inserted = await insertFeedback({
           detective_name: data.detective_name,
           intel_content: data.intel_content,
           user_id: currentUser?.id || null,
         });
+        if (inserted) {
+          if (page === 1) {
+            setFeedbacks(prev => [inserted, ...prev]);
+            setTotal(t => t + 1);
+          } else {
+            // 不在第一页：新情报在最上面，跳回第一页即可看到
+            setPage(1);
+          }
+        }
       }
 
       setIntelToEdit(null);
-      // Refresh current page or go to page 1
-      if (page === 1) {
-        loadFeedbacks(1);
-      } else {
-        setPage(1);
-      }
     } catch (error) {
       console.error('Error posting feedback:', error);
       alert('操作失败，请检查权限或网络');
@@ -79,11 +87,18 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({
 
   const handleDeleteIntel = async (id: number) => {
     if (!window.confirm('确定要永久销毁这份情报吗？')) return;
-    
+
     try {
       await deleteFeedback(id);
+      // 就地移除，不整页重拉
+      const remaining = feedbacks.filter(f => f.id !== id);
+      setFeedbacks(remaining);
+      setTotal(t => Math.max(0, t - 1));
+      // 当前页删空了就回退一页（重新加载上一页）
+      if (remaining.length === 0 && page > 1) {
+        setPage(page - 1);
+      }
       alert('情报已销毁');
-      loadFeedbacks(page);
     } catch (error) {
       console.error('Error deleting feedback:', error);
       alert('删除失败，仅限特殊研究员操作');
@@ -106,9 +121,11 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({
       const adminName = (isAdmin && userProfile?.username)
         ? `管理员·${userProfile.username}`
         : undefined;
-      await updateFeedback(id, { reply_content: content, ...(adminName ? { replied_by: adminName } : {}) });
+      const replyUpdate = { reply_content: content, ...(adminName ? { replied_by: adminName } : {}) };
+      await updateFeedback(id, replyUpdate);
+      // 就地更新回复内容，不整页重拉
+      setFeedbacks(prev => prev.map(f => f.id === id ? { ...f, ...replyUpdate } : f));
       alert('回应已发布');
-      loadFeedbacks(page);
     } catch (error) {
       console.error('Error replying to feedback:', error);
       alert('发布失败，请检查权限');
@@ -119,8 +136,8 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({
 
   return (
     <div className="min-h-screen bg-neutral-900 text-white p-4 md:p-8 relative overflow-hidden font-sans flex flex-col">
-      {/* Background Texture */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+      {/* Background Texture（本地化：不再依赖国外图床 transparenttextures.com，国内加载更快） */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('/textures/cubes.png')]"></div>
       
       {/* Header */}
       <header className="relative z-10 flex flex-col md:flex-row justify-between items-center mb-4 md:mb-8 gap-4 border-b border-white/10 pb-4 md:pb-6 shrink-0">

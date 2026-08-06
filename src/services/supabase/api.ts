@@ -13,12 +13,12 @@ let _probePromise: Promise<string> | null = null;  // 防并发重复探测
 export async function detectApiBase(): Promise<string> {
   if (_apiBase) return _apiBase;
 
-  // 尝试 localStorage 缓存（有效期 30 分钟）
+  // 尝试 localStorage 缓存（有效期 24 小时，减少重复探测白等）
   const cached = localStorage.getItem('sea_api_mode');
   if (cached) {
     try {
       const { mode, ts } = JSON.parse(cached);
-      if (Date.now() - ts < 30 * 60 * 1000) {
+      if (Date.now() - ts < 24 * 60 * 60 * 1000) {
         _apiBase = mode === 'direct' ? SUPABASE_DIRECT : '/api';
         console.log('[选路] 使用缓存:', mode === 'direct' ? '直连 Supabase' : 'CF 代理');
         return _apiBase;
@@ -29,12 +29,12 @@ export async function detectApiBase(): Promise<string> {
   // 已有探测进行中，复用结果
   if (_probePromise) return _probePromise;
 
-  // 快速探测直连（1.5 秒超时）
+  // 快速探测直连（0.6 秒超时，国内不通就尽快退到代理，不白等）
   console.log('[选路] 探测直连...');
   _probePromise = (async () => {
     try {
       const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 1500);
+      const timer = setTimeout(() => ctrl.abort(), 600);
       const resp = await fetch(`${SUPABASE_DIRECT}/rest/v1/games?select=id&limit=1`, {
         headers: { apikey: ANON_KEY },
         signal: ctrl.signal,
@@ -375,18 +375,19 @@ export async function updateSolvedGames(userId: string, solvedGameIds: string[])
 }
 
 export interface ProfileUpsert {
-  id: string;
+  // 只允许 username / xhs_id：005_security_convergence.sql 的列权限白名单即此二列。
+  // id / role / updated_at / created_at 一律不提交：
+  // - id 与 updated_at 由数据库 BEFORE INSERT/UPDATE 触发器 handle_profile_row() 自动写入
+  // - role 对 authenticated 只读（数据库默认值 'user' 兜底），前端不许写，防止自提权
   username: string;
   xhs_id?: string | null;
-  // 不含 role：角色列已对 authenticated 只读（002_role_security.sql），
-  // 前端一律不许写，防止自提权
-  updated_at?: string;
 }
 
 export async function upsertProfile(data: ProfileUpsert): Promise<any | null> {
+  // 只提交白名单字段 username / xhs_id；id / updated_at 由数据库触发器兜底。
   const result = await apiFetch<any[]>('/rest/v1/profiles', {
     method: 'POST',
-    body: data,
+    body: { username: data.username, xhs_id: data.xhs_id ?? null },
     timeout: 10000,
     extraHeaders: {
       Prefer: 'resolution=merge-duplicates, return=representation',
@@ -443,7 +444,8 @@ export async function fetchFeedbacks(page: number, pageSize: number): Promise<{ 
   const resp = await apiFetch<Response>('/rest/v1/feedback', {
     params,
     timeout: 10000,
-    extraHeaders: { Prefer: 'count=exact' },
+    // count=estimated：用 PostgreSQL 统计信息估算总数，避免每次翻页全表 COUNT（数据越多越明显）
+    extraHeaders: { Prefer: 'count=estimated' },
     rawResponse: true,
   });
   const data = await resp.json();
@@ -460,12 +462,16 @@ export async function insertFeedback(data: {
   detective_name: string;
   intel_content: string;
   user_id: string | null;
-}): Promise<void> {
-  await apiFetch('/rest/v1/feedback', {
+}): Promise<any | null> {
+  // return=representation：返回插入后的完整行（含 id/created_at），
+  // 前端可本地插入列表最前，省掉整页重拉
+  const result = await apiFetch<any[]>('/rest/v1/feedback', {
     method: 'POST',
     body: data,
     timeout: 10000,
+    extraHeaders: { Prefer: 'return=representation' },
   });
+  return result?.[0] || null;
 }
 
 export async function updateFeedback(id: number, data: Record<string, any>): Promise<void> {

@@ -44,19 +44,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         if (signUpError) throw signUpError;
         
         // 注册成功后，立即在 profiles 表创建记录 (使用 upsert 防止冲突)
+        // 只提交白名单字段 username / xhs_id；id / role / updated_at / created_at 一律不传：
+        // - id / updated_at 由数据库 BEFORE INSERT/UPDATE 触发器 handle_profile_row() 自动写入（迁移 005）
+        // - role 由数据库默认值 'user' 兜底（002_role_security.sql），防止自提权
+        let profileSaveMsg: string | null = null;
         if (signUpData.user) {
           try {
             await upsertProfile({
-              id: signUpData.user.id,
               username: username,
               xhs_id: xhsId || null,
-              // 注意：不传 role。角色由数据库默认值 'user' 兜底（见 002_role_security.sql），
-              // 防止用户用自己的 token 自写 role 提权
-              updated_at: new Date().toISOString()
             });
           } catch (profileError: any) {
             console.error('手动创建 Profile 失败:', profileError?.message);
-            // 这里不抛出错误，因为账号其实已经创建成功了
+            // 不静默失败：账号已创建成功，但要明确告知档案未保存，并给出恢复路径
+            profileSaveMsg = '账号已创建，但研究员档案保存失败：' + (profileError?.message || '未知错误') +
+              '。登录后请到个人中心「编辑资料」重新保存；若持续失败请联系管理员。';
           }
         }
         
@@ -71,7 +73,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           }
         }
         
-        alert('入职成功！欢迎加入特殊事件研究组。');
+        alert(profileSaveMsg ? '⚠️ ' + profileSaveMsg : '入职成功！欢迎加入特殊事件研究组。');
       }
       onClose();
     } catch (err: any) {
