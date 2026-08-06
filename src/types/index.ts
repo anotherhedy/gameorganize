@@ -61,6 +61,7 @@ export interface Feedback {
   detective_name: string;
   intel_content: string;
   reply_content?: string;
+  replied_by?: string;   // 回复者昵称（管理员回复时记录，用于前端显示 "管理员·xxx"）
   created_at: string;
-  user_id?: string; // 新增：发送者的用户 ID
+  user_id?: string;       // 发送者的用户 ID
 }

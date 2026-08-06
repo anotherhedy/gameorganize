@@ -217,7 +217,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                 </h2>
                 {isAdmin && (
                   <span className="px-2 py-0.5 bg-purple-500/20 border border-purple-500/40 text-purple-300 text-[10px] rounded-full font-bold">
-                    管理员
+                    {isSuperAdmin ? '管理员' : '内容编辑'}
                   </span>
                 )}
               </div>

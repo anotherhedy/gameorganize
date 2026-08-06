@@ -102,7 +102,11 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({
 
   const handlePostReply = async (id: number, content: string) => {
     try {
-      await updateFeedback(id, { reply_content: content });
+      // 管理员回复时记录昵称，前端显示 "管理员·xxx" 而非光秃秃的 "管理员回应"
+      const adminName = (isAdmin && userProfile?.username)
+        ? `管理员·${userProfile.username}`
+        : undefined;
+      await updateFeedback(id, { reply_content: content, ...(adminName ? { replied_by: adminName } : {}) });
       alert('回应已发布');
       loadFeedbacks(page);
     } catch (error) {
@@ -233,6 +237,7 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({
         currentUser={currentUser}
         userProfile={userProfile}
         initialData={intelToEdit}
+        isAdmin={isAdmin}
       />
 
       {/* Reply Modal */}

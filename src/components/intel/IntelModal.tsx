@@ -8,9 +8,10 @@ interface IntelModalProps {
   currentUser?: any;
   userProfile?: any;
   initialData?: any; // 新增：初始编辑数据
+  isAdmin?: boolean;
 }
 
-export const IntelModal: React.FC<IntelModalProps> = ({ onClose, onSubmit, isOpen, currentUser, userProfile, initialData }) => {
+export const IntelModal: React.FC<IntelModalProps> = ({ onClose, onSubmit, isOpen, currentUser, userProfile, initialData, isAdmin }) => {
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,7 +25,13 @@ export const IntelModal: React.FC<IntelModalProps> = ({ onClose, onSubmit, isOpe
             setName(initialData.detective_name);
             setContent(initialData.intel_content);
         } else {
-            if (userProfile?.username) {
+            // 管理员/内容编辑发布情报：自动加 "管理员·" 前缀
+            const baseName = userProfile?.username
+              || currentUser?.user_metadata?.username
+              || '';
+            if (isAdmin && baseName) {
+                setName(`管理员·${baseName}`);
+            } else if (userProfile?.username) {
                 setName(userProfile.username);
             } else if (currentUser?.user_metadata?.username) {
                 setName(currentUser.user_metadata.username);

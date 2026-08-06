@@ -115,7 +115,9 @@ export const IntelCard: React.FC<IntelCardProps> = ({
             已阅
           </div>
           <p className="text-xs text-red-900 bg-red-50 p-2 rounded italic font-serif border-l-2 border-red-800">
-            <span className="font-bold not-italic mr-1">管理员回应:</span>
+            <span className="font-bold not-italic mr-1">
+              {feedback.replied_by || '管理员回应'}:
+            </span>
             {feedback.reply_content}
           </p>
         </div>
