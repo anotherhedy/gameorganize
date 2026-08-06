@@ -423,14 +423,26 @@ const App: React.FC = () => {
     );
   }
 
-  // 加载失败状态：错误提示 + 重试按钮（条件渲染，不提前 return 以避免 hooks 顺序错乱）
+  // 加载失败状态：错误提示 + 重试按钮
+  // 注意：若 initError 触发时用户已登录（setupAuth 成功），说明只是网络波动导致数据没拉下来，
+  // 用户并未掉线 → 给更友好的提示，别让用户以为自己被踢下线了。
   if (initError) {
+    const stillLoggedIn = !!user;
     return (
       <div className="min-h-screen bg-archive-dark flex flex-col items-center justify-center gap-6 p-4">
-        <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-          <AlertTriangle size={32} className="text-red-400" />
+        <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
+          stillLoggedIn ? 'bg-yellow-500/10 border border-yellow-500/20' : 'bg-red-500/10 border border-red-500/20'
+        }`}>
+          <AlertTriangle size={32} className={stillLoggedIn ? 'text-yellow-400' : 'text-red-400'} />
         </div>
-        <p className="text-red-300/80 text-sm text-center max-w-xs">{initError}</p>
+        <p className={`text-sm text-center max-w-xs ${stillLoggedIn ? 'text-yellow-300/80' : 'text-red-300/80'}`}>
+          {initError}
+        </p>
+        {stillLoggedIn && (
+          <p className="text-xs text-gray-500 text-center max-w-xs">
+            您的登录状态没有丢失，只是数据加载暂时失败。点击重试即可。
+          </p>
+        )}
         <button
           onClick={handleRetryInit}
           className="px-6 py-2.5 bg-purple-600/20 border border-purple-500/30 text-purple-300 rounded-xl text-sm font-bold hover:bg-purple-600/30 transition-all flex items-center gap-2"

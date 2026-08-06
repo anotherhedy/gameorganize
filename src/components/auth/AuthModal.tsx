@@ -187,7 +187,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             )}
           </button>
 
-          <div className="text-center pt-2">
+          <div className="text-center pt-2 space-y-3">
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
@@ -195,6 +195,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             >
               {isLogin ? '初次来到？提交入职申请' : '已有档案？点击同步登录'}
             </button>
+
+            {/* 忘记密码引导（国内收不到 Supabase 自动邮件，只能联系管理员重置） */}
+            {isLogin && (
+              <div className="text-[11px] text-gray-500 leading-relaxed px-2">
+                <p className="mb-1">🔑 <span className="font-bold text-gray-400">忘记密码？</span></p>
+                <p>请通过微信/QQ 联系管理员，提供你的<strong>注册邮箱</strong>即可帮你重置密码。</p>
+                <p className="mt-1 text-gray-600">重置后用新密码登录，可在个人中心自行修改。</p>
+              </div>
+            )}
           </div>
         </form>
       </div>
