@@ -28,3 +28,10 @@ dist-ssr
 .env.local
 .env.*.local
 .qoder/
+
+# 内部文档与数据库脚本（仓库因 CF Pages 部署需公开；以下仅本地开发用，不入库）
+AGENTS.md
+docs/
+HANDOFF.md
+migrations/
+tests/
