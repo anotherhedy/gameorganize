@@ -79,9 +79,9 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({
       }
 
       setIntelToEdit(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error posting feedback:', error);
-      alert('操作失败，请检查权限或网络');
+      alert('操作失败：' + (error?.message || '请检查权限或网络'));
     }
   };
 
@@ -126,9 +126,9 @@ export const IntelligenceWall: React.FC<IntelligenceWallProps> = ({
       // 就地更新回复内容，不整页重拉
       setFeedbacks(prev => prev.map(f => f.id === id ? { ...f, ...replyUpdate } : f));
       alert('回应已发布');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error replying to feedback:', error);
-      alert('发布失败，请检查权限');
+      alert('发布失败：' + (error?.message || '请检查权限'));
     }
   };
 

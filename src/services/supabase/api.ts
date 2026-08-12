@@ -398,6 +398,15 @@ export async function upsertProfile(data: ProfileUpsert): Promise<any | null> {
 
 // ========== Games 管理 ==========
 
+/**
+ * PATCH 防静默失败：PostgREST 在 return=minimal 下，即使影响 0 行也返回 204「成功」，
+ * 导致 RLS 不放行时前端误报成功、库却没动（2026-08-12 编辑器 bug 的根因）。
+ * 改为 return=representation 并校验返回行数，0 行立即抛错让前端如实报错。
+ */
+function ensureRowsUpdated(result: any[] | undefined | null, errMsg: string) {
+  if (!result || result.length === 0) throw new Error(errMsg);
+}
+
 export async function deleteGame(gameId: string): Promise<void> {
   await apiFetch(`/rest/v1/games?id=eq.${gameId}`, {
     method: 'DELETE',
@@ -406,12 +415,13 @@ export async function deleteGame(gameId: string): Promise<void> {
 }
 
 export async function updateGame(gameId: string, payload: Record<string, any>): Promise<void> {
-  await apiFetch(`/rest/v1/games?id=eq.${gameId}`, {
+  const result = await apiFetch<any[]>(`/rest/v1/games?id=eq.${gameId}`, {
     method: 'PATCH',
     body: payload,
     timeout: 10000,
-    extraHeaders: { Prefer: 'return=minimal' },
+    extraHeaders: { Prefer: 'return=representation' },
   });
+  ensureRowsUpdated(result, '没有找到该档案，或当前账号无编辑权限（仅管理员/内容编辑）');
 }
 
 /** 更新单个游戏的链接状态 */
@@ -419,15 +429,16 @@ export async function updateGameLinkStatus(
   gameId: string,
   status: 'ok' | 'broken' | 'unknown'
 ): Promise<void> {
-  await apiFetch(`/rest/v1/games?id=eq.${gameId}`, {
+  const result = await apiFetch<any[]>(`/rest/v1/games?id=eq.${gameId}`, {
     method: 'PATCH',
     body: {
       link_status: status,
       link_checked_at: new Date().toISOString(),
     },
     timeout: 10000,
-    extraHeaders: { Prefer: 'return=minimal' },
+    extraHeaders: { Prefer: 'return=representation' },
   });
+  ensureRowsUpdated(result, '链接状态更新失败：未找到该档案或无权限');
 }
 
 // ========== Feedback（情报墙） ==========
@@ -475,12 +486,13 @@ export async function insertFeedback(data: {
 }
 
 export async function updateFeedback(id: number, data: Record<string, any>): Promise<void> {
-  await apiFetch(`/rest/v1/feedback?id=eq.${id}`, {
+  const result = await apiFetch<any[]>(`/rest/v1/feedback?id=eq.${id}`, {
     method: 'PATCH',
     body: data,
     timeout: 10000,
-    extraHeaders: { Prefer: 'return=minimal' },
+    extraHeaders: { Prefer: 'return=representation' },
   });
+  ensureRowsUpdated(result, '没有找到该情报，或当前账号无权限（仅本人/管理员/内容编辑可回复）');
 }
 
 export async function deleteFeedback(id: number): Promise<void> {
