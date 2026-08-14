@@ -187,7 +187,7 @@ export async function fetchAllGames(): Promise<GameData[]> {
 
 export async function incrementGameViews(gameId: string) {
   try {
-    await apiFetch('/rest/v1/rpc/increment_game_views', {
+    await apiFetch('/rest/v1/rpc/record_game_launch', {
       method: 'POST',
       body: { target_id: gameId },
       timeout: 8000,
@@ -203,6 +203,31 @@ export async function fetchGameStats(): Promise<Record<string, number>> {
   const stats: Record<string, number> = {};
   if (data) data.forEach((row: any) => { stats[row.game_id.toString()] = row.views; });
   return stats;
+}
+
+export interface WeeklyGameStatsResult {
+  stats: Record<string, number>;
+  isWarmingUp: boolean;
+}
+
+/** 获取本周最热所需的滚动 7 天启动量与首周过渡状态。 */
+export async function fetchWeeklyGameStats(): Promise<WeeklyGameStatsResult> {
+  const data = await apiFetch<Array<{
+    game_id: number | string;
+    weekly_launches: number | string;
+    is_warming_up: boolean;
+  }>>('/rest/v1/rpc/get_weekly_game_launch_stats', { method: 'POST', timeout: 10000 });
+
+  const stats: Record<string, number> = {};
+  (data || []).forEach((row) => {
+    stats[row.game_id.toString()] = Number(row.weekly_launches) || 0;
+  });
+
+  return {
+    stats,
+    // 数据库暂不可用或返回空集合时，保守地继续沿用累计榜。
+    isWarmingUp: data?.[0]?.is_warming_up ?? true,
+  };
 }
 
 // ========== 投稿审核 ==========

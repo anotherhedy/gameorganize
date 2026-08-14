@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { Header } from './components/layout/Header';
 import { GameCard } from './components/game/GameCard';
 import { Search, Flame, Sparkles, Dices, X, ArrowUp, Loader2, Filter, Clock, ArrowUpDown, ChevronDown, Sliders, Database, CheckCircle2, Circle, Activity, AlertTriangle, RefreshCw } from 'lucide-react';
-import { fetchGameStats, incrementGameViews, fetchAllGames, fetchPendingCount, detectApiBase, fetchProfile, updateSolvedGames } from './services/supabase/api';
+import { fetchGameStats, fetchWeeklyGameStats, incrementGameViews, fetchAllGames, fetchPendingCount, detectApiBase, fetchProfile, updateSolvedGames } from './services/supabase/api';
 import { GameData, GameSubmission, AdminRole } from './types';
 import { RingLoader, PuffLoader } from 'react-spinners';
 import { FloatingEntry } from './components/intel/FloatingEntry';
@@ -42,6 +42,8 @@ const App: React.FC = () => {
   const [editingSubmission, setEditingSubmission] = useState<GameSubmission | null>(null); // 编辑已有投稿
   const [searchTerm, setSearchTerm] = useState('');
   const [gameStats, setGameStats] = useState<Record<string, number>>({});
+  const [weeklyGameStats, setWeeklyGameStats] = useState<Record<string, number>>({});
+  const [isWeeklyRankingWarmingUp, setIsWeeklyRankingWarmingUp] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('releaseDate');
   const [durationFilter, setDurationFilter] = useState<DurationFilter>('all');
   const [solvedFilter, setSolvedFilter] = useState<'all' | 'played' | 'unplayed'>('all'); // 新增进度筛选状态
@@ -86,8 +88,14 @@ const App: React.FC = () => {
         ...prev,
         [id]: (prev[id] || 0) + 1
       }));
+      if (!isWeeklyRankingWarmingUp) {
+        setWeeklyGameStats(prev => ({
+          ...prev,
+          [id]: (prev[id] || 0) + 1
+        }));
+      }
     });
-  }, []);
+  }, [isWeeklyRankingWarmingUp]);
 
   // Scroll logic for searching (Debounced to avoid lag while typing/deleting)
   useEffect(() => {
@@ -132,6 +140,13 @@ const App: React.FC = () => {
           setGameStats(stats);
         }).catch(err => {
           console.error('Failed to fetch game stats:', err);
+        });
+
+        fetchWeeklyGameStats().then(({ stats, isWarmingUp }) => {
+          setWeeklyGameStats(stats);
+          setIsWeeklyRankingWarmingUp(isWarmingUp);
+        }).catch(err => {
+          console.error('Failed to fetch weekly game stats:', err);
         });
 
         // 3. Fetch pending count for admin badge
@@ -231,16 +246,25 @@ const App: React.FC = () => {
     }, 600);
   }, [games]);
 
-  // Popular games: sort by views desc, take top 4
+  // 本周最热：首周沿用累计浏览量；之后按近 7 天启动量。已确认失效的链接不参与。
   const popularGames = useMemo(() => {
-    return [...games]
+    return games
+      .filter(game => game.linkStatus !== 'broken')
       .sort((a, b) => {
+        const weeklyLaunchesA = isWeeklyRankingWarmingUp ? gameStats[a.id] || 0 : weeklyGameStats[a.id] || 0;
+        const weeklyLaunchesB = isWeeklyRankingWarmingUp ? gameStats[b.id] || 0 : weeklyGameStats[b.id] || 0;
+        if (weeklyLaunchesB !== weeklyLaunchesA) return weeklyLaunchesB - weeklyLaunchesA;
+
         const viewsA = gameStats[a.id] || 0;
         const viewsB = gameStats[b.id] || 0;
-        return viewsB - viewsA;
+        if (viewsB !== viewsA) return viewsB - viewsA;
+
+        const dateDiff = new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+        if (dateDiff !== 0) return dateDiff;
+        return parseInt(b.id) - parseInt(a.id);
       })
       .slice(0, 6);
-  }, [gameStats, games]);
+  }, [gameStats, games, isWeeklyRankingWarmingUp, weeklyGameStats]);
 
   // New games: sort by releaseDate desc, then id desc, take top 4
   const newGames = useMemo(() => {
